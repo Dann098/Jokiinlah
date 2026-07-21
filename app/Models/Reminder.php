@@ -12,7 +12,18 @@ class Reminder extends Model
 
     protected $fillable = ['title', 'description', 'reminder_date', 'is_completed'];
 
-    protected function casts(): array { return ['reminder_date' => 'immutable_datetime', 'is_completed' => 'boolean']; }
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
+    protected function casts(): array
+    {
+        return ['reminder_date' => 'immutable_datetime', 'is_completed' => 'boolean'];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

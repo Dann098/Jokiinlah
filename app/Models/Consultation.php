@@ -23,7 +23,18 @@ class Consultation extends Model
         ];
     }
 
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function service(): BelongsTo { return $this->belongsTo(Service::class); }
-    public function project(): HasOne { return $this->hasOne(Project::class); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function project(): HasOne
+    {
+        return $this->hasOne(Project::class);
+    }
 }

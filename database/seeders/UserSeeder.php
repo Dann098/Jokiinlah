@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
         foreach ($users as $data) {
             User::query()->updateOrCreate(['email' => $data['email']], array_merge($data, [
                 'email_verified_at' => now(),
-                'password' => Hash::make('password'),
+                'password' => Hash::make('Password123!'),
                 'is_active' => true,
             ]));
         }

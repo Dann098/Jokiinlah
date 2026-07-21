@@ -22,5 +22,11 @@ enum RevisionStatus: string
             self::CustomerConfirmation => 'Menunggu Konfirmasi Pelanggan', self::Approved => 'Disetujui', self::Closed => 'Ditutup',
         };
     }
-    public function color(): string { return match ($this) { self::Approved, self::Closed => 'success', self::InProgress => 'primary', default => 'warning' }; }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Approved, self::Closed => 'success', self::InProgress => 'primary', default => 'warning'
+        };
+    }
 }

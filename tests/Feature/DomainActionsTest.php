@@ -14,8 +14,10 @@ use App\Models\Consultation;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use App\Models\User;
+use App\Services\ActivityLogger;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Validation\ValidationException;
+use RuntimeException;
 use Tests\TestCase;
 
 class DomainActionsTest extends TestCase
@@ -70,5 +72,64 @@ class DomainActionsTest extends TestCase
         $this->assertSame($current->document_uuid, $next->document_uuid);
         $this->assertSame(2, $next->version);
         $this->assertNotSame($current->stored_name, $next->stored_name);
+    }
+
+    public function test_double_consultation_conversion_is_rejected(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $customer = User::factory()->customer()->create();
+        $consultation = Consultation::factory()->create([
+            'user_id' => $customer->id,
+            'email' => $customer->email,
+            'status' => ConsultationStatus::Reviewed,
+        ]);
+        $action = app(ConvertConsultationToProject::class);
+        $action->execute($consultation, $admin);
+
+        try {
+            $action->execute($consultation->refresh(), $admin);
+            $this->fail('Konversi ganda seharusnya ditolak.');
+        } catch (ValidationException) {
+            $this->assertDatabaseCount('projects', 1);
+            $this->assertSame(ConsultationStatus::Converted, $consultation->refresh()->status);
+        }
+    }
+
+    public function test_consultation_conversion_rolls_back_when_audit_logging_fails(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $customer = User::factory()->customer()->create();
+        $consultation = Consultation::factory()->create([
+            'user_id' => $customer->id,
+            'email' => $customer->email,
+            'status' => ConsultationStatus::Reviewed,
+        ]);
+        $logger = $this->createMock(ActivityLogger::class);
+        $logger->method('log')->willThrowException(new RuntimeException('Simulasi kegagalan audit.'));
+        $this->app->instance(ActivityLogger::class, $logger);
+
+        try {
+            app(ConvertConsultationToProject::class)->execute($consultation, $admin);
+            $this->fail('Kegagalan audit seharusnya membatalkan transaksi.');
+        } catch (RuntimeException) {
+            $this->assertDatabaseCount('projects', 0);
+            $this->assertDatabaseCount('code_sequences', 0);
+            $this->assertSame(ConsultationStatus::Reviewed, $consultation->refresh()->status);
+        }
+    }
+
+    public function test_admin_override_without_reason_is_rejected(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $project = Project::factory()->create(['status' => ProjectStatus::NewRequest]);
+
+        try {
+            app(UpdateProjectStatus::class)->execute($project, ProjectStatus::Completed, $admin);
+            $this->fail('Override tanpa alasan seharusnya ditolak.');
+        } catch (ValidationException $exception) {
+            $this->assertArrayHasKey('override_reason', $exception->errors());
+            $this->assertSame(ProjectStatus::NewRequest, $project->refresh()->status);
+            $this->assertDatabaseCount('activity_logs', 0);
+        }
     }
 }

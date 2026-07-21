@@ -15,7 +15,7 @@ Tahap 2 menyediakan:
 - progress manual 0–100 dan audit perubahan;
 - private file, UUID physical name, logical `document_uuid`, versioning, soft delete, retention, dan download terotorisasi;
 - penyimpanan/proses waktu UTC dan konversi tampilan/input Asia/Jakarta;
-- 19 automated tests dengan 59 assertions.
+- 32 automated tests dengan 110 assertions, termasuk audit isolasi berkas lintas customer/staff.
 
 Landing page lengkap, portal customer, dan dashboard admin/Filament belum dibuat karena termasuk Tahap 3–5.
 
@@ -67,9 +67,9 @@ php artisan serve
 
 | Role | Email | Password |
 |---|---|---|
-| Admin | `admin@example.com` | `password` |
-| Staff | `staff@example.com` | `password` |
-| Customer | `customer@example.com` | `password` |
+| Admin | `admin@example.com` | `Password123!` |
+| Staff | `staff@example.com` | `Password123!` |
+| Customer | `customer@example.com` | `Password123!` |
 
 **Wajib mengganti atau menghapus seluruh password/data demo sebelum deployment production.** Seeder demo menolak berjalan saat `APP_ENV=production`.
 
@@ -97,6 +97,7 @@ Test menggunakan SQLite in-memory dan tidak memodifikasi MariaDB development. Va
 
 - [Arsitektur final Tahap 1](docs/TAHAP-1-ANALISIS-DAN-ARSITEKTUR.md)
 - [Laporan implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
+- [Audit penutup domain dan authentication](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)
 
-Logo asli harus ditempatkan di `public/images/logo.jpeg`. Aplikasi tidak membuat placeholder ketika file belum tersedia.
+Logo asli tersedia di `public/images/logo.jpeg`; tidak ada placeholder yang dibuat.

@@ -30,7 +30,9 @@ enum ProjectStatus: string
 
     public function color(): string
     {
-        return match ($this) { self::Completed => 'success', self::Cancelled => 'danger', self::InProgress => 'primary', default => 'warning' };
+        return match ($this) {
+            self::Completed => 'success', self::Cancelled => 'danger', self::InProgress => 'primary', default => 'warning'
+        };
     }
 
     /** @return list<self> */

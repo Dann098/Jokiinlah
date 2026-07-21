@@ -18,6 +18,13 @@ class ProjectFile extends Model
         return ['version' => 'integer', 'file_size' => 'integer', 'archived_at' => 'immutable_datetime', 'retention_until' => 'immutable_datetime'];
     }
 
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
-    public function uploader(): BelongsTo { return $this->belongsTo(User::class, 'uploaded_by'); }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function uploader(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'uploaded_by');
+    }
 }

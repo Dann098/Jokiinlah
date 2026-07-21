@@ -26,17 +26,61 @@ class Project extends Model
         ];
     }
 
-    public function consultation(): BelongsTo { return $this->belongsTo(Consultation::class); }
-    public function customer(): BelongsTo { return $this->belongsTo(User::class, 'customer_id'); }
-    public function assignedStaff(): BelongsTo { return $this->belongsTo(User::class, 'assigned_staff_id'); }
-    public function service(): BelongsTo { return $this->belongsTo(Service::class); }
-    public function milestones(): HasMany { return $this->hasMany(ProjectMilestone::class); }
-    public function files(): HasMany { return $this->hasMany(ProjectFile::class); }
-    public function revisions(): HasMany { return $this->hasMany(Revision::class); }
-    public function reminders(): HasMany { return $this->hasMany(Reminder::class); }
-    public function appointments(): HasMany { return $this->hasMany(Appointment::class); }
-    public function scopeOwnedBy(Builder $query, User $user): Builder { return $query->where('customer_id', $user->id); }
-    public function scopeAssignedTo(Builder $query, User $user): Builder { return $query->where('assigned_staff_id', $user->id); }
+    public function consultation(): BelongsTo
+    {
+        return $this->belongsTo(Consultation::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function assignedStaff(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'assigned_staff_id');
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(Service::class);
+    }
+
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(ProjectMilestone::class);
+    }
+
+    public function files(): HasMany
+    {
+        return $this->hasMany(ProjectFile::class);
+    }
+
+    public function revisions(): HasMany
+    {
+        return $this->hasMany(Revision::class);
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(Reminder::class);
+    }
+
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
+    public function scopeOwnedBy(Builder $query, User $user): Builder
+    {
+        return $query->where('customer_id', $user->id);
+    }
+
+    public function scopeAssignedTo(Builder $query, User $user): Builder
+    {
+        return $query->where('assigned_staff_id', $user->id);
+    }
+
     public function scopeVisibleTo(Builder $query, User $user): Builder
     {
         return $query->when(! $user->isAdmin(), fn (Builder $query): Builder => $user->isStaff()

@@ -24,5 +24,8 @@ enum ServiceCategory: string
         };
     }
 
-    public function color(): string { return 'primary'; }
+    public function color(): string
+    {
+        return 'primary';
+    }
 }

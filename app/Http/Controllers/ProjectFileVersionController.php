@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\ProjectFiles\CreateProjectFileVersion;
 use App\Http\Requests\StoreProjectFileVersionRequest;
 use App\Models\ProjectFile;
+use App\Services\FilenameSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ use Throwable;
 
 class ProjectFileVersionController extends Controller
 {
-    public function store(StoreProjectFileVersionRequest $request, ProjectFile $projectFile, CreateProjectFileVersion $action): RedirectResponse
+    public function store(StoreProjectFileVersionRequest $request, ProjectFile $projectFile, CreateProjectFileVersion $action, FilenameSanitizer $filenames): RedirectResponse
     {
         $upload = $request->file('file');
         $storedName = (string) Str::uuid();
@@ -24,7 +25,7 @@ class ProjectFileVersionController extends Controller
         try {
             $action->execute($projectFile, $request->user(), [
                 'category' => $request->string('category')->toString(),
-                'original_name' => basename($upload->getClientOriginalName()),
+                'original_name' => $filenames->sanitize($upload->getClientOriginalName()),
                 'stored_name' => $storedName,
                 'file_path' => $path,
                 'file_type' => $upload->getMimeType() ?: 'application/octet-stream',

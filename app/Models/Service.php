@@ -19,8 +19,23 @@ class Service extends Model
         return ['category' => ServiceCategory::class, 'features' => 'array', 'technologies' => 'array', 'is_active' => 'boolean', 'sort_order' => 'integer'];
     }
 
-    public function consultations(): HasMany { return $this->hasMany(Consultation::class); }
-    public function projects(): HasMany { return $this->hasMany(Project::class); }
-    public function faqs(): HasMany { return $this->hasMany(Faq::class); }
-    public function scopeActive(Builder $query): Builder { return $query->where('is_active', true); }
+    public function consultations(): HasMany
+    {
+        return $this->hasMany(Consultation::class);
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class);
+    }
+
+    public function faqs(): HasMany
+    {
+        return $this->hasMany(Faq::class);
+    }
+
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
 }

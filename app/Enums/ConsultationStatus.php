@@ -25,6 +25,8 @@ enum ConsultationStatus: string
 
     public function color(): string
     {
-        return match ($this) { self::New => 'info', self::Converted => 'success', self::Cancelled => 'danger', default => 'warning' };
+        return match ($this) {
+            self::New => 'info', self::Converted => 'success', self::Cancelled => 'danger', default => 'warning'
+        };
     }
 }

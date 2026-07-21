@@ -31,7 +31,7 @@ class AuthenticationTest extends TestCase
     public function test_inactive_user_cannot_login_and_error_is_generic(): void
     {
         User::factory()->inactive()->create(['email' => 'inactive@example.com']);
-        $response = $this->from('/login')->post('/login', ['email' => 'inactive@example.com', 'password' => 'password']);
+        $response = $this->from('/login')->post('/login', ['email' => 'inactive@example.com', 'password' => 'Password123!']);
         $response->assertRedirect('/login')->assertSessionHasErrors('email');
         $this->assertGuest();
     }
@@ -39,10 +39,16 @@ class AuthenticationTest extends TestCase
     public function test_customer_and_staff_receive_role_aware_login_redirects(): void
     {
         $customer = User::factory()->customer()->create();
-        $this->post('/login', ['email' => $customer->email, 'password' => 'password'])->assertRedirect('/dashboard');
+        $this->post('/login', ['email' => $customer->email, 'password' => 'Password123!'])->assertRedirect('/dashboard');
         $this->post('/logout');
         $staff = User::factory()->staff()->create();
-        $this->post('/login', ['email' => $staff->email, 'password' => 'password'])->assertRedirect('/admin');
+        $this->post('/login', ['email' => $staff->email, 'password' => 'Password123!'])->assertRedirect('/admin');
+        $this->get('/admin')->assertOk()->assertSee('Fondasi Admin & Staff', false);
+        $this->post('/logout');
+
+        $admin = User::factory()->admin()->create();
+        $this->post('/login', ['email' => $admin->email, 'password' => 'Password123!'])->assertRedirect('/admin');
+        $this->get('/admin')->assertOk()->assertSee('Fondasi Admin & Staff', false);
     }
 
     public function test_unverified_user_is_blocked_from_dashboard(): void

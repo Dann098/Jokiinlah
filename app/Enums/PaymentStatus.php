@@ -12,6 +12,17 @@ enum PaymentStatus: string
     case DownPayment = 'down_payment';
     case Paid = 'paid';
 
-    public function label(): string { return match ($this) { self::Unpaid => 'Belum Dibayar', self::DownPayment => 'DP', self::Paid => 'Lunas' }; }
-    public function color(): string { return match ($this) { self::Unpaid => 'danger', self::DownPayment => 'warning', self::Paid => 'success' }; }
+    public function label(): string
+    {
+        return match ($this) {
+            self::Unpaid => 'Belum Dibayar', self::DownPayment => 'DP', self::Paid => 'Lunas'
+        };
+    }
+
+    public function color(): string
+    {
+        return match ($this) {
+            self::Unpaid => 'danger', self::DownPayment => 'warning', self::Paid => 'success'
+        };
+    }
 }

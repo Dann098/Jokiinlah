@@ -18,5 +18,8 @@ class ProjectMilestone extends Model
         return ['status' => MilestoneStatus::class, 'due_date' => 'immutable_datetime', 'completed_at' => 'immutable_datetime', 'sort_order' => 'integer'];
     }
 
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
 }

@@ -26,7 +26,7 @@ class EnumAndTimeTest extends TestCase
 
     public function test_jakarta_input_is_converted_to_utc_and_back(): void
     {
-        $service = new DateTimeService();
+        $service = new DateTimeService;
         $utc = $service->fromUserInput('2026-07-22 10:00');
 
         $this->assertSame('2026-07-22 03:00:00', $utc->format('Y-m-d H:i:s'));

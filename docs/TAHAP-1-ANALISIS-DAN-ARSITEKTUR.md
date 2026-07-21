@@ -1267,4 +1267,4 @@ Untuk development, seluruh nilai tersebut harus menggunakan dummy/configuration 
 
 ---
 
-**Peringatan akun demo untuk tahap berikutnya:** akun `admin@example.com`, `staff@example.com`, dan `customer@example.com` dengan password `password` hanya boleh digunakan pada local/staging. Password wajib diganti dan seeder demo tidak boleh dijalankan pada production tanpa guard eksplisit.
+**Peringatan akun demo untuk tahap berikutnya:** akun `admin@example.com`, `staff@example.com`, dan `customer@example.com` dengan password `Password123!` hanya boleh digunakan pada local/staging. Password wajib diganti dan seeder demo tidak boleh dijalankan pada production tanpa guard eksplisit.

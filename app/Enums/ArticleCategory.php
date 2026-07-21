@@ -25,5 +25,9 @@ enum ArticleCategory: string
             self::Database => 'Database', self::ItCareer => 'Karier IT',
         };
     }
-    public function color(): string { return 'primary'; }
+
+    public function color(): string
+    {
+        return 'primary';
+    }
 }

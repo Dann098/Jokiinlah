@@ -13,8 +13,23 @@ class Appointment extends Model
 
     protected $fillable = ['title', 'appointment_date', 'meeting_link', 'notes', 'status'];
 
-    protected function casts(): array { return ['appointment_date' => 'immutable_datetime', 'status' => AppointmentStatus::class]; }
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
-    public function customer(): BelongsTo { return $this->belongsTo(User::class, 'customer_id'); }
-    public function staff(): BelongsTo { return $this->belongsTo(User::class, 'staff_id'); }
+    protected function casts(): array
+    {
+        return ['appointment_date' => 'immutable_datetime', 'status' => AppointmentStatus::class];
+    }
+
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
+
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'staff_id');
+    }
 }

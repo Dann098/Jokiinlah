@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\ProjectFileVersionController;
 use App\Http\Controllers\ProjectFileDownloadController;
+use App\Http\Controllers\ProjectFileVersionController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');

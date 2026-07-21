@@ -23,6 +23,13 @@ class Revision extends Model
         ];
     }
 
-    public function project(): BelongsTo { return $this->belongsTo(Project::class); }
-    public function submitter(): BelongsTo { return $this->belongsTo(User::class, 'submitted_by'); }
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function submitter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'submitted_by');
+    }
 }

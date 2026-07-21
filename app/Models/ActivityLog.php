@@ -14,7 +14,19 @@ class ActivityLog extends Model
     public const UPDATED_AT = null;
 
     protected $guarded = ['id'];
-    protected function casts(): array { return ['metadata' => 'array', 'created_at' => 'immutable_datetime']; }
-    public function user(): BelongsTo { return $this->belongsTo(User::class); }
-    public function model(): MorphTo { return $this->morphTo(); }
+
+    protected function casts(): array
+    {
+        return ['metadata' => 'array', 'created_at' => 'immutable_datetime'];
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function model(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }

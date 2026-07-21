@@ -31,6 +31,7 @@ Keputusan arsitektur Tahap 1 telah diterapkan:
 - Login menolak akun nonaktif dengan respons kredensial generik dan rate limit 5 percobaan/menit.
 - Password baru minimal 12 karakter, menggunakan huruf besar/kecil, angka, simbol, dan pemeriksaan compromised password.
 - Redirect login: customer ke `/dashboard`, admin/staff ke `/admin`.
+- Route `/admin` sementara menampilkan placeholder terproteksi role sehingga login admin/staff tidak menghasilkan 404 sebelum Filament dibuat pada Tahap 5.
 - Middleware `active` dan `role` terdaftar pada bootstrap aplikasi.
 
 ### Database dan model
@@ -72,11 +73,11 @@ Assigned staff hanya boleh memakai transisi normal. Admin dapat override dengan 
 - Route versi baru: `POST /project-files/{projectFile}/versions`.
 - Route download: `GET /project-files/{projectFile}/download`.
 - Upload dibatasi 20 MB dan extension/MIME yang disetujui: PDF, DOC/DOCX, XLS/XLSX, CSV, ZIP/RAR, JPG/JPEG, PNG, WEBP.
-- Nama fisik adalah UUID; original name hanya metadata dan disanitasi dengan `basename`.
+- Nama fisik adalah UUID; original name hanya metadata dan disanitasi terpusat dengan `basename`, penghapusan control character/CR/LF, batas 180 karakter, dan fallback aman.
 - Checksum SHA-256, MIME, ukuran, uploader, description, version, dan retention dicatat.
 - Download memeriksa policy lalu mencatat activity log.
 - Gagal menyimpan metadata akan membersihkan file fisik yang sempat ditulis.
-- Action permanent delete hanya menerima admin, file yang sudah soft-deleted, dan alasan wajib; aksi dicatat sebelum file fisik serta row dihapus permanen.
+- Action permanent delete tetap internal tanpa route/UI. Action hanya menerima admin, file soft-deleted, alasan wajib, dan retensi yang sudah berakhir. Kegagalan storage mempertahankan record database; purge terjadwal penuh tetap ditunda ke Tahap 6.
 
 Catatan keamanan: whitelist bukan antivirus. Sebelum production, tambahkan malware scanning/quarantine. Archive ZIP/RAR tidak boleh diekstrak maupun dijalankan oleh aplikasi.
 
@@ -111,7 +112,7 @@ Hasil aktual:
 - MariaDB `10.4.32` XAMPP terhubung;
 - seluruh 19 migration domain/framework selesai;
 - seeder selesai dan pengulangan seeder mempertahankan hitungan yang sama;
-- 19 test lulus dengan 59 assertion;
+- 32 test lulus dengan 110 assertion;
 - Vite production build lulus, 56 module ditransformasi;
 - Composer audit: tidak ada security advisory;
 - npm audit saat instalasi: 0 vulnerability;

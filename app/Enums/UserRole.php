@@ -14,11 +14,15 @@ enum UserRole: string
 
     public function label(): string
     {
-        return match ($this) { self::Admin => 'Admin', self::Staff => 'Staff', self::Customer => 'Pelanggan' };
+        return match ($this) {
+            self::Admin => 'Admin', self::Staff => 'Staff', self::Customer => 'Pelanggan'
+        };
     }
 
     public function color(): string
     {
-        return match ($this) { self::Admin => 'danger', self::Staff => 'warning', self::Customer => 'primary' };
+        return match ($this) {
+            self::Admin => 'danger', self::Staff => 'warning', self::Customer => 'primary'
+        };
     }
 }
