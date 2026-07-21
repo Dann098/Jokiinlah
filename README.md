@@ -1,66 +1,102 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Jokiinlah
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Fondasi aplikasi **Pendampingan Akademik & Digital** untuk konsultasi, pengelolaan proyek pelanggan, analisis data, serta pengembangan solusi digital. Repository saat ini telah menyelesaikan Tahap 1 (arsitektur) dan Tahap 2 (domain serta autentikasi).
 
-## About Laravel
+## Status implementasi
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Tahap 2 menyediakan:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Alpine.js, Vite, dan Fortify;
+- autentikasi register, login/logout, reset password, dan verifikasi email;
+- role `admin`, `staff`, dan `customer`, akun aktif, middleware, serta policy domain;
+- 14 entitas domain, enum status, relasi, factory, migration, dan seeder idempoten;
+- konversi konsultasi guest setelah akun customer terverifikasi;
+- transisi status proyek normal dan admin override dengan alasan wajib;
+- progress manual 0–100 dan audit perubahan;
+- private file, UUID physical name, logical `document_uuid`, versioning, soft delete, retention, dan download terotorisasi;
+- penyimpanan/proses waktu UTC dan konversi tampilan/input Asia/Jakarta;
+- 19 automated tests dengan 59 assertions.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Landing page lengkap, portal customer, dan dashboard admin/Filament belum dibuat karena termasuk Tahap 3–5.
 
-## Learning Laravel
+## Persyaratan lokal
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP 8.2 atau lebih baru yang kompatibel dengan Laravel 12
+- Composer 2
+- Node.js dan npm
+- MariaDB 10.4+ atau MySQL yang kompatibel
+- Ekstensi PHP yang diminta Composer
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Instalasi development
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```powershell
+git clone https://github.com/Dann098/Jokiinlah.git
+cd Jokiinlah
+composer install
+npm install
+Copy-Item .env.example .env
+php artisan key:generate
+```
 
-## Laravel Sponsors
+Buat database development bernama `jokiinlah_dev` dengan collation `utf8mb4_unicode_ci`. Gunakan user MariaDB khusus yang hanya memiliki hak ke database tersebut, atau konfigurasi XAMPP lokal yang sudah diverifikasi. Isi konfigurasi lokal di `.env`; jangan commit `.env` dan jangan gunakan credential production.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Nilai minimum yang wajib diverifikasi:
 
-### Premium Partners
+```dotenv
+APP_ENV=local
+APP_TIMEZONE=UTC
+DISPLAY_TIMEZONE=Asia/Jakarta
+DB_CONNECTION=mysql
+DB_DATABASE=jokiinlah_dev
+FILESYSTEM_DISK=local
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Kemudian jalankan:
 
-## Contributing
+```powershell
+php artisan config:clear
+php artisan migrate:fresh --seed
+npm run build
+php artisan test
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`migrate:fresh` menghapus seluruh tabel. Jalankan hanya setelah memastikan environment `local`, koneksi `mysql`, dan database tepat `jokiinlah_dev`. Jangan menjalankannya terhadap production.
 
-## Code of Conduct
+## Akun demo
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | Email | Password |
+|---|---|---|
+| Admin | `admin@example.com` | `password` |
+| Staff | `staff@example.com` | `password` |
+| Customer | `customer@example.com` | `password` |
 
-## Security Vulnerabilities
+**Wajib mengganti atau menghapus seluruh password/data demo sebelum deployment production.** Seeder demo menolak berjalan saat `APP_ENV=production`.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Pengujian
 
-## License
+```powershell
+php artisan test
+php artisan route:list
+npm run build
+composer audit
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Test menggunakan SQLite in-memory dan tidak memodifikasi MariaDB development. Validasi integrasi MariaDB tetap dilakukan terpisah melalui safety gate dan `migrate:fresh --seed` pada database development.
+
+## Keamanan dan integritas akademik
+
+- Berkas pelanggan berada di `storage/app/private` dan disk local tidak memiliki route serve langsung.
+- Download hanya melalui controller dan policy. ZIP/RAR disimpan sebagai attachment; aplikasi tidak mengekstrak atau menjalankannya.
+- Customer tidak dapat menghapus file yang sudah diproses; versi baru dibuat pada logical document yang sama.
+- Penghapusan permanen hanya melalui action admin dengan alasan dan activity log.
+- Layanan tidak boleh digunakan untuk plagiarisme, fabrikasi data, pemalsuan penelitian, pengerjaan ujian, atau aktivitas lain yang melanggar integritas akademik.
+- 2FA untuk admin/staff dijadwalkan pada Tahap 6 dan belum diaktifkan.
+
+## Dokumentasi
+
+- [Arsitektur final Tahap 1](docs/TAHAP-1-ANALISIS-DAN-ARSITEKTUR.md)
+- [Laporan implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
+- [Panduan deployment](docs/DEPLOYMENT.md)
+
+Logo asli harus ditempatkan di `public/images/logo.jpeg`. Aplikasi tidak membuat placeholder ketika file belum tersedia.

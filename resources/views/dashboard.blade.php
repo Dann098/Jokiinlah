@@ -1,0 +1,1 @@
+<!DOCTYPE html><html lang='id'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Dashboard Pelanggan</title></head><body><main><h1>Dashboard Pelanggan</h1><p>Fondasi autentikasi dan domain aktif. Portal lengkap dikerjakan pada Tahap 4.</p></main></body></html>

@@ -1,0 +1,1 @@
+<!DOCTYPE html><html lang='id'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>Fondasi Admin</title></head><body><main><h1>Fondasi Admin & Staff</h1><p>Autorisasi domain sudah aktif. Dashboard admin lengkap dikerjakan pada Tahap 5.</p></main></body></html>
