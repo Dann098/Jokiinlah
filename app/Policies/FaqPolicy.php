@@ -9,12 +9,12 @@ class FaqPolicy
 {
     public function viewAny(?User $user): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function view(?User $user, Faq $item): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function create(User $user): bool

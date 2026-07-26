@@ -9,12 +9,12 @@ class PortfolioPolicy
 {
     public function viewAny(?User $user): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function view(?User $user, Portfolio $item): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function create(User $user): bool

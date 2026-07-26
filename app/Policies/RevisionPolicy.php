@@ -43,6 +43,6 @@ class RevisionPolicy
 
     public function forceDelete(User $user, Revision $item): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 }

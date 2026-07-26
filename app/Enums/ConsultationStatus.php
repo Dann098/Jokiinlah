@@ -29,4 +29,20 @@ enum ConsultationStatus: string
             self::New => 'info', self::Converted => 'success', self::Cancelled => 'danger', default => 'warning'
         };
     }
+
+    /** @return list<self> */
+    public function normalTransitions(): array
+    {
+        return match ($this) {
+            self::New => [self::Contacted, self::Cancelled],
+            self::Contacted => [self::Reviewed, self::Closed, self::Cancelled],
+            self::Reviewed => [self::Closed, self::Cancelled],
+            self::Converted, self::Closed, self::Cancelled => [],
+        };
+    }
+
+    public function canTransitionTo(self $status): bool
+    {
+        return in_array($status, $this->normalTransitions(), true);
+    }
 }

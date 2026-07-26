@@ -19,8 +19,9 @@ class ArticleSeeder extends Seeder
             ['Prinsip Dasar Keamanan Aplikasi Web', 'keamanan-aplikasi-web', ArticleCategory::Website],
             ['Merancang Database yang Mudah Dikembangkan', 'merancang-database', ArticleCategory::Database],
         ];
-        foreach ($items as [$title, $slug, $category]) {
-            Article::query()->updateOrCreate(['slug' => $slug], ['author_id' => $author->id, 'title' => $title, 'excerpt' => 'Panduan praktis untuk membantu proses kerja akademik dan digital menjadi lebih terstruktur.', 'content' => 'Artikel demonstrasi ini menjelaskan prinsip, langkah pemeriksaan, serta hal yang perlu didokumentasikan. Konten dapat diubah melalui dashboard admin pada tahap berikutnya.', 'category' => $category, 'is_published' => true, 'published_at' => now()->subDays(2)]);
+        foreach ($items as $index => [$title, $slug, $category]) {
+            $published = $index < 3;
+            Article::query()->updateOrCreate(['slug' => $slug], ['author_id' => $author->id, 'title' => $title, 'excerpt' => 'Panduan praktis untuk membantu proses kerja akademik dan digital menjadi lebih terstruktur.', 'content' => 'Artikel demonstrasi ini menjelaskan prinsip, langkah pemeriksaan, serta hal yang perlu didokumentasikan. Konten dikelola melalui panel admin.', 'category' => $category, 'is_published' => $published, 'published_at' => $published ? now()->subDays(2) : ($index === 4 ? now()->addWeek() : null)]);
         }
     }
 }

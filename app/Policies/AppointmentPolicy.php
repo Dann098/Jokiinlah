@@ -14,7 +14,9 @@ class AppointmentPolicy
 
     public function view(User $user, Appointment $item): bool
     {
-        return $user->isAdmin() || $item->customer_id === $user->id || $item->staff_id === $user->id;
+        return $user->isAdmin()
+            || ($user->isCustomer() && $item->customer_id === $user->id)
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 
     public function create(User $user): bool
@@ -24,11 +26,13 @@ class AppointmentPolicy
 
     public function update(User $user, Appointment $item): bool
     {
-        return $user->isAdmin() || $item->staff_id === $user->id;
+        return $user->isAdmin()
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 
     public function delete(User $user, Appointment $item): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin()
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 }

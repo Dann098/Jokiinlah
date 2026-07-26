@@ -39,6 +39,6 @@ class ConsultationPolicy
 
     public function forceDelete(User $user, Consultation $consultation): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 }

@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class UpdateProjectProgress
@@ -21,10 +22,12 @@ class UpdateProjectProgress
             throw ValidationException::withMessages(['progress' => 'Progress harus berada pada rentang 0 sampai 100.']);
         }
 
-        $before = $project->progress;
-        $project->forceFill(['progress' => $progress])->save();
-        $this->logger->log('project.progress_changed', 'Progress proyek diperbarui secara manual.', $actor, $project, ['before' => $before, 'after' => $progress]);
+        return DB::transaction(function () use ($project, $progress, $actor): Project {
+            $before = $project->progress;
+            $project->forceFill(['progress' => $progress])->save();
+            $this->logger->log('project.progress_changed', 'Progress proyek diperbarui secara manual.', $actor, $project, ['before' => $before, 'after' => $progress]);
 
-        return $project->refresh();
+            return $project->refresh();
+        });
     }
 }

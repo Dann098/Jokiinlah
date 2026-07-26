@@ -8,9 +8,9 @@ enum PaymentStatus: string
 {
     use HasOptions;
 
-    case Unpaid = 'unpaid';
-    case DownPayment = 'down_payment';
-    case Paid = 'paid';
+    case Unpaid = 'belum_dibayar';
+    case DownPayment = 'dp';
+    case Paid = 'lunas';
 
     public function label(): string
     {

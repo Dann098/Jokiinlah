@@ -43,12 +43,12 @@ class AuthenticationTest extends TestCase
         $this->post('/logout');
         $staff = User::factory()->staff()->create();
         $this->post('/login', ['email' => $staff->email, 'password' => 'Password123!'])->assertRedirect('/admin');
-        $this->get('/admin')->assertOk()->assertSee('Fondasi Admin & Staff', false);
+        $this->get('/admin')->assertOk()->assertSee('Jokiinlah Operasional', false);
         $this->post('/logout');
 
         $admin = User::factory()->admin()->create();
         $this->post('/login', ['email' => $admin->email, 'password' => 'Password123!'])->assertRedirect('/admin');
-        $this->get('/admin')->assertOk()->assertSee('Fondasi Admin & Staff', false);
+        $this->get('/admin')->assertOk()->assertSee('Jokiinlah Operasional', false);
     }
 
     public function test_unverified_user_is_blocked_from_dashboard(): void

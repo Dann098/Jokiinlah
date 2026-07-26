@@ -1,69 +1,54 @@
 # Jokiinlah
 
-Aplikasi **Pendampingan Akademik & Digital** berbasis Laravel untuk konsultasi, konten publik, fondasi pengelolaan proyek pelanggan, analisis data, serta pengembangan solusi digital.
+Aplikasi **Pendampingan Akademik & Digital** berbasis Laravel untuk konsultasi,
+konten publik, Customer Portal, serta operasional admin dan staff.
 
 ## Status implementasi
 
 | Tahap | Status | Ringkasan |
 |---|---|---|
 | Tahap 1 | Selesai | Analisis produk dan arsitektur modular monolith |
-| Tahap 2 | Selesai | Domain, autentikasi, authorization, dan fondasi private file |
-| Tahap 3 | Selesai dan terverifikasi | Website publik, landing page, konsultasi guest, SEO, accessibility, dan visual QA |
-| Tahap 4 | Selesai dan terverifikasi | Customer Portal aman, private file/versioning, revisi, pengingat, jadwal, profil, dan visual QA |
-| Tahap 5–6 | Belum dimulai | Panel admin/staff dan hardening lanjutan |
+| Tahap 2 | Selesai | Domain, autentikasi, authorization, dan private file |
+| Tahap 3 | Selesai dan terverifikasi | Website publik, konsultasi guest, SEO, accessibility, dan visual QA |
+| Tahap 4 | Selesai dan terverifikasi | Customer Portal, versioning, revisi, reminder, appointment, profil, dan visual QA |
+| Tahap 5 | Selesai dan terverifikasi | Panel Filament admin/staff, scoping operasional, test, dan visual QA |
+| Tahap 6 | Belum dimulai | Hardening infrastruktur lanjutan |
 
-## Website publik
+## Fitur utama
 
-Tahap 3 menyediakan:
+Website publik menyediakan landing page responsif, layanan, portofolio, artikel, FAQ,
+form konsultasi guest, halaman legal, SEO metadata, sitemap, robots, dan WhatsApp CTA.
+Scope active/published mencegah konten nonaktif, draft, atau future tampil ke publik.
 
-- landing page responsif dengan navbar desktop/mobile, hero, layanan, cara kerja, portofolio, testimonial terkontrol, FAQ, CTA, dan footer;
-- daftar serta detail layanan aktif;
-- daftar serta detail portofolio published;
-- daftar serta detail artikel published yang tidak berada di masa depan;
-- pencarian, filter kategori, pagination, query-string preservation, dan empty state;
-- FAQ aktif dengan accordion accessible;
-- form konsultasi guest dengan validasi Bahasa Indonesia, consent, honeypot, rate limiter IP/identitas, dan duplicate-submission protection;
-- attachment konsultasi pada private local disk dengan UUID path/name, MIME/extension/size validation, checksum SHA-256, serta cleanup saat transaksi gagal;
-- notification database untuk admin aktif dan mail notification yang tidak membatalkan konsultasi jika gagal;
-- CTA WhatsApp terpusat dan URL-encoded;
-- kebijakan privasi, syarat dan ketentuan, serta ketentuan integritas akademik;
-- title, meta description, canonical, Open Graph, Twitter card, JSON-LD, sitemap, robots, dan halaman 404 khusus;
-- self-hosted Playfair Display serta Plus Jakarta Sans, animasi ringan, reduced-motion support, dan visible keyboard focus.
+Customer Portal berada di `/dashboard` dan menyediakan:
 
-Route publik utama:
+- ringkasan serta daftar/detail proyek milik customer;
+- status, progress, dan milestone read-only;
+- private file, download, upload, dan server-generated versioning;
+- pengajuan revisi dengan attachment privat;
+- reminder customer-visible, appointment, profil, dan perubahan password;
+- policy, ownership query, dan scoped nested binding untuk mencegah IDOR.
 
-```text
-GET  /
-GET  /layanan
-GET  /layanan/{service:slug}
-GET  /portofolio
-GET  /portofolio/{portfolio:slug}
-GET  /artikel
-GET  /artikel/{article:slug}
-GET  /faq
-GET  /kontak
-POST /konsultasi
-GET  /kebijakan-privasi
-GET  /syarat-dan-ketentuan
-GET  /sitemap.xml
-GET  /robots.txt
-```
+Panel Filament berada di `/admin` dan menyediakan:
 
-## Customer Portal
+- dashboard admin dengan consultation, project, revision, deadline, payment manual, dan appointment;
+- dashboard staff yang hanya menghitung assigned project;
+- Customer, Staff, Consultation, Project, Service, Portfolio, Article, Testimonial, FAQ,
+  Site Setting, dan Activity Log Resource;
+- relation manager milestone, private file/versioning, revision, reminder, dan appointment;
+- status transition, progress, assignment, serta payment status manual admin-only;
+- global search, widget, notification, direct URL, dan child record yang mengikuti policy
+  serta server-side query scope.
 
-Tahap 4 menyediakan portal customer pada `/dashboard` dengan ringkasan, pencarian dan
-filter proyek, detail status/progress/milestone, private file dan versioning, pengajuan
-revisi, pengingat, jadwal, profil, serta perubahan password. Semua resource dibatasi ke
-pemilik melalui middleware, policy, ownership query, dan scoped nested binding. Customer
-tidak memiliki route untuk mengubah status/progress atau menghapus resource.
+Customer tidak dapat masuk `/admin`. Staff tidak dapat melihat consultation, unassigned
+project, payment, user/content management, site setting, atau global activity log.
 
 ## Persyaratan lokal
 
-- PHP 8.2+ yang kompatibel dengan Laravel 12
+- PHP 8.2+ dengan ekstensi Composer yang dibutuhkan, termasuk `intl`
 - Composer 2
 - Node.js dan npm
-- MariaDB 10.4+ atau MySQL yang kompatibel
-- Ekstensi PHP yang diminta Composer
+- MariaDB 10.4+ atau MySQL kompatibel
 
 ## Instalasi development
 
@@ -76,20 +61,7 @@ Copy-Item .env.example .env
 php artisan key:generate
 ```
 
-Buat database development `jokiinlah_dev` dengan collation `utf8mb4_unicode_ci`, lalu lengkapi `.env` lokal. Jangan commit `.env` dan jangan gunakan credential production.
-
-Nilai minimum yang wajib diverifikasi:
-
-```dotenv
-APP_ENV=local
-APP_TIMEZONE=UTC
-DISPLAY_TIMEZONE=Asia/Jakarta
-DB_CONNECTION=mysql
-DB_DATABASE=jokiinlah_dev
-FILESYSTEM_DISK=local
-```
-
-Jalankan setup non-destruktif:
+Buat database development, lengkapi `.env`, lalu jalankan setup non-destruktif:
 
 ```powershell
 php artisan optimize:clear
@@ -99,9 +71,20 @@ php artisan test
 php artisan serve
 ```
 
-> **PERINGATAN DESTRUKTIF:** `php artisan migrate:fresh --seed` menghapus seluruh tabel pada database aktif. Gunakan hanya pada database development kosong yang namanya telah diverifikasi, tidak pernah pada staging/production atau database yang berisi data penting. Workflow instalasi normal di atas tidak memerlukan `migrate:fresh`.
+Konfigurasi minimum:
 
-## Akun demo development
+```dotenv
+APP_ENV=local
+APP_TIMEZONE=UTC
+DISPLAY_TIMEZONE=Asia/Jakarta
+DB_CONNECTION=mysql
+FILESYSTEM_DISK=local
+```
+
+Jangan commit `.env` atau credential production. Jangan memakai `migrate:fresh` pada
+database yang berisi data; instalasi normal tidak memerlukannya.
+
+## Akun demo local/staging
 
 | Role | Email | Password |
 |---|---|---|
@@ -109,25 +92,29 @@ php artisan serve
 | Staff | `staff@example.com` | `Password123!` |
 | Customer | `customer@example.com` | `Password123!` |
 
-**Ganti atau hapus seluruh akun, password, kontak, dan data demo sebelum deployment production.** Seeder demo menolak berjalan saat `APP_ENV=production`.
+Seeder demo menolak berjalan pada `APP_ENV=production`. Ganti atau hapus seluruh akun,
+password, kontak, testimonial, dan data demo sebelum production.
 
 ## Test, build, dan audit
 
 ```powershell
 vendor\bin\pint --test
-php artisan test
+php artisan optimize:clear
+php artisan migrate:status
 php artisan route:list
+php artisan test
 npm.cmd run build
 npm.cmd audit
 composer validate --strict
 composer audit
 ```
 
-Test memakai SQLite in-memory dan tidak memodifikasi MariaDB development. Verifikasi terakhir Tahap 4: **94 test lulus dengan 519 assertion**.
+Verifikasi Tahap 5: **109 test lulus dengan 671 assertion**. Build Vite memproses
+56 modul; Composer audit dan npm audit bersih.
 
 ## Visual QA
 
-`scripts/visual-qa.mjs` memakai browser Chromium dengan Chrome DevTools Protocol. Jalankan Laravel pada port 8003 dan browser headless dengan remote debugging port 9225, kemudian:
+Website publik:
 
 ```powershell
 $env:QA_BASE_URL='http://127.0.0.1:8003'
@@ -135,9 +122,7 @@ $env:QA_DEBUGGER_URL='http://127.0.0.1:9225'
 node scripts/visual-qa.mjs
 ```
 
-Script menguji viewport `360x800`, `390x844`, `768x1024`, `1024x768`, `1366x768`, dan `1440x900`, termasuk menu mobile, detail konten, form error/sukses, halaman legal, empty state, dan 404. Hasil berada di `docs/screenshots/visual-qa-report.json`.
-
-Portal customer memiliki harness terpisah:
+Customer Portal:
 
 ```powershell
 $env:QA_BASE_URL='http://127.0.0.1:8003'
@@ -146,30 +131,38 @@ $env:QA_FOREIGN_PROJECT_ID='2'
 node scripts/visual-qa-customer.mjs
 ```
 
-Harness portal memeriksa 27 state pada viewport yang sama, termasuk ownership 403,
-empty state, upload, version history, revisi, profil, dan mobile drawer. Hasil berada di
-`docs/screenshots/tahap-4/visual-qa-report.json`.
+Panel admin/staff:
 
-Varian WebP, favicon, dan OG image dapat dibuat ulang dari logo asli dengan `php scripts/generate_brand_assets.php`.
+```powershell
+$env:QA_BASE_URL='http://localhost:8000'
+$env:QA_DEBUGGER_URL='http://127.0.0.1:9226'
+node scripts/visual-qa-admin-staff.mjs
+```
+
+Harness Tahap 5 memeriksa 54 state pada viewport `360x800`, `390x844`, `768x1024`,
+`1024x768`, `1366x768`, dan `1440x900`, termasuk validation error, global/table search,
+notification, relation manager, mobile navigation, dan unauthorized state. Hasil berada
+di `docs/screenshots/tahap-5/visual-qa-report.json`.
 
 ## Keamanan dan integritas akademik
 
-- Dokumen konsultasi dan proyek berada di `storage/app/private`; disk local tidak mempunyai direct serving route.
-- Original filename hanya metadata tersanitasi. Physical path dan filename memakai UUID.
-- Executable, MIME mismatch, file tanpa extension, dangerous double-extension, dan file oversized ditolak.
-- ZIP/RAR disimpan sebagai opaque private attachment; aplikasi tidak mengekstrak, menjalankan, atau membuat preview archive.
-- Customer/staff tidak dapat membaca konsultasi awal atau attachment guest.
-- Guest consultation tidak membuat akun otomatis.
-- Layanan menolak plagiarisme, ghostwriting untuk diserahkan sebagai karya mandiri, fabrikasi/manipulasi data, pemalsuan, pengerjaan ujian, bypass anti-plagiarisme, pelanggaran hak cipta, dan aktivitas ilegal.
-- 2FA, malware scanner, dan purge scheduler tetap ditunda ke Tahap 6.
+- Consultation/project/revision attachment berada pada private local disk.
+- Physical path dan stored filename memakai UUID; original filename hanya metadata aman.
+- MIME, extension, double extension, executable, ukuran, dan checksum diverifikasi.
+- ZIP/RAR disimpan opaque dan tidak diekstrak atau dijalankan.
+- Status/progress/assignment/payment memakai action terotorisasi dan activity log.
+- Staff hanya assigned project; customer hanya resource miliknya.
+- Layanan melarang plagiarisme, fabrikasi data, pemalsuan penelitian, pengerjaan ujian,
+  bypass anti-plagiarisme, pelanggaran hak cipta, dan aktivitas ilegal.
+- 2FA, malware scanner, purge scheduler, object storage production, dan full CSP ditunda
+  ke Tahap 6; Tahap 6 belum dimulai.
 
 ## Dokumentasi
 
-- [Arsitektur final Tahap 1](docs/TAHAP-1-ANALISIS-DAN-ARSITEKTUR.md)
+- [Arsitektur Tahap 1](docs/TAHAP-1-ANALISIS-DAN-ARSITEKTUR.md)
 - [Implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
-- [Audit penutup Tahap 2](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
+- [Audit Tahap 2](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
 - [Penutupan Tahap 3](docs/TAHAP-3-PUBLIC-WEBSITE.md)
 - [Penutupan Tahap 4](docs/TAHAP-4-CUSTOMER-PORTAL.md)
+- [Penutupan Tahap 5](docs/TAHAP-5-ADMIN-STAFF-PANEL.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)
-
-Logo asli berada di `public/images/logo.jpeg`; varian WebP hanya optimasi asset dan tidak mengganti identitas.

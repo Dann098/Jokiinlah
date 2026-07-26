@@ -19,7 +19,7 @@ class SiteSettingPolicy
 
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 
     public function update(User $user, SiteSetting $item): bool
@@ -29,6 +29,6 @@ class SiteSettingPolicy
 
     public function delete(User $user, SiteSetting $item): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 }

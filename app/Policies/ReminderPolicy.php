@@ -14,7 +14,9 @@ class ReminderPolicy
 
     public function view(User $user, Reminder $item): bool
     {
-        return $user->isAdmin() || $item->user_id === $user->id;
+        return $user->isAdmin()
+            || ($user->isCustomer() && $item->user_id === $user->id && $item->is_customer_visible)
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 
     public function create(User $user): bool
@@ -24,11 +26,13 @@ class ReminderPolicy
 
     public function update(User $user, Reminder $item): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin()
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 
     public function delete(User $user, Reminder $item): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin()
+            || ($user->isStaff() && $item->project?->assigned_staff_id === $user->id);
     }
 }

@@ -11,7 +11,7 @@ class Appointment extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'appointment_date', 'meeting_link', 'notes', 'status'];
+    protected $fillable = ['title', 'appointment_date', 'meeting_link', 'notes', 'internal_note', 'status'];
 
     protected function casts(): array
     {

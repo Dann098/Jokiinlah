@@ -57,6 +57,24 @@ class ProjectSeeder extends Seeder
             'privacy_accepted_at' => now(), 'privacy_policy_version' => '1.0', 'terms_version' => '1.0', 'source' => 'website', 'retention_until' => now()->addDays(180),
         ]);
 
+        Consultation::query()->updateOrCreate(['request_code' => 'CNS-20260722-0003'], [
+            'user_id' => $customers['alya@example.com']->id,
+            'service_id' => $services['konsultasi-skripsi-penelitian']->id,
+            'name' => $customers['alya@example.com']->name,
+            'email' => $customers['alya@example.com']->email,
+            'phone' => $customers['alya@example.com']->phone,
+            'project_title' => 'Review Proposal Lanjutan',
+            'description' => 'Konsultasi telah ditinjau dan siap dikonversi oleh admin.',
+            'deadline' => now()->addWeeks(6),
+            'status' => ConsultationStatus::Reviewed,
+            'privacy_accepted_at' => now()->subDay(),
+            'academic_integrity_accepted_at' => now()->subDay(),
+            'privacy_policy_version' => config('jokiinlah.privacy_policy_version'),
+            'terms_version' => config('jokiinlah.terms_version'),
+            'source' => 'website',
+            'retention_until' => now()->addDays(180),
+        ]);
+
         $projectData = [
             ['PRJ-20260722-0001', $customers['customer@example.com'], $staffDev, $services['pengembangan-website'], 'Portal Dokumentasi Penelitian', ProjectStatus::InProgress, 45, PaymentStatus::DownPayment, $consultation->id],
             ['PRJ-20260722-0002', $customers['alya@example.com'], $staff, $services['konsultasi-skripsi-penelitian'], 'Pendampingan Proposal Penelitian', ProjectStatus::WaitingData, 20, PaymentStatus::Unpaid, null],
@@ -65,13 +83,14 @@ class ProjectSeeder extends Seeder
             ['PRJ-20260722-0005', $customers['customer@example.com'], $staff, $services['analisis-data-penelitian'], 'Analisis Data Survei Pengalaman Pengguna', ProjectStatus::WaitingData, 25, PaymentStatus::DownPayment, null],
             ['PRJ-20260722-0006', $customers['customer@example.com'], $staffDev, $services['dashboard-bisnis'], 'Dashboard Monitoring Penelitian dengan Judul Demonstrasi yang Sangat Panjang untuk Pengujian Responsif Portal Pelanggan', ProjectStatus::CustomerReview, 86, PaymentStatus::Paid, null],
             ['PRJ-20260722-0007', $customers['customer@example.com'], $staff, $services['konsultasi-skripsi-penelitian'], 'Review Struktur Proposal Penelitian', ProjectStatus::Completed, 100, PaymentStatus::Paid, null],
+            ['PRJ-20260722-0008', $customers['alya@example.com'], null, $services['pengembangan-website'], 'Portal Riset Belum Ditugaskan', ProjectStatus::NewRequest, 0, PaymentStatus::Unpaid, null],
         ];
 
         foreach ($projectData as [$code, $customer, $assigned, $service, $title, $status, $progress, $payment, $consultationId]) {
             $project = Project::query()->updateOrCreate(['project_code' => $code], [
                 'consultation_id' => $consultationId,
                 'customer_id' => $customer->id,
-                'assigned_staff_id' => $assigned->id,
+                'assigned_staff_id' => $assigned?->id,
                 'service_id' => $service->id,
                 'title' => $title,
                 'description' => 'Proyek demo realistis untuk memvalidasi alur, policy, status, milestone, dan hak akses.',
@@ -89,6 +108,7 @@ class ProjectSeeder extends Seeder
             foreach (['Analisis Kebutuhan', 'Pengerjaan', 'Review dan Dokumentasi'] as $order => $milestone) {
                 ProjectMilestone::query()->updateOrCreate(['project_id' => $project->id, 'title' => $milestone], [
                     'description' => 'Milestone berfungsi sebagai timeline dan tidak menghitung progress otomatis.',
+                    'internal_note' => $order === 1 ? 'Catatan operasional demo yang tidak ditampilkan kepada customer.' : null,
                     'due_date' => now()->addDays(($order + 1) * 7),
                     'status' => $order === 0 ? MilestoneStatus::Completed : MilestoneStatus::Pending,
                     'completed_at' => $order === 0 ? now()->subDays(2) : null,
@@ -96,15 +116,15 @@ class ProjectSeeder extends Seeder
                 ]);
             }
 
-            Reminder::query()->updateOrCreate(['user_id' => $customer->id, 'project_id' => $project->id, 'title' => 'Review progres '.$title], ['description' => 'Periksa progres dan dokumen terbaru.', 'reminder_date' => now()->addDays(3), 'is_completed' => false]);
-            Appointment::query()->updateOrCreate(['project_id' => $project->id, 'title' => 'Konsultasi '.$title], ['customer_id' => $customer->id, 'staff_id' => $assigned->id, 'appointment_date' => now()->addDays(5), 'meeting_link' => 'https://meet.google.com/demo-project', 'notes' => 'Tautan dan jadwal adalah data demonstrasi.', 'status' => AppointmentStatus::Scheduled]);
+            Reminder::query()->updateOrCreate(['user_id' => $customer->id, 'project_id' => $project->id, 'title' => 'Review progres '.$title], ['created_by' => $admin->id, 'description' => 'Periksa progres dan dokumen terbaru.', 'reminder_date' => now()->addDays(3), 'is_completed' => false, 'is_customer_visible' => true]);
+            Appointment::query()->updateOrCreate(['project_id' => $project->id, 'title' => 'Konsultasi '.$title], ['customer_id' => $customer->id, 'staff_id' => $assigned?->id, 'appointment_date' => now()->addDays(5), 'meeting_link' => 'https://meet.google.com/demo-project', 'notes' => 'Tautan dan jadwal adalah data demonstrasi.', 'internal_note' => 'Catatan internal demo untuk koordinasi tim.', 'status' => AppointmentStatus::Scheduled]);
         }
 
         $primary = Project::query()->where('project_code', 'PRJ-20260722-0001')->firstOrFail();
         foreach ([1 => ['dokumen-kebutuhan.pdf', '11111111-1111-4111-8111-111111111111'], 2 => ['dokumen-kebutuhan-revisi.pdf', '22222222-2222-4222-8222-222222222222']] as $version => [$original, $stored]) {
             ProjectFile::withTrashed()->updateOrCreate(['project_id' => $primary->id, 'document_uuid' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'version' => $version], [
                 'uploaded_by' => $version === 1 ? $primary->customer_id : $primary->assigned_staff_id,
-                'category' => 'dokumen_kebutuhan', 'original_name' => $original, 'stored_name' => $stored,
+                'category' => 'dokumen_awal', 'original_name' => $original, 'stored_name' => $stored,
                 'disk' => 'local', 'file_path' => 'private/projects/demo/'.$stored.'.pdf', 'file_type' => 'application/pdf',
                 'file_size' => 120000 + ($version * 1000), 'checksum' => hash('sha256', $stored),
                 'description' => 'Metadata file dummy. Berkas fisik tidak disertakan dalam repository.', 'retention_until' => now()->addDays(180),
@@ -132,9 +152,10 @@ class ProjectSeeder extends Seeder
         Revision::withTrashed()->updateOrCreate(['project_id' => $primary->id, 'title' => 'Penyesuaian alur persetujuan'], [
             'submitted_by' => $primary->customer_id, 'description' => 'Mohon tambahkan konfirmasi sebelum dokumen diselesaikan.',
             'section_reference' => 'Modul review', 'priority' => RevisionPriority::Normal, 'status' => RevisionStatus::UnderReview,
+            'internal_note' => 'Catatan internal demo untuk validasi isolasi data.',
             'retention_until' => now()->addDays(180),
         ]);
 
-        Reminder::query()->updateOrCreate(['user_id' => $admin->id, 'title' => 'Tinjau konsultasi baru'], ['description' => 'Periksa konsultasi guest yang belum terhubung.', 'reminder_date' => now()->addDay(), 'is_completed' => false]);
+        Reminder::query()->updateOrCreate(['user_id' => $admin->id, 'title' => 'Tinjau konsultasi baru'], ['created_by' => $admin->id, 'description' => 'Periksa konsultasi guest yang belum terhubung.', 'reminder_date' => now()->addDay(), 'is_completed' => false, 'is_customer_visible' => false]);
     }
 }

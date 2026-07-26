@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ConsultationAttachmentDownloadController;
 use App\Http\Controllers\Customer\AppointmentController;
 use App\Http\Controllers\Customer\DashboardController;
 use App\Http\Controllers\Customer\ProfileController;
@@ -39,6 +40,13 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::middleware(['auth', 'active', 'verified'])->group(function (): void {
+    Route::get('/admin/konsultasi/{consultation}/lampiran', ConsultationAttachmentDownloadController::class)
+        ->middleware(['role:admin', 'throttle:30,1'])
+        ->name('admin.consultations.attachment');
+    Route::get('/admin/revisi/{revision}/lampiran', RevisionAttachmentDownloadController::class)
+        ->middleware(['role:admin,staff', 'throttle:30,1'])
+        ->name('admin.revisions.attachment');
+
     Route::post('/project-files/{projectFile}/versions', [ProjectFileVersionController::class, 'store'])->middleware('throttle:10,1')->name('project-files.versions.store');
     Route::get('/project-files/{projectFile}/download', ProjectFileDownloadController::class)->middleware('throttle:30,1')->name('project-files.download');
 
@@ -84,7 +92,4 @@ Route::middleware(['auth', 'active', 'verified'])->group(function (): void {
 
     Route::redirect('/profile', '/dashboard/profil')->middleware('role:customer')->name('profile');
 
-    Route::prefix('admin')->middleware('role:admin,staff')->group(function (): void {
-        Route::view('/', 'admin.placeholder')->name('admin.dashboard');
-    });
 });

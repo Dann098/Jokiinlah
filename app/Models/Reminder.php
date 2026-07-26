@@ -10,11 +10,11 @@ class Reminder extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'description', 'reminder_date', 'is_completed'];
+    protected $fillable = ['title', 'description', 'reminder_date', 'is_completed', 'is_customer_visible'];
 
     protected function casts(): array
     {
-        return ['reminder_date' => 'immutable_datetime', 'is_completed' => 'boolean'];
+        return ['reminder_date' => 'immutable_datetime', 'is_completed' => 'boolean', 'is_customer_visible' => 'boolean'];
     }
 
     public function user(): BelongsTo
@@ -25,5 +25,10 @@ class Reminder extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

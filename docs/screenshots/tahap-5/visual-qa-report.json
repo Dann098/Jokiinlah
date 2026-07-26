@@ -1,0 +1,984 @@
+{
+  "generated_at": "2026-07-26T23:17:46.660Z",
+  "base_url": "http://localhost:8000",
+  "scope": "Tahap 5 Panel Admin dan Staff",
+  "required_states": 54,
+  "states": [
+    {
+      "number": 1,
+      "name": "01-admin-login",
+      "url": "/admin/login",
+      "viewport": "390x844",
+      "status": 200,
+      "title": "Masuk - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/01-admin-login.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Masuk"
+        ]
+      }
+    },
+    {
+      "number": 2,
+      "name": "02-admin-dashboard",
+      "url": "/admin",
+      "viewport": "1440x900",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/02-admin-dashboard.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Konsultasi baru",
+          "Pembayaran terbuka"
+        ]
+      }
+    },
+    {
+      "number": 3,
+      "name": "03-admin-navigation",
+      "url": "/admin",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/03-admin-navigation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Operasional",
+          "Pengguna",
+          "Konten Publik",
+          "Sistem"
+        ]
+      }
+    },
+    {
+      "number": 4,
+      "name": "04-admin-global-search",
+      "url": "/admin",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/04-admin-global-search.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Portal"
+        ]
+      }
+    },
+    {
+      "number": 5,
+      "name": "05-customer-list",
+      "url": "/admin/customer",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Customer - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/05-customer-list.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Customer Demo"
+        ]
+      }
+    },
+    {
+      "number": 6,
+      "name": "06-customer-detail",
+      "url": "/admin/customer/4",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Customer Demo - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/06-customer-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludes": [
+          "password"
+        ]
+      }
+    },
+    {
+      "number": 7,
+      "name": "07-staff-list",
+      "url": "/admin/staff",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Staff - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/07-staff-list.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Staff Akademik"
+        ]
+      }
+    },
+    {
+      "number": 8,
+      "name": "08-staff-create",
+      "url": "/admin/staff/create",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Buat Staff - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/08-staff-create.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Role staff ditentukan server",
+          "Password awal acak"
+        ]
+      }
+    },
+    {
+      "number": 9,
+      "name": "09-consultation-list",
+      "url": "/admin/consultations",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Konsultasi - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/09-consultation-list.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "CNS-20260722-0003"
+        ]
+      }
+    },
+    {
+      "number": 10,
+      "name": "10-consultation-detail",
+      "url": "/admin/consultations/4",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat CNS-20260722-0003 - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/10-consultation-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Review Proposal Lanjutan"
+        ]
+      }
+    },
+    {
+      "number": 11,
+      "name": "11-consultation-conversion",
+      "url": "/admin/consultations/4",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat CNS-20260722-0003 - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/11-consultation-conversion.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Judul proyek",
+          "Staff",
+          "Deadline"
+        ]
+      }
+    },
+    {
+      "number": 12,
+      "name": "12-project-list",
+      "url": "/admin/projects",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Proyek - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/12-project-list.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "PRJ-20260722-0001"
+        ]
+      }
+    },
+    {
+      "number": 13,
+      "name": "13-project-detail",
+      "url": "/admin/projects/1",
+      "viewport": "1440x900",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/13-project-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Ringkasan proyek",
+          "Informasi admin"
+        ]
+      }
+    },
+    {
+      "number": 14,
+      "name": "14-project-status-action",
+      "url": "/admin/projects/1",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/14-project-status-action.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Status tujuan"
+        ]
+      }
+    },
+    {
+      "number": 15,
+      "name": "15-project-progress-action",
+      "url": "/admin/projects/1",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/15-project-progress-action.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Progress (%)"
+        ]
+      }
+    },
+    {
+      "number": 16,
+      "name": "16-project-assignment-action",
+      "url": "/admin/projects/1",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/16-project-assignment-action.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Staff aktif"
+        ]
+      }
+    },
+    {
+      "number": 17,
+      "name": "17-milestone-relation",
+      "url": "/admin/projects/1?relation=0",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/17-milestone-relation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Milestone"
+        ]
+      }
+    },
+    {
+      "number": 18,
+      "name": "18-file-relation",
+      "url": "/admin/projects/1?relation=1",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/18-file-relation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Berkas Privat",
+          "Unggah berkas"
+        ]
+      }
+    },
+    {
+      "number": 19,
+      "name": "19-upload-validation-error",
+      "url": "/admin/projects/1?relation=1",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/19-upload-validation-error.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Unggah berkas privat"
+        ],
+        "minimumValidationErrors": 2
+      }
+    },
+    {
+      "number": 20,
+      "name": "20-file-version-history",
+      "url": "/admin/projects/1?relation=1",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/20-file-version-history.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Versi"
+        ]
+      }
+    },
+    {
+      "number": 21,
+      "name": "21-revision-relation",
+      "url": "/admin/projects/1?relation=2",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/21-revision-relation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Revisi Customer"
+        ]
+      }
+    },
+    {
+      "number": 22,
+      "name": "22-reminder-relation",
+      "url": "/admin/projects/1?relation=3",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/22-reminder-relation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Pengingat"
+        ]
+      }
+    },
+    {
+      "number": 23,
+      "name": "23-appointment-relation",
+      "url": "/admin/projects/1?relation=4",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/23-appointment-relation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Jadwal"
+        ]
+      }
+    },
+    {
+      "number": 24,
+      "name": "24-payment-status",
+      "url": "/admin/projects/1",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Portal Dokumentasi Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/24-payment-status.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Status pembayaran manual"
+        ]
+      }
+    },
+    {
+      "number": 25,
+      "name": "25-service-resource",
+      "url": "/admin/services",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Layanan - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/25-service-resource.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Layanan"
+        ]
+      }
+    },
+    {
+      "number": 26,
+      "name": "26-portfolio-resource",
+      "url": "/admin/portfolios",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Portofolio - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/26-portfolio-resource.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Portofolio"
+        ]
+      }
+    },
+    {
+      "number": 27,
+      "name": "27-article-resource",
+      "url": "/admin/articles",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Artikel - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/27-article-resource.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Artikel"
+        ]
+      }
+    },
+    {
+      "number": 28,
+      "name": "28-testimonial-resource",
+      "url": "/admin/testimonials",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Testimoni - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/28-testimonial-resource.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Testimoni"
+        ]
+      }
+    },
+    {
+      "number": 29,
+      "name": "29-faq-resource",
+      "url": "/admin/faqs",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "FAQ - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/29-faq-resource.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "FAQ"
+        ]
+      }
+    },
+    {
+      "number": 30,
+      "name": "30-site-setting",
+      "url": "/admin/site-settings",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Pengaturan Situs - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/30-site-setting.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Pengaturan Situs"
+        ]
+      }
+    },
+    {
+      "number": 31,
+      "name": "31-activity-log-read-only",
+      "url": "/admin/activity-logs",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Log Aktivitas - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/31-activity-log-read-only.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludes": [
+          "Buat",
+          "Hapus massal"
+        ]
+      }
+    },
+    {
+      "number": 32,
+      "name": "32-notification-panel",
+      "url": "/admin",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/32-notification-panel.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 33,
+      "name": "33-empty-state",
+      "url": "/admin/projects?search=DATA-YANG-TIDAK-ADA-999",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Proyek - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/33-empty-state.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Belum ada proyek"
+        ]
+      }
+    },
+    {
+      "number": 34,
+      "name": "34-validation-error",
+      "url": "/admin/staff/create",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Buat Staff - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/34-validation-error.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "minimumValidationErrors": 2
+      }
+    },
+    {
+      "number": 35,
+      "name": "35-mobile-navigation",
+      "url": "/admin",
+      "viewport": "390x844",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/35-mobile-navigation.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Operasional"
+        ]
+      }
+    },
+    {
+      "number": 36,
+      "name": "36-tablet-layout",
+      "url": "/admin/projects",
+      "viewport": "768x1024",
+      "status": 200,
+      "title": "Proyek - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/36-tablet-layout.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Proyek"
+        ]
+      }
+    },
+    {
+      "number": 37,
+      "name": "37-staff-login",
+      "url": "/admin/login",
+      "viewport": "390x844",
+      "status": 200,
+      "title": "Masuk - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/37-staff-login.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Masuk"
+        ]
+      }
+    },
+    {
+      "number": 38,
+      "name": "38-staff-dashboard",
+      "url": "/admin",
+      "viewport": "1440x900",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/38-staff-dashboard.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Proyek aktif"
+        ],
+        "excludes": [
+          "Konsultasi baru",
+          "Pembayaran terbuka"
+        ]
+      }
+    },
+    {
+      "number": 39,
+      "name": "39-staff-assigned-project-list",
+      "url": "/admin/projects",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Proyek - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/39-staff-assigned-project-list.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "PRJ-20260722-0002"
+        ],
+        "excludes": [
+          "PRJ-20260722-0008",
+          "Pembayaran"
+        ]
+      }
+    },
+    {
+      "number": 40,
+      "name": "40-staff-assigned-project-detail",
+      "url": "/admin/projects/2",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/40-staff-assigned-project-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Ringkasan proyek"
+        ],
+        "excludes": [
+          "Informasi admin",
+          "Pembayaran"
+        ]
+      }
+    },
+    {
+      "number": 41,
+      "name": "41-staff-unassigned-project-denied",
+      "url": "/admin/projects/8",
+      "viewport": "1366x768",
+      "status": 404,
+      "title": "Halaman Tidak Ditemukan | Jokiinlah",
+      "screenshot": "docs/screenshots/tahap-5/41-staff-unassigned-project-denied.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 42,
+      "name": "42-staff-consultation-menu-hidden",
+      "url": "/admin",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/42-staff-consultation-menu-hidden.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludedPaths": [
+          "/admin/consultations"
+        ]
+      }
+    },
+    {
+      "number": 43,
+      "name": "43-staff-consultation-url-denied",
+      "url": "/admin/consultations",
+      "viewport": "1366x768",
+      "status": 403,
+      "title": "Akses Ditolak | Jokiinlah",
+      "screenshot": "docs/screenshots/tahap-5/43-staff-consultation-url-denied.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 44,
+      "name": "44-staff-payment-hidden",
+      "url": "/admin/projects/2",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/44-staff-payment-hidden.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludes": [
+          "Pembayaran",
+          "Catatan pembayaran"
+        ]
+      }
+    },
+    {
+      "number": 45,
+      "name": "45-staff-customer-resource-denied",
+      "url": "/admin/customer",
+      "viewport": "1366x768",
+      "status": 403,
+      "title": "Akses Ditolak | Jokiinlah",
+      "screenshot": "docs/screenshots/tahap-5/45-staff-customer-resource-denied.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 46,
+      "name": "46-staff-resource-denied",
+      "url": "/admin/staff",
+      "viewport": "1366x768",
+      "status": 403,
+      "title": "Akses Ditolak | Jokiinlah",
+      "screenshot": "docs/screenshots/tahap-5/46-staff-resource-denied.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 47,
+      "name": "47-staff-assigned-milestone",
+      "url": "/admin/projects/2?relation=0",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/47-staff-assigned-milestone.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Milestone"
+        ]
+      }
+    },
+    {
+      "number": 48,
+      "name": "48-staff-assigned-file",
+      "url": "/admin/projects/2?relation=1",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/48-staff-assigned-file.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Berkas Privat"
+        ]
+      }
+    },
+    {
+      "number": 49,
+      "name": "49-staff-assigned-revision",
+      "url": "/admin/projects/2?relation=2",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/49-staff-assigned-revision.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Revisi Customer"
+        ]
+      }
+    },
+    {
+      "number": 50,
+      "name": "50-staff-assigned-reminder",
+      "url": "/admin/projects/2?relation=3",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/50-staff-assigned-reminder.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Pengingat"
+        ]
+      }
+    },
+    {
+      "number": 51,
+      "name": "51-staff-assigned-appointment",
+      "url": "/admin/projects/2?relation=4",
+      "viewport": "1366x768",
+      "status": 200,
+      "title": "Lihat Pendampingan Proposal Penelitian - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/51-staff-assigned-appointment.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "includes": [
+          "Jadwal"
+        ]
+      }
+    },
+    {
+      "number": 52,
+      "name": "52-staff-global-search-scoped",
+      "url": "/admin",
+      "viewport": "1024x768",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/52-staff-global-search-scoped.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludes": [
+          "CNS-20260722-0003"
+        ]
+      }
+    },
+    {
+      "number": 53,
+      "name": "53-staff-activity-log-denied",
+      "url": "/admin/activity-logs",
+      "viewport": "1366x768",
+      "status": 403,
+      "title": "Akses Ditolak | Jokiinlah",
+      "screenshot": "docs/screenshots/tahap-5/53-staff-activity-log-denied.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {}
+    },
+    {
+      "number": 54,
+      "name": "54-mobile-staff-panel",
+      "url": "/admin",
+      "viewport": "360x800",
+      "status": 200,
+      "title": "Dasbor - Jokiinlah Operasional",
+      "screenshot": "docs/screenshots/tahap-5/54-mobile-staff-panel.png",
+      "horizontal_overflow": false,
+      "broken_images": [],
+      "duplicate_ids": [],
+      "unlabeled_controls": [],
+      "assertions": {
+        "excludes": [
+          "Pembayaran"
+        ],
+        "excludedPaths": [
+          "/admin/consultations"
+        ]
+      }
+    }
+  ],
+  "console_errors": [],
+  "network_errors": [],
+  "status": "passed"
+}

@@ -11,7 +11,7 @@ class ProjectMilestone extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['project_id', 'title', 'description', 'due_date', 'status', 'completed_at', 'sort_order'];
+    protected $fillable = ['title', 'description', 'internal_note', 'due_date', 'status', 'completed_at', 'sort_order'];
 
     protected function casts(): array
     {

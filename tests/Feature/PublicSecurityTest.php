@@ -30,13 +30,13 @@ class PublicSecurityTest extends TestCase
         $this->assertFalse($staff->can('view', $consultation));
     }
 
-    public function test_admin_placeholder_is_safe_until_filament_is_built(): void
+    public function test_admin_and_staff_can_open_the_filament_panel(): void
     {
         $admin = User::factory()->admin()->create();
         $staff = User::factory()->staff()->create();
 
-        $this->actingAs($admin)->get(route('admin.dashboard'))->assertOk()->assertSee('Tahap 5');
-        $this->actingAs($staff)->get(route('admin.dashboard'))->assertOk()->assertSee('Tahap 5');
+        $this->actingAs($admin)->get(route('filament.admin.pages.dashboard'))->assertOk()->assertSee('Jokiinlah Operasional');
+        $this->actingAs($staff)->get(route('filament.admin.pages.dashboard'))->assertOk()->assertSee('Jokiinlah Operasional');
     }
 
     public function test_public_submission_uses_web_middleware_and_csrf_token(): void

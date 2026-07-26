@@ -20,7 +20,7 @@ class FaqSeeder extends Seeder
             ['Apakah layanan menjaga integritas akademik?', 'Ya. Layanan melarang plagiarisme, fabrikasi data, pemalsuan penelitian, pengerjaan ujian, dan pelanggaran integritas akademik lainnya.'],
         ];
         foreach ($items as $index => [$question, $answer]) {
-            Faq::query()->updateOrCreate(['question' => $question], ['answer' => $answer, 'category' => 'umum', 'sort_order' => $index + 1, 'is_active' => true]);
+            Faq::query()->updateOrCreate(['question' => $question], ['answer' => $answer, 'category' => 'umum', 'sort_order' => $index + 1, 'is_active' => $index !== array_key_last($items)]);
         }
     }
 }

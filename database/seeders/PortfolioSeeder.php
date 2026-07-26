@@ -18,7 +18,7 @@ class PortfolioSeeder extends Seeder
             ['Aplikasi Administrasi Desktop', 'aplikasi-administrasi-desktop', 'Desktop'],
         ];
         foreach ($items as [$title, $slug, $category]) {
-            Portfolio::query()->updateOrCreate(['slug' => $slug], ['title' => $title, 'category' => $category, 'description' => 'Studi kasus demonstrasi solusi digital yang dibangun berdasarkan kebutuhan pengguna.', 'problem' => 'Data dan alur kerja belum terpusat.', 'solution' => 'Membangun solusi terstruktur dengan kontrol akses dan dokumentasi.', 'result' => 'Proses menjadi lebih terukur dan mudah dipantau.', 'technologies' => ['Laravel', 'MySQL', 'Tailwind CSS'], 'gallery' => [], 'is_published' => true]);
+            Portfolio::query()->updateOrCreate(['slug' => $slug], ['title' => $title, 'category' => $category, 'description' => 'Studi kasus demonstrasi solusi digital yang dibangun berdasarkan kebutuhan pengguna.', 'problem' => 'Data dan alur kerja belum terpusat.', 'solution' => 'Membangun solusi terstruktur dengan kontrol akses dan dokumentasi.', 'result' => 'Proses menjadi lebih terukur dan mudah dipantau.', 'technologies' => ['Laravel', 'MySQL', 'Tailwind CSS'], 'gallery' => [], 'is_published' => true, 'is_demo' => true]);
         }
     }
 }

@@ -9,12 +9,12 @@ class TestimonialPolicy
 {
     public function viewAny(?User $user): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function view(?User $user, Testimonial $item): bool
     {
-        return true;
+        return (bool) $user?->isAdmin();
     }
 
     public function create(User $user): bool

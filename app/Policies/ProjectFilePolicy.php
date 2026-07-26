@@ -53,6 +53,6 @@ class ProjectFilePolicy
 
     public function forceDelete(User $user, ProjectFile $file): bool
     {
-        return $user->isAdmin();
+        return false;
     }
 }

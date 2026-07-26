@@ -14,6 +14,7 @@ class ReminderController extends Controller
         $user = $request->user();
         $reminders = Reminder::query()
             ->where('user_id', $user->id)
+            ->where('is_customer_visible', true)
             ->where(function ($query) use ($user): void {
                 $query->whereNull('project_id')
                     ->orWhereHas('project', fn ($project) => $project->where('customer_id', $user->id));

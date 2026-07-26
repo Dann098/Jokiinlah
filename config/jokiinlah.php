@@ -21,4 +21,11 @@ return [
     'consultation_code_prefix' => env('CONSULTATION_CODE_PREFIX', 'CNS'),
     'privacy_policy_version' => env('PRIVACY_POLICY_VERSION', '2026-07-22'),
     'terms_version' => env('TERMS_VERSION', '2026-07-22'),
+    'editable_site_settings' => [
+        'brand_name' => 'Nama brand',
+        'brand_tagline' => 'Tagline',
+        'whatsapp_number' => 'Nomor WhatsApp',
+        'contact_email' => 'Email kontak',
+        'academic_integrity_notice' => 'Pemberitahuan integritas akademik',
+    ],
 ];

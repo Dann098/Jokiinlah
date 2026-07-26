@@ -2,6 +2,15 @@
 
 namespace App\Providers;
 
+use App\Models\Appointment;
+use App\Models\Article;
+use App\Models\Faq;
+use App\Models\Portfolio;
+use App\Models\ProjectMilestone;
+use App\Models\Reminder;
+use App\Models\Service;
+use App\Models\Testimonial;
+use App\Observers\OperationalActivityObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -21,6 +30,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        foreach ([
+            Appointment::class,
+            Article::class,
+            Faq::class,
+            Portfolio::class,
+            ProjectMilestone::class,
+            Reminder::class,
+            Service::class,
+            Testimonial::class,
+        ] as $model) {
+            $model::observe(OperationalActivityObserver::class);
+        }
+
         Date::useClass(CarbonImmutable::class);
         Password::defaults(fn (): Password => Password::min(12)->letters()->mixedCase()->numbers()->symbols()->uncompromised());
 

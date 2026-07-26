@@ -22,7 +22,7 @@ class ServiceSeeder extends Seeder
         ];
 
         foreach ($items as $index => [$name, $slug, $category, $short]) {
-            Service::query()->updateOrCreate(['slug' => $slug], ['name' => $name, 'category' => $category, 'short_description' => $short, 'description' => $short.' Ruang lingkup ditetapkan melalui konsultasi dan persetujuan kebutuhan.', 'features' => ['Konsultasi kebutuhan', 'Proses transparan', 'Dokumentasi hasil'], 'technologies' => $category === ServiceCategory::Academic ? ['Metodologi penelitian'] : ['Laravel', 'MySQL', 'Tailwind CSS'], 'icon' => 'briefcase-business', 'is_active' => true, 'sort_order' => $index + 1]);
+            Service::query()->updateOrCreate(['slug' => $slug], ['name' => $name, 'category' => $category, 'short_description' => $short, 'description' => $short.' Ruang lingkup ditetapkan melalui konsultasi dan persetujuan kebutuhan.', 'features' => ['Konsultasi kebutuhan', 'Proses transparan', 'Dokumentasi hasil'], 'technologies' => $category === ServiceCategory::Academic ? ['Metodologi penelitian'] : ['Laravel', 'MySQL', 'Tailwind CSS'], 'icon' => 'briefcase-business', 'is_active' => $index !== array_key_last($items), 'sort_order' => $index + 1]);
         }
     }
 }

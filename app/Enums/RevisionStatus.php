@@ -29,4 +29,22 @@ enum RevisionStatus: string
             self::Approved, self::Closed => 'success', self::InProgress => 'primary', default => 'warning'
         };
     }
+
+    /** @return list<self> */
+    public function normalTransitions(): array
+    {
+        return match ($this) {
+            self::Submitted => [self::UnderReview],
+            self::UnderReview => [self::InProgress, self::Closed],
+            self::InProgress => [self::CustomerConfirmation, self::Closed],
+            self::CustomerConfirmation => [self::Approved, self::InProgress],
+            self::Approved => [self::Closed],
+            self::Closed => [],
+        };
+    }
+
+    public function canTransitionTo(self $status): bool
+    {
+        return in_array($status, $this->normalTransitions(), true);
+    }
 }

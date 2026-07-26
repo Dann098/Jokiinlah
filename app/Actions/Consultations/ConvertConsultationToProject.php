@@ -18,7 +18,7 @@ class ConvertConsultationToProject
 {
     public function __construct(private CodeGenerator $codes, private ActivityLogger $logger) {}
 
-    public function execute(Consultation $consultation, User $actor): Project
+    public function execute(Consultation $consultation, User $actor, array $data = []): Project
     {
         if (! $actor->isAdmin()) {
             throw new AuthorizationException('Hanya admin dapat mengonversi konsultasi.');
@@ -34,18 +34,25 @@ class ConvertConsultationToProject
         if ($consultation->service_id === null) {
             throw ValidationException::withMessages(['service_id' => 'Layanan wajib dipilih sebelum konversi.']);
         }
+        $staff = isset($data['assigned_staff_id'])
+            ? User::query()->find($data['assigned_staff_id'])
+            : null;
+        if ($staff && (! $staff->isStaff() || ! $staff->is_active)) {
+            throw ValidationException::withMessages(['assigned_staff_id' => 'Staff harus aktif dan memiliki role staff.']);
+        }
 
-        return DB::transaction(function () use ($consultation, $actor): Project {
+        return DB::transaction(function () use ($consultation, $actor, $data, $staff): Project {
             $project = Project::query()->forceCreate([
                 'consultation_id' => $consultation->id,
                 'customer_id' => $consultation->user_id,
                 'service_id' => $consultation->service_id,
                 'project_code' => $this->codes->generate('project', config('jokiinlah.project_code_prefix')),
-                'title' => $consultation->project_title,
+                'assigned_staff_id' => $staff?->id,
+                'title' => trim((string) ($data['title'] ?? $consultation->project_title)),
                 'description' => $consultation->description,
                 'status' => ProjectStatus::NewRequest,
                 'progress' => 0,
-                'deadline' => $consultation->deadline,
+                'deadline' => $data['deadline'] ?? $consultation->deadline,
                 'payment_status' => PaymentStatus::Unpaid,
                 'retention_until' => now()->addDays((int) config('jokiinlah.default_retention_days')),
             ]);
