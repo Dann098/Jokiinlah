@@ -282,9 +282,9 @@ Migration baru bersifat additive: academic integrity consent timestamp, attachme
 Metadata release:
 
 - Branch: `main`
-- Commit utama: **menunggu commit release**
+- Commit utama: `628f4179b638`
 - Commit message: `feat: finalize and audit public website phase`
-- Push: **menunggu release gate**
-- Working tree final: **diverifikasi setelah push**
+- Push: berhasil ke `origin/main`
+- Working tree final: bersih
 
-Definition of Done teknis telah terpenuhi: landing/public content, konsultasi, private attachment, notification, limiter, honeypot, WhatsApp, privacy/terms/integrity, SEO, sitemap/robots/JSON-LD, XSS/IDOR controls, accessibility, responsive UI, build, dependency audit, automated test, dan visual QA lulus. Status release dinyatakan final setelah metadata Git di atas diperbarui dan `origin/main` berhasil menerima commit tanpa force push.
+Definition of Done terpenuhi: landing/public content, konsultasi, private attachment, notification, limiter, honeypot, WhatsApp, privacy/terms/integrity, SEO, sitemap/robots/JSON-LD, XSS/IDOR controls, accessibility, responsive UI, build, dependency audit, automated test, visual QA, commit, dan push lulus. `origin/main` menerima commit tanpa force push dan Tahap 4 tidak dimulai.
