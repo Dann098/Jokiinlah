@@ -1,0 +1,7 @@
+@extends('layouts.public')
+@section('title', 'Pertanyaan Umum Layanan | Jokiinlah')
+@section('description', 'Jawaban mengenai konsultasi, analisis data, pengembangan aplikasi, revisi, keamanan dokumen, estimasi waktu, dan integritas akademik.')
+@section('content')
+<section class='bg-navy py-16 text-white'><div class='container-public'><h1 class='text-4xl font-bold sm:text-5xl'>Pertanyaan yang Sering Diajukan</h1><p class='mt-5 max-w-3xl leading-8 text-white/75'>Informasi awal untuk membantu Anda memahami layanan dan proses konsultasi.</p></div></section>
+<section class='section-space'><div class='container-public max-w-4xl'><form method='GET' class='surface-card flex flex-col gap-3 p-5 sm:flex-row sm:items-end' role='search'><div class='flex-1'><x-form-input name='q' label='Cari pertanyaan' :value='$search' /></div><x-primary-button type='submit'>Cari</x-primary-button></form><div class='mt-10 space-y-8'>@forelse($faqGroups as $group => $faqs)<section><h2 class='mb-4 text-2xl font-bold text-navy'>{{ ucfirst($group) }}</h2><div class='surface-card px-6 py-3'>@foreach($faqs as $faq)<x-faq-accordion :faq='$faq' />@endforeach</div></section>@empty<x-empty-state title='Jawaban tidak ditemukan' description='Coba kata kunci lain atau ajukan konsultasi agar tim kami dapat membantu.' />@endforelse</div><div class='mt-10 text-center'><x-primary-button :href="route('contact.index')">Ajukan Pertanyaan</x-primary-button></div></div></section>
+@endsection

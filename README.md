@@ -1,27 +1,57 @@
 # Jokiinlah
 
-Fondasi aplikasi **Pendampingan Akademik & Digital** untuk konsultasi, pengelolaan proyek pelanggan, analisis data, serta pengembangan solusi digital. Repository saat ini telah menyelesaikan Tahap 1 (arsitektur) dan Tahap 2 (domain serta autentikasi).
+Aplikasi **Pendampingan Akademik & Digital** berbasis Laravel untuk konsultasi, konten publik, fondasi pengelolaan proyek pelanggan, analisis data, serta pengembangan solusi digital.
 
 ## Status implementasi
 
-Tahap 2 menyediakan:
+| Tahap | Status | Ringkasan |
+|---|---|---|
+| Tahap 1 | Selesai | Analisis produk dan arsitektur modular monolith |
+| Tahap 2 | Selesai | Domain, autentikasi, authorization, dan fondasi private file |
+| Tahap 3 | Selesai dan terverifikasi | Website publik, landing page, konsultasi guest, SEO, accessibility, dan visual QA |
+| Tahap 4 | Belum dimulai | Customer Portal lengkap |
+| Tahap 5–6 | Belum dimulai | Panel admin/staff dan hardening lanjutan |
 
-- Laravel 12, PHP 8.2, Blade, Tailwind CSS 4, Alpine.js, Vite, dan Fortify;
-- autentikasi register, login/logout, reset password, dan verifikasi email;
-- role `admin`, `staff`, dan `customer`, akun aktif, middleware, serta policy domain;
-- 14 entitas domain, enum status, relasi, factory, migration, dan seeder idempoten;
-- konversi konsultasi guest setelah akun customer terverifikasi;
-- transisi status proyek normal dan admin override dengan alasan wajib;
-- progress manual 0–100 dan audit perubahan;
-- private file, UUID physical name, logical `document_uuid`, versioning, soft delete, retention, dan download terotorisasi;
-- penyimpanan/proses waktu UTC dan konversi tampilan/input Asia/Jakarta;
-- 32 automated tests dengan 110 assertions, termasuk audit isolasi berkas lintas customer/staff.
+## Website publik
 
-Landing page lengkap, portal customer, dan dashboard admin/Filament belum dibuat karena termasuk Tahap 3–5.
+Tahap 3 menyediakan:
+
+- landing page responsif dengan navbar desktop/mobile, hero, layanan, cara kerja, portofolio, testimonial terkontrol, FAQ, CTA, dan footer;
+- daftar serta detail layanan aktif;
+- daftar serta detail portofolio published;
+- daftar serta detail artikel published yang tidak berada di masa depan;
+- pencarian, filter kategori, pagination, query-string preservation, dan empty state;
+- FAQ aktif dengan accordion accessible;
+- form konsultasi guest dengan validasi Bahasa Indonesia, consent, honeypot, rate limiter IP/identitas, dan duplicate-submission protection;
+- attachment konsultasi pada private local disk dengan UUID path/name, MIME/extension/size validation, checksum SHA-256, serta cleanup saat transaksi gagal;
+- notification database untuk admin aktif dan mail notification yang tidak membatalkan konsultasi jika gagal;
+- CTA WhatsApp terpusat dan URL-encoded;
+- kebijakan privasi, syarat dan ketentuan, serta ketentuan integritas akademik;
+- title, meta description, canonical, Open Graph, Twitter card, JSON-LD, sitemap, robots, dan halaman 404 khusus;
+- self-hosted Playfair Display serta Plus Jakarta Sans, animasi ringan, reduced-motion support, dan visible keyboard focus.
+
+Route publik utama:
+
+```text
+GET  /
+GET  /layanan
+GET  /layanan/{service:slug}
+GET  /portofolio
+GET  /portofolio/{portfolio:slug}
+GET  /artikel
+GET  /artikel/{article:slug}
+GET  /faq
+GET  /kontak
+POST /konsultasi
+GET  /kebijakan-privasi
+GET  /syarat-dan-ketentuan
+GET  /sitemap.xml
+GET  /robots.txt
+```
 
 ## Persyaratan lokal
 
-- PHP 8.2 atau lebih baru yang kompatibel dengan Laravel 12
+- PHP 8.2+ yang kompatibel dengan Laravel 12
 - Composer 2
 - Node.js dan npm
 - MariaDB 10.4+ atau MySQL yang kompatibel
@@ -33,12 +63,12 @@ Landing page lengkap, portal customer, dan dashboard admin/Filament belum dibuat
 git clone https://github.com/Dann098/Jokiinlah.git
 cd Jokiinlah
 composer install
-npm install
+npm.cmd install
 Copy-Item .env.example .env
 php artisan key:generate
 ```
 
-Buat database development bernama `jokiinlah_dev` dengan collation `utf8mb4_unicode_ci`. Gunakan user MariaDB khusus yang hanya memiliki hak ke database tersebut, atau konfigurasi XAMPP lokal yang sudah diverifikasi. Isi konfigurasi lokal di `.env`; jangan commit `.env` dan jangan gunakan credential production.
+Buat database development `jokiinlah_dev` dengan collation `utf8mb4_unicode_ci`, lalu lengkapi `.env` lokal. Jangan commit `.env` dan jangan gunakan credential production.
 
 Nilai minimum yang wajib diverifikasi:
 
@@ -51,19 +81,19 @@ DB_DATABASE=jokiinlah_dev
 FILESYSTEM_DISK=local
 ```
 
-Kemudian jalankan:
+Jalankan setup non-destruktif:
 
 ```powershell
-php artisan config:clear
-php artisan migrate:fresh --seed
-npm run build
+php artisan optimize:clear
+php artisan migrate --seed
+npm.cmd run build
 php artisan test
 php artisan serve
 ```
 
-`migrate:fresh` menghapus seluruh tabel. Jalankan hanya setelah memastikan environment `local`, koneksi `mysql`, dan database tepat `jokiinlah_dev`. Jangan menjalankannya terhadap production.
+> **PERINGATAN DESTRUKTIF:** `php artisan migrate:fresh --seed` menghapus seluruh tabel pada database aktif. Gunakan hanya pada database development kosong yang namanya telah diverifikasi, tidak pernah pada staging/production atau database yang berisi data penting. Workflow instalasi normal di atas tidak memerlukan `migrate:fresh`.
 
-## Akun demo
+## Akun demo development
 
 | Role | Email | Password |
 |---|---|---|
@@ -71,33 +101,53 @@ php artisan serve
 | Staff | `staff@example.com` | `Password123!` |
 | Customer | `customer@example.com` | `Password123!` |
 
-**Wajib mengganti atau menghapus seluruh password/data demo sebelum deployment production.** Seeder demo menolak berjalan saat `APP_ENV=production`.
+**Ganti atau hapus seluruh akun, password, kontak, dan data demo sebelum deployment production.** Seeder demo menolak berjalan saat `APP_ENV=production`.
 
-## Pengujian
+## Test, build, dan audit
 
 ```powershell
+vendor\bin\pint --test
 php artisan test
 php artisan route:list
-npm run build
+npm.cmd run build
+npm.cmd audit
+composer validate --strict
 composer audit
 ```
 
-Test menggunakan SQLite in-memory dan tidak memodifikasi MariaDB development. Validasi integrasi MariaDB tetap dilakukan terpisah melalui safety gate dan `migrate:fresh --seed` pada database development.
+Test memakai SQLite in-memory dan tidak memodifikasi MariaDB development. Verifikasi terakhir Tahap 3: **74 test lulus dengan 357 assertion**.
+
+## Visual QA
+
+`scripts/visual-qa.mjs` memakai browser Chromium dengan Chrome DevTools Protocol. Jalankan Laravel pada port 8003 dan browser headless dengan remote debugging port 9225, kemudian:
+
+```powershell
+$env:QA_BASE_URL='http://127.0.0.1:8003'
+$env:QA_DEBUGGER_URL='http://127.0.0.1:9225'
+node scripts/visual-qa.mjs
+```
+
+Script menguji viewport `360x800`, `390x844`, `768x1024`, `1024x768`, `1366x768`, dan `1440x900`, termasuk menu mobile, detail konten, form error/sukses, halaman legal, empty state, dan 404. Hasil berada di `docs/screenshots/visual-qa-report.json`.
+
+Varian WebP, favicon, dan OG image dapat dibuat ulang dari logo asli dengan `php scripts/generate_brand_assets.php`.
 
 ## Keamanan dan integritas akademik
 
-- Berkas pelanggan berada di `storage/app/private` dan disk local tidak memiliki route serve langsung.
-- Download hanya melalui controller dan policy. ZIP/RAR disimpan sebagai attachment; aplikasi tidak mengekstrak atau menjalankannya.
-- Customer tidak dapat menghapus file yang sudah diproses; versi baru dibuat pada logical document yang sama.
-- Penghapusan permanen hanya melalui action admin dengan alasan dan activity log.
-- Layanan tidak boleh digunakan untuk plagiarisme, fabrikasi data, pemalsuan penelitian, pengerjaan ujian, atau aktivitas lain yang melanggar integritas akademik.
-- 2FA untuk admin/staff dijadwalkan pada Tahap 6 dan belum diaktifkan.
+- Dokumen konsultasi dan proyek berada di `storage/app/private`; disk local tidak mempunyai direct serving route.
+- Original filename hanya metadata tersanitasi. Physical path dan filename memakai UUID.
+- Executable, MIME mismatch, file tanpa extension, dangerous double-extension, dan file oversized ditolak.
+- ZIP/RAR disimpan sebagai opaque private attachment; aplikasi tidak mengekstrak, menjalankan, atau membuat preview archive.
+- Customer/staff tidak dapat membaca konsultasi awal atau attachment guest.
+- Guest consultation tidak membuat akun otomatis.
+- Layanan menolak plagiarisme, ghostwriting untuk diserahkan sebagai karya mandiri, fabrikasi/manipulasi data, pemalsuan, pengerjaan ujian, bypass anti-plagiarisme, pelanggaran hak cipta, dan aktivitas ilegal.
+- 2FA, malware scanner, dan purge scheduler tetap ditunda ke Tahap 6.
 
 ## Dokumentasi
 
 - [Arsitektur final Tahap 1](docs/TAHAP-1-ANALISIS-DAN-ARSITEKTUR.md)
-- [Laporan implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
-- [Audit penutup domain dan authentication](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
+- [Implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
+- [Audit penutup Tahap 2](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
+- [Penutupan Tahap 3](docs/TAHAP-3-PUBLIC-WEBSITE.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)
 
-Logo asli tersedia di `public/images/logo.jpeg`; tidak ada placeholder yang dibuat.
+Logo asli berada di `public/images/logo.jpeg`; varian WebP hanya optimasi asset dan tidak mengganti identitas.

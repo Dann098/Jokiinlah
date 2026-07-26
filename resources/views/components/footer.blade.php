@@ -1,0 +1,10 @@
+@php($footerWhatsAppUrl = app(\App\Services\WhatsAppUrlBuilder::class)->build('Halo, saya ingin berkonsultasi mengenai layanan di Jokiinlah.'))
+<footer class='bg-navy text-white'>
+    <div class='container-public grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4'>
+        <div class='sm:col-span-2 lg:col-span-1'><x-logo /><p class='mt-5 max-w-sm text-sm leading-7 text-white/70'>Pendampingan akademik, analisis data, dan pengembangan solusi digital melalui proses yang jelas, etis, dan terstruktur.</p></div>
+        <div><h2 class='font-sans text-sm font-bold uppercase tracking-wider text-gold'>Navigasi</h2><ul class='mt-4 space-y-3 text-sm text-white/75'><li><a href='{{ route('services.index') }}'>Layanan</a></li><li><a href='{{ route('portfolios.index') }}'>Portofolio</a></li><li><a href='{{ route('articles.index') }}'>Artikel</a></li><li><a href='{{ route('faq.index') }}'>FAQ</a></li></ul></div>
+        <div><h2 class='font-sans text-sm font-bold uppercase tracking-wider text-gold'>Layanan</h2><ul class='mt-4 space-y-3 text-sm text-white/75'><li>Konsultasi penelitian</li><li>Analisis data</li><li>Editing & proofreading</li><li>Pengembangan aplikasi</li></ul></div>
+        <div><h2 class='font-sans text-sm font-bold uppercase tracking-wider text-gold'>Informasi</h2><ul class='mt-4 space-y-3 text-sm text-white/75'><li><a href='{{ route('contact.index') }}'>Kontak & Konsultasi</a></li>@if($footerWhatsAppUrl)<li><a href='{{ $footerWhatsAppUrl }}' target='_blank' rel='noopener noreferrer'>WhatsApp</a></li>@endif<li><a href='{{ route('privacy') }}'>Kebijakan Privasi</a></li><li><a href='{{ route('terms') }}'>Syarat dan Ketentuan</a></li><li><a href='{{ route('login') }}'>Masuk pelanggan</a></li></ul></div>
+    </div>
+    <div class='border-t border-white/10'><div class='container-public flex flex-col gap-2 py-5 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between'><p>© {{ now()->year }} Jokiinlah. Pendampingan Akademik & Digital.</p><p>Layanan berkomitmen pada integritas akademik dan keamanan data.</p></div></div>
+</footer>

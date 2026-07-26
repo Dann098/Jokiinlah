@@ -1,0 +1,7 @@
+@extends('layouts.public')
+@section('title', 'Portofolio Website, Mobile, dan Analisis Data | Jokiinlah')
+@section('description', 'Jelajahi studi kasus demonstrasi website, aplikasi, dashboard, sistem informasi, dan analisis data.')
+@section('content')
+<section class='bg-navy py-16 text-white'><div class='container-public'><x-breadcrumb :items="['Portofolio' => null]" /><h1 class='mt-7 text-4xl font-bold sm:text-5xl'>Portofolio & Studi Kasus</h1><p class='mt-5 max-w-3xl leading-8 text-white/75'>Contoh pendekatan solusi tanpa mengungkap data pelanggan atau informasi akademik sensitif.</p></div></section>
+<section class='section-space'><div class='container-public'><form method='GET' class='surface-card grid gap-4 p-5 md:grid-cols-[1fr_0.7fr_auto]' role='search'><x-form-input name='q' label='Cari studi kasus' :value='$search' /><x-form-select name='category' label='Kategori'><option value=''>Semua kategori</option>@foreach($categories as $option)<option value='{{ $option }}' @selected($category === $option)>{{ $option }}</option>@endforeach</x-form-select><div class='self-end'><x-primary-button type='submit' class='w-full'>Terapkan Filter</x-primary-button></div></form><div class='mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3'>@forelse($portfolios as $portfolio)<x-portfolio-card :portfolio='$portfolio' />@empty<x-empty-state title='Studi kasus tidak ditemukan' />@endforelse</div><x-pagination-wrapper :paginator='$portfolios' /></div></section>
+@endsection

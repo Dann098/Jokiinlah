@@ -1,0 +1,2 @@
+@props(['name', 'required' => false])
+<div><label class='flex cursor-pointer items-start gap-3 rounded-xl border border-navy/10 bg-cream/60 p-4 text-sm leading-6 text-charcoal'><input id='{{ $name }}' name='{{ $name }}' value='1' type='checkbox' @checked(old($name)) @required($required) aria-invalid='{{ $errors->has($name) ? 'true' : 'false' }}' @if($errors->has($name)) aria-describedby='{{ $name }}-error' @endif class='mt-1 h-5 w-5 shrink-0 accent-navy'><span>{{ $slot }}</span></label><x-form-error :name='$name' /></div>

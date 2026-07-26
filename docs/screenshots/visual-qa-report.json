@@ -1,0 +1,219 @@
+{
+  "generated_at": "2026-07-26T20:51:56.287Z",
+  "base_url": "http://127.0.0.1:8003",
+  "pages": [
+    {
+      "name": "home-desktop",
+      "url": "/",
+      "viewport": "1440x900",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-desktop.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "home-mobile",
+      "url": "/",
+      "viewport": "390x844",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-mobile.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "mobile-menu-open",
+      "url": "/",
+      "viewport": "390x844",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-mobile-menu-open.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "home-360",
+      "url": "/",
+      "viewport": "360x800",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-360.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "home-tablet-768",
+      "url": "/",
+      "viewport": "768x1024",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-tablet-768.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "home-tablet-1024",
+      "url": "/",
+      "viewport": "1024x768",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-tablet-1024.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "home-1366",
+      "url": "/",
+      "viewport": "1366x768",
+      "title": "Pendampingan Akademik &amp; Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-home-1366.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "services",
+      "url": "/layanan",
+      "viewport": "1366x768",
+      "title": "Layanan Akademik dan Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-services.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "service-detail",
+      "url": "/layanan/konsultasi-skripsi-penelitian",
+      "viewport": "1366x768",
+      "title": "Konsultasi Skripsi dan Penelitian | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-service-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "portfolio",
+      "url": "/portofolio",
+      "viewport": "1366x768",
+      "title": "Portofolio Website, Mobile, dan Analisis Data | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-portfolio.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "portfolio-detail",
+      "url": "/portofolio/dashboard-monitoring-penjualan",
+      "viewport": "1366x768",
+      "title": "Dashboard Monitoring Penjualan | Portofolio Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-portfolio-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "articles",
+      "url": "/artikel",
+      "viewport": "1366x768",
+      "title": "Artikel Akademik, Data, dan Teknologi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-articles.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "article-detail",
+      "url": "/artikel/menyusun-rumusan-masalah",
+      "viewport": "1366x768",
+      "title": "Menyusun Rumusan Masalah yang Terarah | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-article-detail.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "faq",
+      "url": "/faq",
+      "viewport": "1366x768",
+      "title": "Pertanyaan Umum Layanan | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-faq.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "contact",
+      "url": "/kontak",
+      "viewport": "1366x768",
+      "title": "Konsultasi Proyek Akademik dan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-contact.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "privacy",
+      "url": "/kebijakan-privasi",
+      "viewport": "1366x768",
+      "title": "Kebijakan Privasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-privacy.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "terms",
+      "url": "/syarat-dan-ketentuan",
+      "viewport": "1366x768",
+      "title": "Syarat dan Ketentuan | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-terms.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "empty-search",
+      "url": "/layanan?q=qa-tidak-ada-hasil",
+      "viewport": "1366x768",
+      "title": "Layanan Akademik dan Pengembangan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-empty-search.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "content-404",
+      "url": "/layanan/qa-konten-tidak-ada",
+      "viewport": "1366x768",
+      "title": "Halaman Tidak Ditemukan | Jokiinlah",
+      "status": 404,
+      "screenshot": "docs/screenshots/tahap-3-content-404.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "validation-error",
+      "url": "/kontak",
+      "viewport": "1366x768",
+      "title": "Konsultasi Proyek Akademik dan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-validation-error.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    },
+    {
+      "name": "success-state",
+      "url": "/kontak",
+      "viewport": "1366x768",
+      "title": "Konsultasi Proyek Akademik dan Aplikasi | Jokiinlah",
+      "status": 200,
+      "screenshot": "docs/screenshots/tahap-3-success-state.png",
+      "horizontal_overflow": false,
+      "broken_images": []
+    }
+  ],
+  "console_errors": [],
+  "network_errors": [],
+  "status": "passed"
+}

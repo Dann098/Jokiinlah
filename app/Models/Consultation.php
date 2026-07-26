@@ -13,12 +13,13 @@ class Consultation extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['service_id', 'name', 'email', 'phone', 'project_title', 'description', 'deadline', 'technology', 'budget', 'privacy_accepted_at', 'privacy_policy_version', 'terms_version', 'source'];
+    protected $fillable = ['service_id', 'name', 'email', 'phone', 'project_title', 'description', 'deadline', 'technology', 'budget', 'privacy_accepted_at', 'academic_integrity_accepted_at', 'privacy_policy_version', 'terms_version', 'source'];
 
     protected function casts(): array
     {
         return [
             'status' => ConsultationStatus::class, 'deadline' => 'immutable_datetime', 'privacy_accepted_at' => 'immutable_datetime',
+            'academic_integrity_accepted_at' => 'immutable_datetime',
             'archived_at' => 'immutable_datetime', 'retention_until' => 'immutable_datetime', 'budget' => 'decimal:2',
         ];
     }

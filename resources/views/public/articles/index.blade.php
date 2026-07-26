@@ -1,0 +1,7 @@
+@extends('layouts.public')
+@section('title', 'Artikel Akademik, Data, dan Teknologi | Jokiinlah')
+@section('description', 'Artikel praktis tentang penelitian, analisis data, pemrograman, website, mobile, database, dan karier IT.')
+@section('content')
+<section class='bg-navy py-16 text-white'><div class='container-public'><x-breadcrumb :items="$breadcrumbs = ['Artikel' => null]" /><h1 class='mt-7 text-4xl font-bold sm:text-5xl'>Artikel Akademik, Data, dan Teknologi</h1><p class='mt-5 max-w-3xl leading-8 text-white/75'>Wawasan praktis untuk membantu proses penelitian dan pengembangan solusi digital yang lebih terstruktur.</p></div></section>
+<section class='section-space'><div class='container-public'><form method='GET' class='surface-card grid gap-4 p-5 md:grid-cols-[1fr_0.7fr_auto]' role='search'><x-form-input name='q' label='Cari artikel' :value='$search' /><x-form-select name='category' label='Kategori'><option value=''>Semua kategori</option>@foreach(\App\Enums\ArticleCategory::cases() as $option)<option value='{{ $option->value }}' @selected($category === $option)>{{ $option->label() }}</option>@endforeach</x-form-select><div class='self-end'><x-primary-button type='submit' class='w-full'>Cari Artikel</x-primary-button></div></form><div class='mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3'>@forelse($articles as $article)<x-article-card :article='$article' />@empty<x-empty-state title='Artikel tidak ditemukan' />@endforelse</div><x-pagination-wrapper :paginator='$articles' /></div></section>
+@endsection
