@@ -8,7 +8,7 @@ class LoginResponse implements LoginResponseContract
 {
     public function toResponse($request)
     {
-        $destination = $request->user()->isCustomer() ? route('dashboard') : route('admin.dashboard');
+        $destination = $request->user()->isCustomer() ? route('customer.dashboard') : route('admin.dashboard');
 
         return $request->wantsJson()
             ? response()->json(['two_factor' => false])

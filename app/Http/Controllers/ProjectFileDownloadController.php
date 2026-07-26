@@ -15,7 +15,7 @@ class ProjectFileDownloadController extends Controller
 
     public function __invoke(ProjectFile $projectFile, ActivityLogger $logger, FilenameSanitizer $filenames): StreamedResponse
     {
-        $this->authorize('view', $projectFile);
+        $this->authorize('download', $projectFile);
         abort_unless(Storage::disk($projectFile->disk)->exists($projectFile->file_path), 404, 'Berkas tidak ditemukan.');
 
         $logger->log('project_file.downloaded', 'Berkas privat diunduh melalui pemeriksaan authorization.', request()->user(), $projectFile, ['version' => $projectFile->version]);

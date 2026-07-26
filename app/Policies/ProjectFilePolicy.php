@@ -21,6 +21,11 @@ class ProjectFilePolicy
         return $this->canViewProject($user, $file->project);
     }
 
+    public function download(User $user, ProjectFile $file): bool
+    {
+        return $this->view($user, $file);
+    }
+
     public function create(User $user, Project $project): bool
     {
         return $this->canViewProject($user, $project);

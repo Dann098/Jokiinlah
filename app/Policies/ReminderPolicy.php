@@ -24,11 +24,11 @@ class ReminderPolicy
 
     public function update(User $user, Reminder $item): bool
     {
-        return $user->isAdmin() || $item->user_id === $user->id;
+        return $user->isAdmin();
     }
 
     public function delete(User $user, Reminder $item): bool
     {
-        return $user->isAdmin() || $item->user_id === $user->id;
+        return $user->isAdmin();
     }
 }

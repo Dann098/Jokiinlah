@@ -9,7 +9,7 @@ Aplikasi **Pendampingan Akademik & Digital** berbasis Laravel untuk konsultasi, 
 | Tahap 1 | Selesai | Analisis produk dan arsitektur modular monolith |
 | Tahap 2 | Selesai | Domain, autentikasi, authorization, dan fondasi private file |
 | Tahap 3 | Selesai dan terverifikasi | Website publik, landing page, konsultasi guest, SEO, accessibility, dan visual QA |
-| Tahap 4 | Belum dimulai | Customer Portal lengkap |
+| Tahap 4 | Selesai dan terverifikasi | Customer Portal aman, private file/versioning, revisi, pengingat, jadwal, profil, dan visual QA |
 | Tahap 5–6 | Belum dimulai | Panel admin/staff dan hardening lanjutan |
 
 ## Website publik
@@ -48,6 +48,14 @@ GET  /syarat-dan-ketentuan
 GET  /sitemap.xml
 GET  /robots.txt
 ```
+
+## Customer Portal
+
+Tahap 4 menyediakan portal customer pada `/dashboard` dengan ringkasan, pencarian dan
+filter proyek, detail status/progress/milestone, private file dan versioning, pengajuan
+revisi, pengingat, jadwal, profil, serta perubahan password. Semua resource dibatasi ke
+pemilik melalui middleware, policy, ownership query, dan scoped nested binding. Customer
+tidak memiliki route untuk mengubah status/progress atau menghapus resource.
 
 ## Persyaratan lokal
 
@@ -115,7 +123,7 @@ composer validate --strict
 composer audit
 ```
 
-Test memakai SQLite in-memory dan tidak memodifikasi MariaDB development. Verifikasi terakhir Tahap 3: **74 test lulus dengan 357 assertion**.
+Test memakai SQLite in-memory dan tidak memodifikasi MariaDB development. Verifikasi terakhir Tahap 4: **94 test lulus dengan 519 assertion**.
 
 ## Visual QA
 
@@ -128,6 +136,19 @@ node scripts/visual-qa.mjs
 ```
 
 Script menguji viewport `360x800`, `390x844`, `768x1024`, `1024x768`, `1366x768`, dan `1440x900`, termasuk menu mobile, detail konten, form error/sukses, halaman legal, empty state, dan 404. Hasil berada di `docs/screenshots/visual-qa-report.json`.
+
+Portal customer memiliki harness terpisah:
+
+```powershell
+$env:QA_BASE_URL='http://127.0.0.1:8003'
+$env:QA_DEBUGGER_URL='http://127.0.0.1:9225'
+$env:QA_FOREIGN_PROJECT_ID='2'
+node scripts/visual-qa-customer.mjs
+```
+
+Harness portal memeriksa 27 state pada viewport yang sama, termasuk ownership 403,
+empty state, upload, version history, revisi, profil, dan mobile drawer. Hasil berada di
+`docs/screenshots/tahap-4/visual-qa-report.json`.
 
 Varian WebP, favicon, dan OG image dapat dibuat ulang dari logo asli dengan `php scripts/generate_brand_assets.php`.
 
@@ -148,6 +169,7 @@ Varian WebP, favicon, dan OG image dapat dibuat ulang dari logo asli dengan `php
 - [Implementasi Tahap 2](docs/TAHAP-2-IMPLEMENTASI.md)
 - [Audit penutup Tahap 2](docs/TAHAP-2-DOMAIN-DAN-AUTHENTICATION.md)
 - [Penutupan Tahap 3](docs/TAHAP-3-PUBLIC-WEBSITE.md)
+- [Penutupan Tahap 4](docs/TAHAP-4-CUSTOMER-PORTAL.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)
 
 Logo asli berada di `public/images/logo.jpeg`; varian WebP hanya optimasi asset dan tidak mengganti identitas.

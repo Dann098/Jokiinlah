@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Project;
 use App\Models\SiteSetting;
 
 class WhatsAppUrlBuilder
@@ -26,5 +27,14 @@ class WhatsAppUrlBuilder
         $number = $this->number();
 
         return $number ? 'https://wa.me/'.$number.'?text='.rawurlencode(trim($message)) : null;
+    }
+
+    public function forProject(Project $project): ?string
+    {
+        return $this->build(sprintf(
+            'Halo, saya ingin menanyakan perkembangan proyek %s — %s.',
+            $project->project_code,
+            $project->title,
+        ));
     }
 }

@@ -62,6 +62,9 @@ class ProjectSeeder extends Seeder
             ['PRJ-20260722-0002', $customers['alya@example.com'], $staff, $services['konsultasi-skripsi-penelitian'], 'Pendampingan Proposal Penelitian', ProjectStatus::WaitingData, 20, PaymentStatus::Unpaid, null],
             ['PRJ-20260722-0003', $customers['bagas@example.com'], $staff, $services['analisis-data-penelitian'], 'Analisis Regresi Data Survei', ProjectStatus::CustomerReview, 80, PaymentStatus::Paid, null],
             ['PRJ-20260722-0004', $customers['citra@example.com'], $staffDev, $services['dashboard-bisnis'], 'Dashboard Kinerja Operasional', ProjectStatus::Completed, 100, PaymentStatus::Paid, null],
+            ['PRJ-20260722-0005', $customers['customer@example.com'], $staff, $services['analisis-data-penelitian'], 'Analisis Data Survei Pengalaman Pengguna', ProjectStatus::WaitingData, 25, PaymentStatus::DownPayment, null],
+            ['PRJ-20260722-0006', $customers['customer@example.com'], $staffDev, $services['dashboard-bisnis'], 'Dashboard Monitoring Penelitian dengan Judul Demonstrasi yang Sangat Panjang untuk Pengujian Responsif Portal Pelanggan', ProjectStatus::CustomerReview, 86, PaymentStatus::Paid, null],
+            ['PRJ-20260722-0007', $customers['customer@example.com'], $staff, $services['konsultasi-skripsi-penelitian'], 'Review Struktur Proposal Penelitian', ProjectStatus::Completed, 100, PaymentStatus::Paid, null],
         ];
 
         foreach ($projectData as [$code, $customer, $assigned, $service, $title, $status, $progress, $payment, $consultationId]) {
@@ -107,6 +110,24 @@ class ProjectSeeder extends Seeder
                 'description' => 'Metadata file dummy. Berkas fisik tidak disertakan dalam repository.', 'retention_until' => now()->addDays(180),
             ]);
         }
+
+        ProjectFile::withTrashed()->updateOrCreate([
+            'project_id' => $primary->id,
+            'document_uuid' => 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+            'version' => 1,
+        ], [
+            'uploaded_by' => $primary->customer_id,
+            'category' => 'data_pendukung',
+            'original_name' => str_repeat('dataset-pendukung-validasi-layout-', 6).'akhir.xlsx',
+            'stored_name' => '33333333-3333-4333-8333-333333333333',
+            'disk' => 'local',
+            'file_path' => 'projects/33333333-3333-4333-8333-333333333333/33333333-3333-4333-8333-333333333333',
+            'file_type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'file_size' => 245760,
+            'checksum' => hash('sha256', '33333333-3333-4333-8333-333333333333'),
+            'description' => 'Metadata file demo untuk pengujian nama panjang. Berkas fisik tidak disertakan.',
+            'retention_until' => now()->addDays(180),
+        ]);
 
         Revision::withTrashed()->updateOrCreate(['project_id' => $primary->id, 'title' => 'Penyesuaian alur persetujuan'], [
             'submitted_by' => $primary->customer_id, 'description' => 'Mohon tambahkan konfirmasi sebelum dokumen diselesaikan.',

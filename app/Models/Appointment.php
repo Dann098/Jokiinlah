@@ -32,4 +32,15 @@ class Appointment extends Model
     {
         return $this->belongsTo(User::class, 'staff_id');
     }
+
+    public function safeMeetingUrl(): ?string
+    {
+        if (! $this->meeting_link || filter_var($this->meeting_link, FILTER_VALIDATE_URL) === false) {
+            return null;
+        }
+
+        return mb_strtolower((string) parse_url($this->meeting_link, PHP_URL_SCHEME)) === 'https'
+            ? $this->meeting_link
+            : null;
+    }
 }

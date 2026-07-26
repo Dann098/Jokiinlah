@@ -11,7 +11,11 @@ class ProjectFile extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id', 'project_id', 'uploaded_by', 'document_uuid', 'version', 'stored_name', 'file_path'];
+    protected $guarded = [
+        'id', 'project_id', 'uploaded_by', 'document_uuid', 'version',
+        'original_name', 'stored_name', 'disk', 'file_path',
+        'file_type', 'file_size', 'checksum',
+    ];
 
     protected function casts(): array
     {

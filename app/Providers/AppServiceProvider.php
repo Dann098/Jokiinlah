@@ -42,6 +42,10 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('customer-mutations', fn (Request $request): Limit => Limit::perMinute(12)
+            ->by('customer-mutation:'.hash('sha256', (string) $request->user()?->email).'|'.$request->ip())
+            ->response(fn () => response('Terlalu banyak permintaan. Silakan tunggu dan coba kembali.', 429)));
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }

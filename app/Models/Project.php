@@ -56,6 +56,11 @@ class Project extends Model
         return $this->hasMany(ProjectFile::class);
     }
 
+    public function projectFiles(): HasMany
+    {
+        return $this->files();
+    }
+
     public function revisions(): HasMany
     {
         return $this->hasMany(Revision::class);
