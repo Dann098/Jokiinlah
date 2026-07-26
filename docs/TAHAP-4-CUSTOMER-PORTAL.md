@@ -7,8 +7,8 @@
 - Scope: portal customer terautentikasi
 - Di luar scope: panel operasional admin/staff Tahap 5 dan hardening infrastruktur Tahap 6
 - Basis: arsitektur Tahap 1, domain/authentication Tahap 2, dan website publik Tahap 3
-- Commit implementasi: dicatat setelah commit rilis dibuat
-- Status push: dicatat setelah commit rilis berhasil dikirim
+- Commit implementasi: `e2c25867512807f4efca50d915b74932e8f10254`
+- Status push implementasi: berhasil ke `origin/main`
 
 ## Ringkasan hasil
 
@@ -410,4 +410,4 @@ Tidak ada implementasi Tahap 5 yang dimulai pada perubahan ini.
 - [x] Pint, Vite build, npm audit, Composer validation/audit lulus.
 - [x] Migration development dijalankan tanpa operasi destruktif.
 - [x] Visual QA 27 state lulus dan bukti tersimpan.
-- [ ] Commit hash dan status push diisi setelah rilis Git dibuat.
+- [x] Commit hash tercatat dan commit implementasi berhasil di-push ke `origin/main`.
