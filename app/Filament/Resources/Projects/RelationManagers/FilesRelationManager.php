@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects\RelationManagers;
 
 use App\Actions\ProjectFiles\CreateProjectFileRecord;
 use App\Actions\ProjectFiles\CreateProjectFileVersion;
+use App\Exceptions\UnsafeUploadException;
 use App\Models\Project;
 use App\Models\ProjectFile;
 use App\Rules\SafePrivateUpload;
@@ -23,6 +24,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class FilesRelationManager extends RelationManager
@@ -136,7 +138,13 @@ class FilesRelationManager extends RelationManager
         /** @var UploadedFile $upload */
         $upload = $data['file'];
         $storage = app(PrivateProjectFileStorage::class);
-        $metadata = $storage->store($upload);
+        try {
+            $metadata = $storage->store($upload);
+        } catch (UnsafeUploadException $exception) {
+            Notification::make()->danger()->title('Berkas ditolak')->body($exception->getMessage())->send();
+
+            throw ValidationException::withMessages(['file' => $exception->getMessage()]);
+        }
 
         try {
             $file = $persist(array_merge($metadata, [

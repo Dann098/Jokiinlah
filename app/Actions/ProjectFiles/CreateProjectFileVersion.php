@@ -2,6 +2,7 @@
 
 namespace App\Actions\ProjectFiles;
 
+use App\Enums\MalwareScanStatus;
 use App\Models\ProjectFile;
 use App\Models\User;
 use App\Services\ActivityLogger;
@@ -29,7 +30,9 @@ class CreateProjectFileVersion
                 'document_uuid' => $current->document_uuid,
                 'version' => $latest->version + 1,
                 'stored_name' => $storedName,
-                'disk' => 'local',
+                'disk' => $metadata['disk'] ?? config('jokiinlah.private_disk', 'local'),
+                'scan_status' => $metadata['scan_status'] ?? MalwareScanStatus::Pending->value,
+                'scanned_at' => $metadata['scanned_at'] ?? null,
                 'retention_until' => now()->addDays((int) config('jokiinlah.default_retention_days')),
             ]));
             $this->logger->log('project_file.version_uploaded', 'Versi baru berkas privat dicatat.', $uploader, $file, ['previous_file_id' => $latest->id, 'version' => $file->version]);

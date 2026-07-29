@@ -22,6 +22,7 @@ use App\Http\Controllers\Public\PortfolioController;
 use App\Http\Controllers\Public\ServiceController;
 use App\Http\Controllers\Public\SitemapController;
 use App\Http\Controllers\RevisionAttachmentDownloadController;
+use App\Http\Controllers\TwoFactorSecurityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -40,6 +41,10 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/robots.txt', [SitemapController::class, 'robots'])->name('robots');
 
 Route::middleware(['auth', 'active', 'verified'])->group(function (): void {
+    Route::get('/keamanan/two-factor', TwoFactorSecurityController::class)
+        ->middleware('role:admin,staff')
+        ->name('security.two-factor.setup');
+
     Route::get('/admin/konsultasi/{consultation}/lampiran', ConsultationAttachmentDownloadController::class)
         ->middleware(['role:admin', 'throttle:30,1'])
         ->name('admin.consultations.attachment');
@@ -75,7 +80,7 @@ Route::middleware(['auth', 'active', 'verified'])->group(function (): void {
                 ->middleware('throttle:customer-mutations')
                 ->name('projects.revisions.store');
             Route::get('/proyek/{project}/revisi/{revision}', [RevisionController::class, 'show'])->name('projects.revisions.show');
-            Route::get('/proyek/{project}/revisi/{revision}/lampiran', RevisionAttachmentDownloadController::class)
+            Route::get('/proyek/{project}/revisi/{revision}/lampiran', [RevisionAttachmentDownloadController::class, 'customer'])
                 ->middleware('throttle:30,1')
                 ->name('projects.revisions.attachment');
 

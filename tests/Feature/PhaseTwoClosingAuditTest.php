@@ -13,7 +13,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
 use Tests\TestCase;
 
 class PhaseTwoClosingAuditTest extends TestCase
@@ -174,7 +173,7 @@ class PhaseTwoClosingAuditTest extends TestCase
         }
     }
 
-    public function test_storage_failure_keeps_soft_deleted_file_record(): void
+    public function test_legacy_permanent_delete_action_only_schedules_two_phase_purge(): void
     {
         Storage::fake('local');
         $admin = User::factory()->admin()->create();
@@ -184,12 +183,10 @@ class PhaseTwoClosingAuditTest extends TestCase
         ]);
         $file->delete();
 
-        try {
-            app(PermanentlyDeleteProjectFile::class)->execute($file, $admin, 'Retensi telah berakhir.');
-            $this->fail('Storage yang gagal seharusnya mempertahankan record.');
-        } catch (RuntimeException) {
-            $this->assertNotNull(ProjectFile::withTrashed()->find($file->id));
-            $this->assertDatabaseCount('activity_logs', 0);
-        }
+        app(PermanentlyDeleteProjectFile::class)->execute($file, $admin, 'Retensi telah berakhir.');
+
+        $this->assertNotNull(ProjectFile::withTrashed()->find($file->id));
+        $this->assertSame('purge_pending', ProjectFile::withTrashed()->find($file->id)->purge_status->value);
+        $this->assertDatabaseCount('activity_logs', 1);
     }
 }

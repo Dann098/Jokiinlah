@@ -11,14 +11,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = ['name', 'email', 'phone', 'institution', 'study_program', 'password'];
 
-    protected $hidden = ['password', 'remember_token'];
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+    ];
 
     protected function casts(): array
     {
@@ -27,6 +33,8 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             'password' => 'hashed',
             'role' => UserRole::class,
             'is_active' => 'boolean',
+            'two_factor_confirmed_at' => 'immutable_datetime',
+            'two_factor_recovery_codes_viewed_at' => 'immutable_datetime',
         ];
     }
 

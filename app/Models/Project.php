@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\PaymentStatus;
 use App\Enums\ProjectStatus;
+use App\Enums\PurgeStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,8 @@ class Project extends Model
             'status' => ProjectStatus::class, 'payment_status' => PaymentStatus::class, 'progress' => 'integer',
             'start_date' => 'immutable_datetime', 'deadline' => 'immutable_datetime', 'completed_at' => 'immutable_datetime',
             'payment_updated_at' => 'immutable_datetime', 'archived_at' => 'immutable_datetime', 'retention_until' => 'immutable_datetime',
+            'purge_status' => PurgeStatus::class, 'purge_pending_at' => 'immutable_datetime',
+            'physical_deleted_at' => 'immutable_datetime', 'purged_at' => 'immutable_datetime',
         ];
     }
 

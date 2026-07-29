@@ -5,13 +5,17 @@ namespace App\Actions\Users;
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Services\ActivityLogger;
+use App\Services\SessionSecurity;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class UpdateManagedUser
 {
-    public function __construct(private ActivityLogger $logger) {}
+    public function __construct(
+        private ActivityLogger $logger,
+        private SessionSecurity $sessions,
+    ) {}
 
     public function execute(User $subject, array $data, UserRole $expectedRole, User $actor): User
     {
@@ -22,7 +26,7 @@ class UpdateManagedUser
             throw ValidationException::withMessages(['is_active' => 'Admin tidak dapat menonaktifkan akunnya sendiri.']);
         }
 
-        return DB::transaction(function () use ($subject, $data, $actor): User {
+        $updated = DB::transaction(function () use ($subject, $data, $actor): User {
             $beforeEmail = $subject->email;
             $subject->forceFill([
                 'name' => trim($data['name']),
@@ -46,5 +50,11 @@ class UpdateManagedUser
 
             return $subject->refresh();
         });
+
+        if (! $updated->is_active || ! $updated->hasVerifiedEmail()) {
+            $this->sessions->invalidateAllSessions($updated);
+        }
+
+        return $updated;
     }
 }

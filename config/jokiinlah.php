@@ -3,6 +3,7 @@
 return [
     'display_timezone' => env('DISPLAY_TIMEZONE', 'Asia/Jakarta'),
     'upload_max_size' => (int) env('UPLOAD_MAX_SIZE', 20480),
+    'private_disk' => env('PRIVATE_FILESYSTEM_DISK', 'local'),
     'allowed_file_extensions' => [
         'pdf', 'doc', 'docx', 'xls', 'xlsx', 'csv', 'zip', 'rar',
         'jpg', 'jpeg', 'png', 'webp',

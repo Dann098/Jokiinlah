@@ -4,12 +4,16 @@ namespace App\Actions\Users;
 
 use App\Models\User;
 use App\Services\ActivityLogger;
+use App\Services\SessionSecurity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UpdateCustomerPassword
 {
-    public function __construct(private ActivityLogger $logger) {}
+    public function __construct(
+        private ActivityLogger $logger,
+        private SessionSecurity $sessions,
+    ) {}
 
     public function execute(User $user, string $password): void
     {
@@ -23,5 +27,7 @@ class UpdateCustomerPassword
                 $user,
             );
         });
+
+        $this->sessions->invalidateOtherSessions($user, request()?->session()->getId());
     }
 }

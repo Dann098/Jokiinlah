@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Widgets\OperationalStats;
 use App\Filament\Widgets\UpcomingOperations;
+use App\Http\Middleware\EnsurePanelTwoFactorEnabled;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -78,6 +79,7 @@ class AdminPanelProvider extends PanelProvider
                 'active',
                 'verified',
                 'role:admin,staff',
+                EnsurePanelTwoFactorEnabled::class,
             ]);
     }
 }

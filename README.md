@@ -12,7 +12,11 @@ konten publik, Customer Portal, serta operasional admin dan staff.
 | Tahap 3 | Selesai dan terverifikasi | Website publik, konsultasi guest, SEO, accessibility, dan visual QA |
 | Tahap 4 | Selesai dan terverifikasi | Customer Portal, versioning, revisi, reminder, appointment, profil, dan visual QA |
 | Tahap 5 | Selesai dan terverifikasi | Panel Filament admin/staff, scoping operasional, test, dan visual QA |
-| Tahap 6 | Belum dimulai | Hardening infrastruktur lanjutan |
+| Tahap 6 | Implementasi aplikasi selesai | 2FA, upload scanning, retention/purge, reconciliation, security header, dan readiness guard |
+
+Tahap 6 belum berarti deployment production siap. Server masih wajib menyediakan
+HTTPS, ClamAV, queue worker, scheduler, private storage, serta backup dan restore
+terverifikasi sebelum go-live.
 
 ## Fitur utama
 
@@ -49,6 +53,7 @@ project, payment, user/content management, site setting, atau global activity lo
 - Composer 2
 - Node.js dan npm
 - MariaDB 10.4+ atau MySQL kompatibel
+- ClamAV daemon yang dapat dijangkau aplikasi (wajib untuk production)
 
 ## Instalasi development
 
@@ -79,10 +84,13 @@ APP_TIMEZONE=UTC
 DISPLAY_TIMEZONE=Asia/Jakarta
 DB_CONNECTION=mysql
 FILESYSTEM_DISK=local
+PRIVATE_FILESYSTEM_DISK=local
+MALWARE_SCANNER_ENABLED=false
 ```
 
 Jangan commit `.env` atau credential production. Jangan memakai `migrate:fresh` pada
-database yang berisi data; instalasi normal tidak memerlukannya.
+database yang berisi data; instalasi normal tidak memerlukannya. Scanner yang nonaktif
+bersifat fail-closed: upload akan ditolak, bukan dianggap bersih.
 
 ## Akun demo local/staging
 
@@ -109,8 +117,23 @@ composer validate --strict
 composer audit
 ```
 
-Verifikasi Tahap 5: **109 test lulus dengan 671 assertion**. Build Vite memproses
-56 modul; Composer audit dan npm audit bersih.
+Verifikasi akhir Tahap 6: **130 test lulus dengan 789 assertion**. Build Vite
+memproses 56 modul; Composer audit dan npm audit bersih. Config, route, dan view
+cache berhasil dibuat lalu dibersihkan kembali untuk development.
+
+Perintah hardening dan pemeriksaan production:
+
+```powershell
+php artisan jokiinlah:retention-evaluate --dry-run
+php artisan jokiinlah:purge --dry-run
+php artisan jokiinlah:files-reconcile --checksum
+php artisan schedule:list
+php artisan jokiinlah:readiness
+```
+
+`jokiinlah:readiness` harus lulus pada server production sebelum go-live. Perintah
+tersebut memeriksa konfigurasi minimum, bukan menggantikan uji koneksi scanner,
+worker, cron, filesystem, HTTPS, ataupun simulasi restore.
 
 ## Visual QA
 
@@ -144,18 +167,37 @@ Harness Tahap 5 memeriksa 54 state pada viewport `360x800`, `390x844`, `768x1024
 notification, relation manager, mobile navigation, dan unauthorized state. Hasil berada
 di `docs/screenshots/tahap-5/visual-qa-report.json`.
 
+Harness Tahap 6:
+
+```powershell
+$env:QA_BASE_URL='http://127.0.0.1:8006'
+$env:QA_DEBUGGER_URL='http://127.0.0.1:9230'
+$env:QA_PASSWORD='<password akun QA>'
+$env:QA_TOTP_SECRET='<secret TOTP akun staff QA>'
+node scripts/visual-qa-security.mjs
+```
+
+Hasil Tahap 6 memeriksa 15 state pada keenam viewport yang sama, tanpa overflow,
+console error, network error, atau asset error. Bukti berada di
+`docs/screenshots/tahap-6/visual-qa-report.json`.
+
 ## Keamanan dan integritas akademik
 
 - Consultation/project/revision attachment berada pada private local disk.
 - Physical path dan stored filename memakai UUID; original filename hanya metadata aman.
 - MIME, extension, double extension, executable, ukuran, dan checksum diverifikasi.
+- Upload masuk karantina sementara, dipindai melalui abstraction ClamAV, dan hanya
+  hasil `clean` yang dipindah ke jalur final; infected dan scan failure fail-closed.
 - ZIP/RAR disimpan opaque dan tidak diekstrak atau dijalankan.
 - Status/progress/assignment/payment memakai action terotorisasi dan activity log.
 - Staff hanya assigned project; customer hanya resource miliknya.
+- Admin/staff wajib 2FA TOTP beserta recovery code; customer tidak diwajibkan.
+- Retention memakai evaluasi dan two-phase purge idempoten; reconciliation hanya
+  melaporkan secara default dan tidak menghapus orphan otomatis.
 - Layanan melarang plagiarisme, fabrikasi data, pemalsuan penelitian, pengerjaan ujian,
   bypass anti-plagiarisme, pelanggaran hak cipta, dan aktivitas ilegal.
-- 2FA, malware scanner, purge scheduler, object storage production, dan full CSP ditunda
-  ke Tahap 6; Tahap 6 belum dimulai.
+- CSP kompatibel Filament, header keamanan, session revocation, queue after-commit,
+  scheduler, dan readiness guard telah diterapkan pada Tahap 6.
 
 ## Dokumentasi
 
@@ -165,4 +207,5 @@ di `docs/screenshots/tahap-5/visual-qa-report.json`.
 - [Penutupan Tahap 3](docs/TAHAP-3-PUBLIC-WEBSITE.md)
 - [Penutupan Tahap 4](docs/TAHAP-4-CUSTOMER-PORTAL.md)
 - [Penutupan Tahap 5](docs/TAHAP-5-ADMIN-STAFF-PANEL.md)
+- [Hardening dan production readiness Tahap 6](docs/TAHAP-6-HARDENING-DAN-PRODUCTION-READINESS.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)

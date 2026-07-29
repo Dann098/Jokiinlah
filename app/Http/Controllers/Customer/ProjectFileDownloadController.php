@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Customer;
 
+use App\Enums\MalwareScanStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\ProjectFile;
@@ -23,6 +24,7 @@ class ProjectFileDownloadController extends Controller
     ): StreamedResponse {
         $this->authorize('view', $project);
         $this->authorize('download', $projectFile);
+        abort_unless($projectFile->scan_status === MalwareScanStatus::Clean, 423, 'Berkas belum tersedia untuk diunduh.');
         abort_unless(Storage::disk($projectFile->disk)->exists($projectFile->file_path), 404, 'Berkas tidak ditemukan.');
 
         $logger->log(
@@ -36,6 +38,11 @@ class ProjectFileDownloadController extends Controller
         return Storage::disk($projectFile->disk)->download(
             $projectFile->file_path,
             $filenames->sanitize($projectFile->original_name),
+            [
+                'Content-Type' => $projectFile->file_type ?: 'application/octet-stream',
+                'X-Content-Type-Options' => 'nosniff',
+                'Content-Security-Policy' => "sandbox; default-src 'none'",
+            ],
         );
     }
 }

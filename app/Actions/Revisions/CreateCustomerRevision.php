@@ -39,6 +39,8 @@ class CreateCustomerRevision
                     'attachment_mime' => $file['file_type'] ?? null,
                     'attachment_size' => $file['file_size'] ?? null,
                     'attachment_checksum' => $file['checksum'] ?? null,
+                    'attachment_scan_status' => $file['scan_status'] ?? null,
+                    'attachment_scanned_at' => $file['scanned_at'] ?? null,
                     'retention_until' => now()->addDays((int) config('jokiinlah.default_retention_days')),
                 ]);
 

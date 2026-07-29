@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Laravel\Fortify\Fortify;
+use PragmaRX\Google2FA\Google2FA;
 
 /**
  * @extends Factory<User>
@@ -39,12 +41,18 @@ class UserFactory extends Factory
 
     public function admin(): static
     {
-        return $this->state(fn () => ['role' => UserRole::Admin]);
+        return $this->state(fn () => array_merge(
+            ['role' => UserRole::Admin],
+            $this->enabledTwoFactorState(),
+        ));
     }
 
     public function staff(): static
     {
-        return $this->state(fn () => ['role' => UserRole::Staff]);
+        return $this->state(fn () => array_merge(
+            ['role' => UserRole::Staff],
+            $this->enabledTwoFactorState(),
+        ));
     }
 
     public function customer(): static
@@ -55,6 +63,31 @@ class UserFactory extends Factory
     public function inactive(): static
     {
         return $this->state(fn () => ['is_active' => false]);
+    }
+
+    public function withoutTwoFactor(): static
+    {
+        return $this->state(fn () => [
+            'two_factor_secret' => null,
+            'two_factor_recovery_codes' => null,
+            'two_factor_confirmed_at' => null,
+            'two_factor_recovery_codes_viewed_at' => null,
+        ]);
+    }
+
+    private function enabledTwoFactorState(): array
+    {
+        $secret = (new Google2FA)->generateSecretKey();
+
+        return [
+            'two_factor_secret' => Fortify::currentEncrypter()->encrypt($secret),
+            'two_factor_recovery_codes' => Fortify::currentEncrypter()->encrypt(json_encode([
+                Str::random(32),
+                Str::random(32),
+            ])),
+            'two_factor_confirmed_at' => now(),
+            'two_factor_recovery_codes_viewed_at' => now(),
+        ];
     }
 
     /**

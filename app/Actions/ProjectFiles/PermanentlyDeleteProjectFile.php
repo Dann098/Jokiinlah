@@ -2,14 +2,12 @@
 
 namespace App\Actions\ProjectFiles;
 
+use App\Enums\PurgeStatus;
 use App\Models\ProjectFile;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use RuntimeException;
-use Throwable;
 
 class PermanentlyDeleteProjectFile
 {
@@ -30,23 +28,15 @@ class PermanentlyDeleteProjectFile
             throw ValidationException::withMessages(['retention_until' => 'Masa retensi berkas belum berakhir.']);
         }
 
-        try {
-            if (! Storage::disk($file->disk)->exists($file->file_path)) {
-                throw new RuntimeException('Berkas fisik tidak ditemukan; record audit dipertahankan.');
-            }
+        $file->forceFill([
+            'purge_status' => PurgeStatus::Pending,
+            'purge_pending_at' => now(),
+            'purge_failure_code' => null,
+        ])->saveQuietly();
 
-            $deleted = Storage::disk($file->disk)->delete($file->file_path);
-        } catch (Throwable $exception) {
-            throw new RuntimeException('Penyimpanan gagal menghapus berkas; record database tidak dihapus.', previous: $exception);
-        }
-
-        if (! $deleted) {
-            throw new RuntimeException('Penyimpanan menolak penghapusan; record database tidak dihapus.');
-        }
-
-        $this->logger->log('project_file.force_deleted', 'Admin menghapus berkas privat secara permanen.', $actor, $file, [
-            'reason' => trim($reason), 'file_path' => $file->file_path, 'document_uuid' => $file->document_uuid, 'version' => $file->version,
+        $this->logger->log('project_file.purge_requested', 'Admin memasukkan berkas ke proses two-phase purge.', $actor, $file, [
+            'reason' => trim($reason),
+            'version' => $file->version,
         ]);
-        $file->forceDelete();
     }
 }

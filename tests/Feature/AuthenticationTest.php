@@ -41,14 +41,14 @@ class AuthenticationTest extends TestCase
         $customer = User::factory()->customer()->create();
         $this->post('/login', ['email' => $customer->email, 'password' => 'Password123!'])->assertRedirect('/dashboard');
         $this->post('/logout');
-        $staff = User::factory()->staff()->create();
+        $staff = User::factory()->staff()->withoutTwoFactor()->create();
         $this->post('/login', ['email' => $staff->email, 'password' => 'Password123!'])->assertRedirect('/admin');
-        $this->get('/admin')->assertOk()->assertSee('Jokiinlah Operasional', false);
+        $this->get('/admin')->assertRedirect(route('security.two-factor.setup'));
         $this->post('/logout');
 
-        $admin = User::factory()->admin()->create();
+        $admin = User::factory()->admin()->withoutTwoFactor()->create();
         $this->post('/login', ['email' => $admin->email, 'password' => 'Password123!'])->assertRedirect('/admin');
-        $this->get('/admin')->assertOk()->assertSee('Jokiinlah Operasional', false);
+        $this->get('/admin')->assertRedirect(route('security.two-factor.setup'));
     }
 
     public function test_unverified_user_is_blocked_from_dashboard(): void

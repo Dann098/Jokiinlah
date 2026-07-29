@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\MalwareScannerInterface;
+use App\Enums\MalwareScanStatus;
+use App\Listeners\AuditTwoFactorSecurityEvent;
 use App\Models\Appointment;
 use App\Models\Article;
 use App\Models\Faq;
@@ -11,25 +14,60 @@ use App\Models\Reminder;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Observers\OperationalActivityObserver;
+use App\Services\Malware\ClamAvMalwareScanner;
+use App\Services\Malware\FakeMalwareScanner;
+use App\Services\Malware\UnavailableMalwareScanner;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Fortify\Events\RecoveryCodeReplaced;
+use Laravel\Fortify\Events\RecoveryCodesGenerated;
+use Laravel\Fortify\Events\TwoFactorAuthenticationConfirmed;
+use Laravel\Fortify\Events\TwoFactorAuthenticationDisabled;
+use Laravel\Fortify\Events\TwoFactorAuthenticationEnabled;
+use Laravel\Fortify\Events\TwoFactorAuthenticationFailed;
+use Laravel\Fortify\Events\ValidTwoFactorAuthenticationCodeProvided;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        // Application services use constructor injection.
+        $this->app->singleton(MalwareScannerInterface::class, function (): MalwareScannerInterface {
+            if (! config('security.malware.enabled')) {
+                return new UnavailableMalwareScanner;
+            }
+
+            if (config('security.malware.driver') === 'fake' && ! $this->app->environment('production')) {
+                return new FakeMalwareScanner(
+                    MalwareScanStatus::tryFrom((string) config('security.malware.fake_status'))
+                        ?? MalwareScanStatus::Clean,
+                    'non_production_fake',
+                );
+            }
+
+            return new ClamAvMalwareScanner;
+        });
     }
 
     public function boot(): void
     {
+        Event::listen([
+            TwoFactorAuthenticationEnabled::class,
+            TwoFactorAuthenticationConfirmed::class,
+            TwoFactorAuthenticationDisabled::class,
+            RecoveryCodesGenerated::class,
+            RecoveryCodeReplaced::class,
+            TwoFactorAuthenticationFailed::class,
+            ValidTwoFactorAuthenticationCodeProvided::class,
+        ], AuditTwoFactorSecurityEvent::class);
+
         foreach ([
             Appointment::class,
             Article::class,

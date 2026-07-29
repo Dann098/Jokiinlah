@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\MalwareScanStatus;
+use App\Enums\PurgeStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,7 +21,18 @@ class ProjectFile extends Model
 
     protected function casts(): array
     {
-        return ['version' => 'integer', 'file_size' => 'integer', 'archived_at' => 'immutable_datetime', 'retention_until' => 'immutable_datetime'];
+        return [
+            'version' => 'integer',
+            'file_size' => 'integer',
+            'archived_at' => 'immutable_datetime',
+            'retention_until' => 'immutable_datetime',
+            'scan_status' => MalwareScanStatus::class,
+            'scanned_at' => 'immutable_datetime',
+            'purge_status' => PurgeStatus::class,
+            'purge_pending_at' => 'immutable_datetime',
+            'physical_deleted_at' => 'immutable_datetime',
+            'purged_at' => 'immutable_datetime',
+        ];
     }
 
     public function project(): BelongsTo
