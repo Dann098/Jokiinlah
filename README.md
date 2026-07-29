@@ -13,10 +13,25 @@ konten publik, Customer Portal, serta operasional admin dan staff.
 | Tahap 4 | Selesai dan terverifikasi | Customer Portal, versioning, revisi, reminder, appointment, profil, dan visual QA |
 | Tahap 5 | Selesai dan terverifikasi | Panel Filament admin/staff, scoping operasional, test, dan visual QA |
 | Tahap 6 | Implementasi aplikasi selesai | 2FA, upload scanning, retention/purge, reconciliation, security header, dan readiness guard |
+| Tahap 7 | Audit final selesai | Full regression SQLite/MariaDB, browser QA, dokumentasi, dan release readiness |
 
-Tahap 6 belum berarti deployment production siap. Server masih wajib menyediakan
-HTTPS, ClamAV, queue worker, scheduler, private storage, serta backup dan restore
-terverifikasi sebelum go-live.
+Status release candidate: **STATUS B — READY WITH OPERATIONAL PREREQUISITES**.
+Implementasi aplikasi selesai, tetapi ini bukan izin deployment production. Server
+masih wajib menyediakan HTTPS, ClamAV, queue worker, scheduler, mail, private storage
+terisolasi, enrollment 2FA, logging/monitoring, serta backup dan restore terverifikasi.
+Seluruh guard `php artisan jokiinlah:readiness` harus PASS sebelum go-live.
+
+## Stack
+
+- Laravel 12, PHP 8.2+, Fortify, Eloquent, database queue/cache/session;
+- Filament 5 dan Livewire 4 untuk panel operasional;
+- Blade, Alpine.js, Tailwind CSS 4, dan Vite 6;
+- MariaDB 10.4+ atau MySQL kompatibel;
+- ClamAV TCP daemon untuk malware scanning production.
+
+Role aplikasi adalah `customer`, `staff`, dan `admin`. Customer hanya mengakses
+resource miliknya; staff hanya assigned project; admin memperoleh operasi global
+sesuai policy.
 
 ## Fitur utama
 
@@ -101,7 +116,10 @@ bersifat fail-closed: upload akan ditolak, bukan dianggap bersih.
 | Customer | `customer@example.com` | `Password123!` |
 
 Seeder demo menolak berjalan pada `APP_ENV=production`. Ganti atau hapus seluruh akun,
-password, kontak, testimonial, dan data demo sebelum production.
+password, kontak, testimonial, file fixture, dan data demo sebelum production. Seeder
+development idempotent dan membuat tiga fixture kecil pada private disk untuk
+memverifikasi alur dokumen serta reconciliation; jangan jalankan seeder demo pada
+database yang berisi data nyata.
 
 ## Test, build, dan audit
 
@@ -117,9 +135,10 @@ composer validate --strict
 composer audit
 ```
 
-Verifikasi akhir Tahap 6: **130 test lulus dengan 789 assertion**. Build Vite
-memproses 56 modul; Composer audit dan npm audit bersih. Config, route, dan view
-cache berhasil dibuat lalu dibersihkan kembali untuk development.
+Verifikasi akhir Tahap 7: **133 test lulus dengan 799 assertion** pada SQLite dan
+MariaDB 10.4.32. Build Vite memproses 56 modul; Composer audit dan npm audit bersih.
+Config, route, dan view cache berhasil dibuat lalu dibersihkan kembali untuk
+development.
 
 Perintah hardening dan pemeriksaan production:
 
@@ -134,6 +153,22 @@ php artisan jokiinlah:readiness
 `jokiinlah:readiness` harus lulus pada server production sebelum go-live. Perintah
 tersebut memeriksa konfigurasi minimum, bukan menggantikan uji koneksi scanner,
 worker, cron, filesystem, HTTPS, ataupun simulasi restore.
+
+Jalankan queue worker lokal:
+
+```powershell
+php artisan queue:work --queue=default --sleep=3 --tries=3 --timeout=90
+```
+
+Jalankan scheduler lokal pada terminal terpisah:
+
+```powershell
+php artisan schedule:work
+```
+
+Production wajib memakai process manager untuk worker dan cron `schedule:run` setiap
+menit. Tiga task maintenance terdaftar: retention harian, purge harian, dan file
+reconciliation mingguan.
 
 ## Visual QA
 
@@ -181,6 +216,10 @@ Hasil Tahap 6 memeriksa 15 state pada keenam viewport yang sama, tanpa overflow,
 console error, network error, atau asset error. Bukti berada di
 `docs/screenshots/tahap-6/visual-qa-report.json`.
 
+Audit Tahap 7 mengulang 21 state publik, 27 state Customer Portal, dan 15 state
+security/2FA. Responsive QA mencakup `360x800`, `390x844`, `768x1024`,
+`1024x768`, `1280x720`, `1366x768`, `1440x900`, dan `1920x1080`.
+
 ## Keamanan dan integritas akademik
 
 - Consultation/project/revision attachment berada pada private local disk.
@@ -198,6 +237,25 @@ console error, network error, atau asset error. Bukti berada di
   bypass anti-plagiarisme, pelanggaran hak cipta, dan aktivitas ilegal.
 - CSP kompatibel Filament, header keamanan, session revocation, queue after-commit,
   scheduler, dan readiness guard telah diterapkan pada Tahap 6.
+- Halaman setup/recovery 2FA mengirim `Cache-Control: no-store, private`.
+
+## Deployment dan security disclosure
+
+Gunakan [Deployment Checklist](docs/DEPLOYMENT-CHECKLIST.md) dan
+[panduan deployment](docs/DEPLOYMENT.md). Ringkasan gate:
+
+1. test, lint, build, dependency audit, backup, dan restore drill harus lulus;
+2. environment production, HTTPS, secure cookie, private storage, mail, worker,
+   scheduler, ClamAV, logging, dan monitoring harus diverifikasi;
+3. jalankan migration non-destruktif, production cache, queue restart, dan readiness;
+4. lakukan smoke test auth, 2FA, portal, panel, upload/scan/download, queue, dan cron;
+5. rollback memakai release artifact serta backup terverifikasi, bukan force push
+   atau `git reset --hard`.
+
+Jangan membuka detail kerentanan atau data customer di issue publik. Laporkan masalah
+ke maintainer repository melalui kanal privat yang disepakati, sertakan langkah
+reproduksi minimal tanpa credential, token, private file, atau data pribadi. Segera
+rotasi secret bila diduga terekspos.
 
 ## Dokumentasi
 
@@ -208,4 +266,7 @@ console error, network error, atau asset error. Bukti berada di
 - [Penutupan Tahap 4](docs/TAHAP-4-CUSTOMER-PORTAL.md)
 - [Penutupan Tahap 5](docs/TAHAP-5-ADMIN-STAFF-PANEL.md)
 - [Hardening dan production readiness Tahap 6](docs/TAHAP-6-HARDENING-DAN-PRODUCTION-READINESS.md)
+- [Audit final dan release readiness Tahap 7](docs/TAHAP-7-AUDIT-FINAL-DAN-RELEASE-READINESS.md)
 - [Panduan deployment](docs/DEPLOYMENT.md)
+- [Deployment checklist](docs/DEPLOYMENT-CHECKLIST.md)
+- [Release notes v1.0.0-rc.1](docs/RELEASE-NOTES.md)

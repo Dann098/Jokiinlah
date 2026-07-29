@@ -6,7 +6,9 @@ use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 class AuthenticationTest extends TestCase
@@ -62,6 +64,48 @@ class AuthenticationTest extends TestCase
         $user = User::factory()->create();
         $this->post('/forgot-password', ['email' => $user->email])->assertSessionHas('status');
         Notification::assertSentTo($user, ResetPassword::class);
+    }
+
+    public function test_password_can_be_reset_with_the_issued_token(): void
+    {
+        Notification::fake();
+        $user = User::factory()->create();
+
+        $this->post('/forgot-password', ['email' => $user->email])->assertSessionHas('status');
+
+        $token = null;
+        Notification::assertSentTo(
+            $user,
+            ResetPassword::class,
+            function (ResetPassword $notification) use (&$token): bool {
+                $token = $notification->token;
+
+                return true;
+            },
+        );
+
+        $this->post('/reset-password', [
+            'token' => $token,
+            'email' => $user->email,
+            'password' => 'Jkl!T7_2026_Unik#Zebra9842',
+            'password_confirmation' => 'Jkl!T7_2026_Unik#Zebra9842',
+        ])->assertSessionHas('status');
+
+        $this->assertTrue(Hash::check('Jkl!T7_2026_Unik#Zebra9842', $user->fresh()->password));
+    }
+
+    public function test_signed_email_verification_link_verifies_the_customer(): void
+    {
+        $user = User::factory()->unverified()->create();
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinute(),
+            ['id' => $user->getKey(), 'hash' => sha1($user->email)],
+        );
+
+        $this->actingAs($user)->get($verificationUrl)->assertRedirect('/dashboard?verified=1');
+
+        $this->assertNotNull($user->fresh()->email_verified_at);
     }
 
     public function test_login_is_rate_limited(): void

@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Laravel\Fortify\Fortify;
 
 class TwoFactorSecurityController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request): Response
     {
         $user = $request->user();
         $setupKey = null;
@@ -25,6 +25,8 @@ class TwoFactorSecurityController extends Controller
             $user->forceFill(['two_factor_recovery_codes_viewed_at' => now()])->saveQuietly();
         }
 
-        return view('auth.two-factor-setup', compact('user', 'setupKey', 'qrCode', 'recoveryCodes'));
+        return response()
+            ->view('auth.two-factor-setup', compact('user', 'setupKey', 'qrCode', 'recoveryCodes'))
+            ->header('Cache-Control', 'no-store, private');
     }
 }

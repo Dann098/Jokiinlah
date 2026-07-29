@@ -120,6 +120,20 @@ class TwoFactorSecurityTest extends TestCase
             ->assertDontSee('do-not-expose');
     }
 
+    public function test_setup_page_prevents_sensitive_two_factor_data_from_being_cached(): void
+    {
+        $admin = User::factory()->admin()->withoutTwoFactor()->create();
+
+        $response = $this->actingAs($admin)
+            ->get(route('security.two-factor.setup'))
+            ->assertOk();
+
+        $this->assertStringContainsString(
+            'no-store',
+            (string) $response->headers->get('Cache-Control'),
+        );
+    }
+
     /**
      * @param  array<int, string>  $recoveryCodes
      */

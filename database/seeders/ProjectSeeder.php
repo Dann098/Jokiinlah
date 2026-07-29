@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Enums\AppointmentStatus;
 use App\Enums\ConsultationStatus;
+use App\Enums\MalwareScanStatus;
 use App\Enums\MilestoneStatus;
 use App\Enums\PaymentStatus;
 use App\Enums\ProjectStatus;
@@ -19,6 +20,8 @@ use App\Models\Revision;
 use App\Models\Service;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
+use RuntimeException;
 
 class ProjectSeeder extends Seeder
 {
@@ -122,13 +125,27 @@ class ProjectSeeder extends Seeder
 
         $primary = Project::query()->where('project_code', 'PRJ-20260722-0001')->firstOrFail();
         foreach ([1 => ['dokumen-kebutuhan.pdf', '11111111-1111-4111-8111-111111111111'], 2 => ['dokumen-kebutuhan-revisi.pdf', '22222222-2222-4222-8222-222222222222']] as $version => [$original, $stored]) {
+            $path = 'projects/aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa/'.$stored;
+            $contents = "Fixture demo Jokiinlah: {$original}\n";
+            if (! Storage::disk('local')->put($path, $contents)) {
+                throw new RuntimeException("Fixture demo gagal disimpan: {$path}");
+            }
+
             ProjectFile::withTrashed()->updateOrCreate(['project_id' => $primary->id, 'document_uuid' => 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', 'version' => $version], [
                 'uploaded_by' => $version === 1 ? $primary->customer_id : $primary->assigned_staff_id,
                 'category' => 'dokumen_awal', 'original_name' => $original, 'stored_name' => $stored,
-                'disk' => 'local', 'file_path' => 'private/projects/demo/'.$stored.'.pdf', 'file_type' => 'application/pdf',
-                'file_size' => 120000 + ($version * 1000), 'checksum' => hash('sha256', $stored),
-                'description' => 'Metadata file dummy. Berkas fisik tidak disertakan dalam repository.', 'retention_until' => now()->addDays(180),
+                'disk' => 'local', 'file_path' => $path, 'file_type' => 'application/pdf',
+                'file_size' => strlen($contents), 'checksum' => hash('sha256', $contents),
+                'scan_status' => MalwareScanStatus::Clean,
+                'scanned_at' => now(),
+                'description' => 'Fixture file demo untuk validasi alur dokumen.', 'retention_until' => now()->addDays(180),
             ]);
+        }
+
+        $supportingPath = 'projects/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/33333333-3333-4333-8333-333333333333';
+        $supportingContents = "Fixture demo Jokiinlah: dataset nama panjang\n";
+        if (! Storage::disk('local')->put($supportingPath, $supportingContents)) {
+            throw new RuntimeException("Fixture demo gagal disimpan: {$supportingPath}");
         }
 
         ProjectFile::withTrashed()->updateOrCreate([
@@ -141,11 +158,13 @@ class ProjectSeeder extends Seeder
             'original_name' => str_repeat('dataset-pendukung-validasi-layout-', 6).'akhir.xlsx',
             'stored_name' => '33333333-3333-4333-8333-333333333333',
             'disk' => 'local',
-            'file_path' => 'projects/33333333-3333-4333-8333-333333333333/33333333-3333-4333-8333-333333333333',
+            'file_path' => $supportingPath,
             'file_type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'file_size' => 245760,
-            'checksum' => hash('sha256', '33333333-3333-4333-8333-333333333333'),
-            'description' => 'Metadata file demo untuk pengujian nama panjang. Berkas fisik tidak disertakan.',
+            'file_size' => strlen($supportingContents),
+            'checksum' => hash('sha256', $supportingContents),
+            'scan_status' => MalwareScanStatus::Clean,
+            'scanned_at' => now(),
+            'description' => 'Fixture file demo untuk pengujian nama panjang.',
             'retention_until' => now()->addDays(180),
         ]);
 

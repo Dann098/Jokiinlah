@@ -6,8 +6,10 @@ use App\Models\ProjectFile;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Models\User;
+use App\Services\Reconciliation\FileReconciler;
 use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
 use Tests\TestCase;
 
@@ -17,6 +19,8 @@ class DatabaseSeederTest extends TestCase
 
     public function test_demo_seed_is_complete_and_idempotent(): void
     {
+        Storage::fake('local');
+
         $this->seed(DatabaseSeeder::class);
         $this->seed(DatabaseSeeder::class);
 
@@ -24,6 +28,9 @@ class DatabaseSeederTest extends TestCase
         $this->assertSame(8, User::query()->count());
         $this->assertSame(5, Testimonial::query()->where('is_demo', true)->count());
         $this->assertSame(2, ProjectFile::query()->where('document_uuid', 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa')->count());
+
+        $reconciliation = app(FileReconciler::class)->reconcile(100, true, false, false);
+        $this->assertSame(0, $reconciliation['mismatches'], implode(', ', $reconciliation['issues']));
     }
 
     public function test_demo_seeder_is_rejected_in_production(): void
