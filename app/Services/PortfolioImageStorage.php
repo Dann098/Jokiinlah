@@ -136,7 +136,7 @@ class PortfolioImageStorage
                 return null;
             }
 
-            return $disk->url($path);
+            return '/storage/'.$path;
         } catch (Throwable) {
             return null;
         }
