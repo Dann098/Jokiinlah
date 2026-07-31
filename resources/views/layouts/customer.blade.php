@@ -7,7 +7,8 @@
     <meta name='robots' content='noindex,nofollow'>
     <title>@yield('title', 'Portal Pelanggan') | Jokiinlah</title>
     <link rel='icon' type='image/png' href='{{ asset('images/favicon.png') }}'>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/customer.js'])
+    @livewireStyles
 </head>
 <body class='bg-cream text-charcoal antialiased'>
     <a href='#main-content' class='fixed left-3 top-3 z-[100] -translate-y-24 rounded-lg bg-white px-4 py-3 font-bold text-navy shadow-lg transition focus:translate-y-0'>Lewati ke konten utama</a>
@@ -22,6 +23,7 @@
             <nav class='flex-1 space-y-1 overflow-y-auto px-4 py-6'>
                 <x-customer.sidebar-link :href="route('customer.dashboard')" :active="request()->routeIs('customer.dashboard')" icon='home'>Ringkasan</x-customer.sidebar-link>
                 <x-customer.sidebar-link :href="route('customer.projects.index')" :active="request()->routeIs('customer.projects.*')" icon='folder'>Proyek Saya</x-customer.sidebar-link>
+                <x-customer.sidebar-link :href="route('customer.project-requests.index')" :active="request()->routeIs('customer.project-requests.*')" icon='folder'>Permintaan Proyek</x-customer.sidebar-link>
                 <x-customer.sidebar-link :href="route('customer.reminders.index')" :active="request()->routeIs('customer.reminders.*')" icon='bell'>Pengingat</x-customer.sidebar-link>
                 <x-customer.sidebar-link :href="route('customer.appointments.index')" :active="request()->routeIs('customer.appointments.*')" icon='calendar'>Jadwal</x-customer.sidebar-link>
                 <x-customer.sidebar-link :href="route('customer.profile.edit')" :active="request()->routeIs('customer.profile.*') || request()->routeIs('customer.password.*')" icon='user'>Profil</x-customer.sidebar-link>
@@ -87,6 +89,7 @@
                     <nav class='flex-1 space-y-1 overflow-y-auto p-4'>
                         <x-customer.sidebar-link :href="route('customer.dashboard')" :active="request()->routeIs('customer.dashboard')" icon='home'>Ringkasan</x-customer.sidebar-link>
                         <x-customer.sidebar-link :href="route('customer.projects.index')" :active="request()->routeIs('customer.projects.*')" icon='folder'>Proyek Saya</x-customer.sidebar-link>
+                        <x-customer.sidebar-link :href="route('customer.project-requests.index')" :active="request()->routeIs('customer.project-requests.*')" icon='folder'>Permintaan Proyek</x-customer.sidebar-link>
                         <x-customer.sidebar-link :href="route('customer.reminders.index')" :active="request()->routeIs('customer.reminders.*')" icon='bell'>Pengingat</x-customer.sidebar-link>
                         <x-customer.sidebar-link :href="route('customer.appointments.index')" :active="request()->routeIs('customer.appointments.*')" icon='calendar'>Jadwal</x-customer.sidebar-link>
                         <x-customer.sidebar-link :href="route('customer.profile.edit')" :active="request()->routeIs('customer.profile.*')" icon='user'>Profil</x-customer.sidebar-link>
@@ -107,5 +110,6 @@
             </footer>
         </div>
     </div>
+    @livewireScriptConfig
 </body>
 </html>

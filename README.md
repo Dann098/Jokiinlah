@@ -14,6 +14,7 @@ konten publik, Customer Portal, serta operasional admin dan staff.
 | Tahap 5 | Selesai dan terverifikasi | Panel Filament admin/staff, scoping operasional, test, dan visual QA |
 | Tahap 6 | Implementasi aplikasi selesai | 2FA, upload scanning, retention/purge, reconciliation, security header, dan readiness guard |
 | Tahap 7 | Audit final selesai | Full regression SQLite/MariaDB, browser QA, dokumentasi, dan release readiness |
+| Fitur kolaborasi | Selesai dan terverifikasi | Permintaan proyek customer, approval admin, chat proyek, unread, dan notifikasi |
 
 Status release candidate: **STATUS B — READY WITH OPERATIONAL PREREQUISITES**.
 Implementasi aplikasi selesai, tetapi ini bukan izin deployment production. Server
@@ -42,6 +43,8 @@ Scope active/published mencegah konten nonaktif, draft, atau future tampil ke pu
 Customer Portal berada di `/dashboard` dan menyediakan:
 
 - ringkasan serta daftar/detail proyek milik customer;
+- pengiriman dan riwayat permintaan proyek beserta tanggapan admin;
+- chat privat per proyek dengan unread indicator dan notifikasi;
 - status, progress, dan milestone read-only;
 - private file, download, upload, dan server-generated versioning;
 - pengajuan revisi dengan attachment privat;
@@ -55,6 +58,7 @@ Panel Filament berada di `/admin` dan menyediakan:
 - Customer, Staff, Consultation, Project, Service, Portfolio, Article, Testimonial, FAQ,
   Site Setting, dan Activity Log Resource;
 - relation manager milestone, private file/versioning, revision, reminder, dan appointment;
+- tindak lanjut permintaan proyek serta percakapan customer–assigned staff–admin;
 - status transition, progress, assignment, serta payment status manual admin-only;
 - global search, widget, notification, direct URL, dan child record yang mengikuti policy
   serta server-side query scope.
@@ -135,8 +139,9 @@ composer validate --strict
 composer audit
 ```
 
-Verifikasi akhir Tahap 7: **133 test lulus dengan 799 assertion** pada SQLite dan
-MariaDB 10.4.32. Build Vite memproses 56 modul; Composer audit dan npm audit bersih.
+Verifikasi regresi terbaru: **219 test lulus dengan 1.103 assertion** pada SQLite.
+Sebanyak 59 test fitur permintaan proyek dan chat (120 assertion) juga lulus pada
+MariaDB 10.4.32. Build Vite memproses 58 modul; Composer audit dan npm audit bersih.
 Config, route, dan view cache berhasil dibuat lalu dibersihkan kembali untuk
 development.
 

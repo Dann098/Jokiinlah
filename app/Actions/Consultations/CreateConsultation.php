@@ -4,6 +4,7 @@ namespace App\Actions\Consultations;
 
 use App\Enums\ConsultationStatus;
 use App\Models\Consultation;
+use App\Models\User;
 use App\Services\CodeGenerator;
 use App\Services\DateTimeService;
 use App\Services\PrivateConsultationAttachment;
@@ -20,11 +21,15 @@ class CreateConsultation
         private PrivateConsultationAttachment $attachments,
     ) {}
 
-    public function execute(array $data, ?UploadedFile $attachment = null): Consultation
-    {
+    public function execute(
+        array $data,
+        ?UploadedFile $attachment = null,
+        ?User $customer = null,
+        string $source = 'public_website',
+    ): Consultation {
         $fingerprint = hash('sha256', implode('|', [
             $data['email'], $data['phone'], $data['service_id'], mb_strtolower($data['project_title']),
-            hash('sha256', $data['description']), now()->format('Y-m-d-H'),
+            hash('sha256', $data['description']), $source, $customer?->id ?? 'guest', now()->format('Y-m-d-H'),
         ]));
 
         if ($existing = Consultation::query()->where('submission_fingerprint', $fingerprint)->first()) {
@@ -34,8 +39,9 @@ class CreateConsultation
         $fileMetadata = $attachment ? $this->attachments->store($attachment) : [];
 
         try {
-            return DB::transaction(function () use ($data, $fileMetadata, $fingerprint): Consultation {
+            return DB::transaction(function () use ($data, $fileMetadata, $fingerprint, $customer, $source): Consultation {
                 return Consultation::query()->forceCreate(array_merge([
+                    'user_id' => $customer?->id,
                     'request_code' => $this->nextAvailableRequestCode(),
                     'submission_fingerprint' => $fingerprint,
                     'name' => $data['name'],
@@ -52,7 +58,7 @@ class CreateConsultation
                     'academic_integrity_accepted_at' => now(),
                     'privacy_policy_version' => config('jokiinlah.privacy_policy_version'),
                     'terms_version' => config('jokiinlah.terms_version'),
-                    'source' => 'public_website',
+                    'source' => $source,
                     'retention_until' => now()->addDays((int) config('jokiinlah.default_retention_days')),
                 ], $fileMetadata));
             }, 3);

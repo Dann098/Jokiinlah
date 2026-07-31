@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Projects\Pages;
 
 use App\Actions\Projects\AssignProjectStaff;
+use App\Actions\Projects\MarkProjectChatRead;
 use App\Actions\Projects\UpdatePaymentStatus;
 use App\Actions\Projects\UpdateProjectProgress;
 use App\Actions\Projects\UpdateProjectStatus;
@@ -21,6 +22,15 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewProject extends ViewRecord
 {
     protected static string $resource = ProjectResource::class;
+
+    public function mount(int|string $record): void
+    {
+        parent::mount($record);
+
+        if (auth()->user()?->can('viewChat', $this->record)) {
+            app(MarkProjectChatRead::class)->execute($this->record, auth()->user());
+        }
+    }
 
     protected function getHeaderActions(): array
     {

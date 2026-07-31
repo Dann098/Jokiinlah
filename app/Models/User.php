@@ -88,6 +88,16 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         return $this->hasMany(ActivityLog::class);
     }
 
+    public function sentProjectMessages(): HasMany
+    {
+        return $this->hasMany(ProjectMessage::class, 'sender_id');
+    }
+
+    public function projectChatParticipations(): HasMany
+    {
+        return $this->hasMany(ProjectChatParticipant::class);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);

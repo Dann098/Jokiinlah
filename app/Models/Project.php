@@ -79,6 +79,28 @@ class Project extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function messages(): HasMany
+    {
+        return $this->hasMany(ProjectMessage::class);
+    }
+
+    public function chatParticipants(): HasMany
+    {
+        return $this->hasMany(ProjectChatParticipant::class);
+    }
+
+    public function unreadMessagesFor(User $user): int
+    {
+        $participant = $this->chatParticipants()
+            ->where('user_id', $user->id)
+            ->first(['last_read_message_id']);
+
+        return $this->messages()
+            ->where('sender_id', '!=', $user->id)
+            ->when($participant?->last_read_message_id, fn (Builder $query) => $query->where('id', '>', $participant->last_read_message_id))
+            ->count();
+    }
+
     public function scopeOwnedBy(Builder $query, User $user): Builder
     {
         return $query->where('customer_id', $user->id);

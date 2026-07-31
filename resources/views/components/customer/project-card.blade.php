@@ -2,7 +2,11 @@
 <article {{ $attributes->merge(['class' => 'surface-card flex h-full min-w-0 flex-col p-5 hover-lift']) }}>
     <div class='flex flex-wrap items-start justify-between gap-3'>
         <p class='text-xs font-bold uppercase tracking-[0.14em] text-rose'>{{ $project->project_code }}</p>
-        <x-customer.status-badge :status='$project->status' />
+        <div class='flex flex-wrap items-center gap-2'>
+            @php($unreadChat = $project->unreadMessagesFor(auth()->user()))
+            @if($unreadChat > 0)<span class='rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-950'>{{ $unreadChat }} pesan baru</span>@endif
+            <x-customer.status-badge :status='$project->status' />
+        </div>
     </div>
     <h2 class='safe-content mt-4 text-xl font-bold text-navy'>{{ $project->title }}</h2>
     <p class='mt-2 text-sm text-muted'>{{ $project->service?->name }}</p>

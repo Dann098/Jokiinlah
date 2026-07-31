@@ -16,6 +16,10 @@ class ConsultationInfolist
                 Section::make('Pengajuan')->schema([
                     TextEntry::make('request_code')->label('Kode'),
                     TextEntry::make('status')->label('Status')->badge(),
+                    TextEntry::make('source')
+                        ->label('Sumber')
+                        ->badge()
+                        ->formatStateUsing(fn (?string $state): string => $state === 'customer_portal' ? 'Portal Customer' : 'Website Publik'),
                     TextEntry::make('name')->label('Nama'),
                     TextEntry::make('email')->label('Email'),
                     TextEntry::make('phone')->label('WhatsApp'),
@@ -49,6 +53,8 @@ class ConsultationInfolist
                     TextEntry::make('user.name')->label('Customer terhubung')->placeholder('Belum terhubung'),
                     TextEntry::make('project.project_code')->label('Proyek hasil konversi')->placeholder('Belum dikonversi'),
                     TextEntry::make('admin_note')->label('Catatan admin')->placeholder('—')->columnSpanFull(),
+                    TextEntry::make('customer_response')->label('Tanggapan customer-facing')->placeholder('—')->columnSpanFull(),
+                    TextEntry::make('rejection_reason')->label('Alasan penolakan')->placeholder('—')->columnSpanFull(),
                     TextEntry::make('created_at')
                         ->label('Diterima')
                         ->dateTime('d M Y H:i', timezone: config('jokiinlah.display_timezone')),

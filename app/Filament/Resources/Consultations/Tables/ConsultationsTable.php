@@ -38,6 +38,10 @@ class ConsultationsTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge(),
+                TextColumn::make('source')
+                    ->label('Sumber')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): string => $state === 'customer_portal' ? 'Portal Customer' : 'Website Publik'),
                 TextColumn::make('deadline')
                     ->label('Deadline')
                     ->dateTime('d M Y', timezone: config('jokiinlah.display_timezone'))

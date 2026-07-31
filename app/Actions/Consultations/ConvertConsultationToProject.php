@@ -10,13 +10,18 @@ use App\Models\Project;
 use App\Models\User;
 use App\Services\ActivityLogger;
 use App\Services\CodeGenerator;
+use App\Services\ProjectRequestNotifier;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class ConvertConsultationToProject
 {
-    public function __construct(private CodeGenerator $codes, private ActivityLogger $logger) {}
+    public function __construct(
+        private CodeGenerator $codes,
+        private ActivityLogger $logger,
+        private ProjectRequestNotifier $notifier,
+    ) {}
 
     public function execute(Consultation $consultation, User $actor, array $data = []): Project
     {
@@ -41,7 +46,7 @@ class ConvertConsultationToProject
             throw ValidationException::withMessages(['assigned_staff_id' => 'Staff harus aktif dan memiliki role staff.']);
         }
 
-        return DB::transaction(function () use ($consultation, $actor, $data, $staff): Project {
+        $project = DB::transaction(function () use ($consultation, $actor, $data, $staff): Project {
             $project = Project::query()->forceCreate([
                 'consultation_id' => $consultation->id,
                 'customer_id' => $consultation->user_id,
@@ -62,5 +67,12 @@ class ConvertConsultationToProject
 
             return $project;
         });
+
+        if ($consultation->source === 'customer_portal') {
+            $consultation->refresh()->loadMissing('user');
+            $this->notifier->notifyCustomer($consultation);
+        }
+
+        return $project;
     }
 }

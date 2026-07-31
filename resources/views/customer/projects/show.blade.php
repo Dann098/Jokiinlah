@@ -111,4 +111,6 @@
         </div>
     </section>
 </div>
+
+<livewire:project-chat :project='$project' />
 @endsection

@@ -22,6 +22,7 @@ class Consultation extends Model
         return [
             'status' => ConsultationStatus::class, 'deadline' => 'immutable_datetime', 'privacy_accepted_at' => 'immutable_datetime',
             'academic_integrity_accepted_at' => 'immutable_datetime',
+            'responded_at' => 'immutable_datetime',
             'archived_at' => 'immutable_datetime', 'retention_until' => 'immutable_datetime', 'budget' => 'decimal:2',
             'attachment_scan_status' => MalwareScanStatus::class,
             'attachment_scanned_at' => 'immutable_datetime',
@@ -45,5 +46,27 @@ class Consultation extends Model
     public function project(): HasOne
     {
         return $this->hasOne(Project::class);
+    }
+
+    public function customerStatusLabel(): string
+    {
+        return match ($this->status) {
+            ConsultationStatus::New => 'Menunggu Review',
+            ConsultationStatus::Contacted => 'Perlu Info Tambahan',
+            ConsultationStatus::Reviewed => 'Disetujui',
+            ConsultationStatus::Converted => 'Menjadi Proyek',
+            ConsultationStatus::Cancelled => 'Ditolak',
+            ConsultationStatus::Closed => 'Ditutup',
+        };
+    }
+
+    public function customerStatusColor(): string
+    {
+        return match ($this->status) {
+            ConsultationStatus::Reviewed, ConsultationStatus::Converted => 'success',
+            ConsultationStatus::Cancelled => 'danger',
+            ConsultationStatus::Contacted => 'warning',
+            default => 'info',
+        };
     }
 }

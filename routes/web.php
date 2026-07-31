@@ -8,6 +8,7 @@ use App\Http\Controllers\Customer\ProjectController;
 use App\Http\Controllers\Customer\ProjectFileController;
 use App\Http\Controllers\Customer\ProjectFileDownloadController as CustomerProjectFileDownloadController;
 use App\Http\Controllers\Customer\ProjectFileVersionController as CustomerProjectFileVersionController;
+use App\Http\Controllers\Customer\ProjectRequestController;
 use App\Http\Controllers\Customer\ReminderController;
 use App\Http\Controllers\Customer\RevisionController;
 use App\Http\Controllers\ProjectFileDownloadController;
@@ -54,6 +55,21 @@ Route::middleware(['auth', 'active', 'verified'])->group(function (): void {
 
     Route::post('/project-files/{projectFile}/versions', [ProjectFileVersionController::class, 'store'])->middleware('throttle:10,1')->name('project-files.versions.store');
     Route::get('/project-files/{projectFile}/download', ProjectFileDownloadController::class)->middleware('throttle:30,1')->name('project-files.download');
+
+    Route::prefix('permintaan-proyek')
+        ->name('customer.project-requests.')
+        ->middleware('role:customer')
+        ->group(function (): void {
+            Route::get('/', [ProjectRequestController::class, 'index'])->name('index');
+            Route::get('/buat', [ProjectRequestController::class, 'create'])->name('create');
+            Route::post('/', [ProjectRequestController::class, 'store'])
+                ->middleware('throttle:customer-mutations')
+                ->name('store');
+            Route::get('/{consultation}', [ProjectRequestController::class, 'show'])->name('show');
+            Route::patch('/{consultation}', [ProjectRequestController::class, 'update'])
+                ->middleware('throttle:customer-mutations')
+                ->name('update');
+        });
 
     Route::prefix('dashboard')
         ->name('customer.')

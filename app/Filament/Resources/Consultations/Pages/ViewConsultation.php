@@ -2,8 +2,11 @@
 
 namespace App\Filament\Resources\Consultations\Pages;
 
+use App\Actions\Consultations\ApproveCustomerProjectRequest;
 use App\Actions\Consultations\ConvertConsultationToProject;
 use App\Actions\Consultations\LinkConsultationToCustomer;
+use App\Actions\Consultations\RejectCustomerProjectRequest;
+use App\Actions\Consultations\RequestCustomerProjectInformation;
 use App\Enums\ConsultationStatus;
 use App\Enums\UserRole;
 use App\Filament\Resources\Consultations\ConsultationResource;
@@ -13,6 +16,7 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -49,6 +53,72 @@ class ViewConsultation extends ViewRecord
                     auth()->user(),
                 ))
                 ->visible(fn (): bool => $this->record->user_id === null),
+            Action::make('requestInformation')
+                ->label('Minta info tambahan')
+                ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                ->color('warning')
+                ->schema([
+                    Textarea::make('customer_response')
+                        ->label('Informasi yang perlu dilengkapi')
+                        ->required()
+                        ->minLength(10)
+                        ->maxLength(3000),
+                ])
+                ->action(function (array $data): void {
+                    app(RequestCustomerProjectInformation::class)->execute(
+                        $this->record,
+                        auth()->user(),
+                        $data['customer_response'],
+                    );
+                    $this->refreshFormData(['status', 'customer_response', 'responded_at']);
+                })
+                ->visible(fn (): bool => $this->record->source === 'customer_portal'
+                    && in_array($this->record->status, [ConsultationStatus::New, ConsultationStatus::Contacted], true)),
+            Action::make('approveRequest')
+                ->label('Setujui')
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->schema([
+                    Textarea::make('customer_response')
+                        ->label('Tanggapan untuk customer')
+                        ->maxLength(3000),
+                ])
+                ->action(function (array $data): void {
+                    app(ApproveCustomerProjectRequest::class)->execute(
+                        $this->record,
+                        auth()->user(),
+                        $data['customer_response'] ?? null,
+                    );
+                    $this->refreshFormData(['status', 'customer_response', 'responded_at']);
+                })
+                ->visible(fn (): bool => $this->record->source === 'customer_portal'
+                    && in_array($this->record->status, [ConsultationStatus::New, ConsultationStatus::Contacted], true)),
+            Action::make('rejectRequest')
+                ->label('Tolak')
+                ->icon('heroicon-o-x-circle')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->schema([
+                    Textarea::make('rejection_reason')
+                        ->label('Alasan penolakan')
+                        ->required()
+                        ->minLength(10)
+                        ->maxLength(3000),
+                ])
+                ->action(function (array $data): void {
+                    app(RejectCustomerProjectRequest::class)->execute(
+                        $this->record,
+                        auth()->user(),
+                        $data['rejection_reason'],
+                    );
+                    $this->refreshFormData(['status', 'rejection_reason', 'responded_at']);
+                })
+                ->visible(fn (): bool => $this->record->source === 'customer_portal'
+                    && in_array($this->record->status, [
+                        ConsultationStatus::New,
+                        ConsultationStatus::Contacted,
+                        ConsultationStatus::Reviewed,
+                    ], true)),
             Action::make('convert')
                 ->label('Konversi ke proyek')
                 ->color('success')

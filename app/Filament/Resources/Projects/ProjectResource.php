@@ -8,6 +8,7 @@ use App\Filament\Resources\Projects\Pages\ListProjects;
 use App\Filament\Resources\Projects\Pages\ViewProject;
 use App\Filament\Resources\Projects\RelationManagers\AppointmentsRelationManager;
 use App\Filament\Resources\Projects\RelationManagers\FilesRelationManager;
+use App\Filament\Resources\Projects\RelationManagers\MessagesRelationManager;
 use App\Filament\Resources\Projects\RelationManagers\MilestonesRelationManager;
 use App\Filament\Resources\Projects\RelationManagers\RemindersRelationManager;
 use App\Filament\Resources\Projects\RelationManagers\RevisionsRelationManager;
@@ -63,6 +64,7 @@ class ProjectResource extends Resource
             RevisionsRelationManager::class,
             RemindersRelationManager::class,
             AppointmentsRelationManager::class,
+            MessagesRelationManager::class,
         ];
     }
 

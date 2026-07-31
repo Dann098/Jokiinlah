@@ -28,6 +28,12 @@ class ProjectsTable
                     ->placeholder('Belum ditugaskan')
                     ->visible(fn (): bool => (bool) auth()->user()?->isAdmin()),
                 TextColumn::make('status')->label('Status')->badge(),
+                TextColumn::make('unread_chat')
+                    ->label('Chat belum dibaca')
+                    ->state(fn ($record): int => $record->unreadMessagesFor(auth()->user()))
+                    ->badge()
+                    ->formatStateUsing(fn (int $state): string => $state > 0 ? $state.' baru' : 'Sudah dibaca')
+                    ->color(fn (int $state): string => $state > 0 ? 'warning' : 'gray'),
                 TextColumn::make('progress')->label('Progress')->suffix('%')->sortable(),
                 TextColumn::make('deadline')
                     ->label('Deadline')
