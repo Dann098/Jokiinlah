@@ -202,7 +202,7 @@ class PortfolioImageManagementTest extends TestCase
         $this->withHeader('Host', '127.0.0.1:8000')
             ->get('/portofolio')
             ->assertOk()
-            ->assertSee('http://127.0.0.1:8000/storage/portfolios/thumbnails/card.jpg', false)
+            ->assertSee("src='/storage/portfolios/thumbnails/card.jpg'", false)
             ->assertDontSee('http://localhost:8000/storage/portfolios/thumbnails/card.jpg', false);
     }
 
