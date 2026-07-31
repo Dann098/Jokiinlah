@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Portfolios\Tables;
 
+use App\Models\Portfolio;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -21,8 +23,14 @@ class PortfoliosTable
                     ->searchable(),
                 TextColumn::make('category')
                     ->searchable(),
-                TextColumn::make('thumbnail')
-                    ->searchable(),
+                ImageColumn::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->state(fn (Portfolio $record): string => $record->thumbnailUrl())
+                    ->disk('public')
+                    ->visibility('public')
+                    ->square()
+                    ->height(48)
+                    ->alt(fn (Portfolio $record): string => "Thumbnail {$record->title}"),
                 IconColumn::make('is_published')
                     ->boolean(),
                 IconColumn::make('is_demo')->label('Demo')->boolean(),

@@ -14,6 +14,7 @@ use App\Models\Reminder;
 use App\Models\Service;
 use App\Models\Testimonial;
 use App\Observers\OperationalActivityObserver;
+use App\Observers\PortfolioImageObserver;
 use App\Services\Malware\ClamAvMalwareScanner;
 use App\Services\Malware\FakeMalwareScanner;
 use App\Services\Malware\UnavailableMalwareScanner;
@@ -80,6 +81,8 @@ class AppServiceProvider extends ServiceProvider
         ] as $model) {
             $model::observe(OperationalActivityObserver::class);
         }
+
+        Portfolio::observe(PortfolioImageObserver::class);
 
         Date::useClass(CarbonImmutable::class);
         Password::defaults(fn (): Password => Password::min(12)->letters()->mixedCase()->numbers()->symbols()->uncompromised());

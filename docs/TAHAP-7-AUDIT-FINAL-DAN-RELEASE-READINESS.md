@@ -397,3 +397,46 @@ Tahap pengembangan fitur yang didefinisikan pada Tahap 1–6 dinyatakan ditutup.
 Pekerjaan berikutnya adalah provisioning, staging verification, restore drill,
 operational acceptance, dan deployment terkontrol; bukan penambahan fitur bisnis
 tanpa scope baru.
+
+## 40. Addendum upload gambar portofolio
+
+Pengelolaan gambar pada resource Portfolio telah dipindahkan dari input path manual
+ke `FileUpload` Filament. Thumbnail disimpan pada
+`public:portfolios/thumbnails`, galeri pada `public:portfolios/gallery`, dan database
+tetap menyimpan relative path. Format yang diterima dibatasi ke JPG, PNG, dan WebP
+dengan ukuran maksimum 4 MB per berkas; nama fisik selalu UUID.
+
+Resolver terpusat mempertahankan kompatibilitas untuk path public lama
+`images/portfolios/...` dan prefix `storage/portfolios/...`, menolak path traversal,
+URL eksternal, MIME/ekstensi berbahaya, serta memberikan fallback aman untuk file
+yang hilang. Observer cleanup berjalan setelah commit, mempertahankan file yang
+masih direferensikan record atau field lain, dan tidak menghapus legacy asset.
+Tidak ada migration baru dan alur Article/private project storage tidak diubah.
+
+Verifikasi addendum:
+
+- Full suite: **149 test, 920 assertion, seluruhnya PASS**.
+- Vite 6.4.3: 56 modul, build production PASS.
+- `composer validate --strict`, `composer audit`, dan `npm audit`: PASS, 0 advisory.
+- Cache lifecycle (`config`, `route`, `view`, lalu `optimize:clear`): PASS.
+- `route:list`: 119 route berhasil dimuat.
+- Browser QA create/edit/list/detail/fallback: upload tiga gambar, remove menjadi
+  dua, replace thumbnail, preview storage, serta fallback seluruhnya PASS.
+- Viewport 360x800, 390x844, 768x1024, 1366x768, dan 1440x900: tidak ada
+  horizontal overflow, broken image, console error, atau response gagal.
+- Kontrol drag-and-drop FilePond tampil; persistensi urutan galeri dan batas delapan
+  gambar dibuktikan oleh integration test. Gesture drag sintetis headless tidak
+  dipakai sebagai satu-satunya bukti karena tidak stabil.
+
+File utama addendum:
+
+- `app/Services/PortfolioImageStorage.php`
+- `app/Observers/PortfolioImageObserver.php`
+- `app/Models/Portfolio.php`
+- `app/Filament/Resources/Portfolios/Schemas/PortfolioForm.php`
+- `app/Filament/Resources/Portfolios/Schemas/PortfolioInfolist.php`
+- `app/Filament/Resources/Portfolios/Tables/PortfoliosTable.php`
+- `resources/views/components/portfolio-card.blade.php`
+- `resources/views/public/portfolios/show.blade.php`
+- `tests/Feature/PortfolioImageManagementTest.php`
+- `tests/Feature/PortfolioImageCleanupTest.php`

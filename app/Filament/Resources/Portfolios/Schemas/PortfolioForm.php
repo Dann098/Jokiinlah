@@ -2,11 +2,15 @@
 
 namespace App\Filament\Resources\Portfolios\Schemas;
 
+use App\Services\PortfolioImageStorage;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class PortfolioForm
 {
@@ -35,16 +39,62 @@ class PortfolioForm
                 TagsInput::make('technologies')
                     ->label('Teknologi')
                     ->columnSpanFull(),
-                TextInput::make('thumbnail')
-                    ->label('Path thumbnail publik')->maxLength(255)->notRegex('/\.\./')->regex('/^(images|storage)\/[A-Za-z0-9_\/.\-]+$/'),
-                TagsInput::make('gallery')
-                    ->label('Path galeri publik')
-                    ->nestedRecursiveRules(['max:255', 'not_regex:/\.\./', 'regex:/^(images|storage)\/[A-Za-z0-9_\/.\-]+$/'])
+                self::imageUpload('thumbnail', 'Thumbnail portofolio', 'portfolios/thumbnails')
+                    ->imagePreviewHeight('180')
+                    ->itemPanelAspectRatio('16:9')
+                    ->helperText('Gunakan gambar landscape dengan rasio 16:9. Format JPG, PNG, atau WebP, maksimal 4 MB.'),
+                self::imageUpload('gallery', 'Galeri portofolio', 'portfolios/gallery')
+                    ->multiple()
+                    ->maxFiles(8)
+                    ->reorderable()
+                    ->appendFiles()
+                    ->imagePreviewHeight('140')
+                    ->helperText('Unggah maksimal 8 gambar. Urutan gambar dapat diubah dengan drag and drop.')
                     ->columnSpanFull(),
                 Toggle::make('is_published')
                     ->label('Terbit')->default(false),
                 Toggle::make('is_demo')
                     ->label('Data demo')->default(true)->required(),
             ]);
+    }
+
+    private static function imageUpload(string $name, string $label, string $directory): FileUpload
+    {
+        return FileUpload::make($name)
+            ->label($label)
+            ->disk('public')
+            ->directory($directory)
+            ->visibility('public')
+            ->image()
+            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+            ->rules(['image', 'extensions:jpg,jpeg,png,webp'])
+            ->maxSize(4096)
+            ->previewable()
+            ->openable()
+            ->downloadable()
+            ->fetchFileInformation(false)
+            ->preventFilePathTampering()
+            ->getUploadedFileNameForStorageUsing(
+                fn (TemporaryUploadedFile $file): string => Str::uuid().'.'.self::extensionForMime($file->getMimeType()),
+            )
+            ->getUploadedFileUsing(
+                fn (string $file): ?array => app(PortfolioImageStorage::class)->uploadMetadata($file),
+            )
+            ->getOpenableFileUrlUsing(
+                fn (string $file): ?string => app(PortfolioImageStorage::class)->url($file),
+            )
+            ->getDownloadableFileUrlUsing(
+                fn (string $file): ?string => app(PortfolioImageStorage::class)->url($file),
+            );
+    }
+
+    private static function extensionForMime(string $mime): string
+    {
+        return match ($mime) {
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            default => throw new \RuntimeException('Unsupported portfolio image type.'),
+        };
     }
 }

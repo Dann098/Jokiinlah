@@ -2,7 +2,8 @@
 @section('title', $portfolio->title.' | Portofolio Jokiinlah')
 @section('description', \Illuminate\Support\Str::limit($portfolio->description, 155))
 @section('content')
-@php($portfolioImage = $portfolio->thumbnail && file_exists(public_path($portfolio->thumbnail)) ? asset($portfolio->thumbnail) : asset('images/logo.webp'))
+@php($portfolioImage = $portfolio->thumbnailUrl())
+@php($galleryUrls = $portfolio->galleryUrls())
 <section class='bg-navy py-16 text-white'>
     <div class='container-public'>
         <x-breadcrumb :items="['Portofolio' => route('portfolios.index'), $portfolio->title => null]" />
@@ -13,7 +14,7 @@
 </section>
 <section class='section-space'>
     <div class='container-public'>
-        <div class='hero-grid flex aspect-[16/7] min-h-64 items-center justify-center overflow-hidden rounded-[2rem] bg-navy-light'>
+        <div class='hero-grid flex min-h-44 w-full min-w-0 items-center justify-center overflow-hidden rounded-[2rem] bg-navy-light sm:aspect-[16/7] sm:min-h-64'>
             <img src='{{ $portfolioImage }}' alt='Visual studi kasus {{ $portfolio->title }}' width='1280' height='560' class='h-full w-full object-contain p-8'>
         </div>
         <div class='mt-10 grid gap-6 lg:grid-cols-3'>
@@ -21,14 +22,12 @@
                 <article class='surface-card p-7'><h2 class='text-2xl font-bold text-navy'>{{ $heading }}</h2><p class='mt-4 whitespace-pre-line text-sm leading-7 text-muted'>{{ $copy ?: 'Rincian studi kasus akan dilengkapi.' }}</p></article>
             @endforeach
         </div>
-        @if($portfolio->gallery)
+        @if($galleryUrls)
             <section class='mt-8'>
                 <h2 class='text-2xl font-bold text-navy'>Galeri</h2>
                 <div class='mt-4 grid gap-4 sm:grid-cols-2'>
-                    @foreach($portfolio->gallery as $image)
-                        @if(file_exists(public_path($image)))
-                            <img src='{{ asset(ltrim($image, '/')) }}' alt='Galeri {{ $portfolio->title }}' width='720' height='440' loading='lazy' class='aspect-[16/10] w-full rounded-2xl border border-navy/10 object-cover'>
-                        @endif
+                    @foreach($galleryUrls as $imageUrl)
+                        <img src='{{ $imageUrl }}' alt='Galeri {{ $portfolio->title }}' width='720' height='440' loading='lazy' class='aspect-[16/10] w-full rounded-2xl border border-navy/10 object-cover'>
                     @endforeach
                 </div>
             </section>
