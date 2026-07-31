@@ -206,6 +206,30 @@ class PortfolioImageManagementTest extends TestCase
             ->assertDontSee('http://localhost:8000/storage/portfolios/thumbnails/card.jpg', false);
     }
 
+    public function test_public_storage_images_preserve_the_configured_url_path(): void
+    {
+        Storage::disk('public')->put(
+            'portfolios/thumbnails/card.jpg',
+            UploadedFile::fake()->image('card.jpg')->getContent(),
+        );
+        $fakeRoot = Storage::disk('public')->path('');
+
+        config()->set([
+            'filesystems.disks.public.root' => $fakeRoot,
+            'filesystems.disks.public.url' => 'https://cdn.example.com/media',
+        ]);
+        Storage::forgetDisk('public');
+
+        Portfolio::factory()->create([
+            'thumbnail' => 'portfolios/thumbnails/card.jpg',
+        ]);
+
+        $this->get('/portofolio')
+            ->assertOk()
+            ->assertSee("src='/media/portfolios/thumbnails/card.jpg'", false)
+            ->assertDontSee('https://cdn.example.com/media', false);
+    }
+
     public function test_missing_or_unsafe_images_use_fallback_and_never_render_broken_paths(): void
     {
         Storage::disk('public')->put('portfolios/thumbnails/payload.php', '<?php echo "unsafe";');
