@@ -11,6 +11,6 @@ class PortfolioFactory extends Factory
     {
         $title = fake()->unique()->sentence(4);
 
-        return ['title' => $title, 'slug' => Str::slug($title).'-'.Str::lower(Str::random(4)), 'category' => 'web', 'description' => fake()->paragraph(), 'problem' => fake()->paragraph(), 'solution' => fake()->paragraph(), 'result' => fake()->paragraph(), 'technologies' => ['Laravel', 'Tailwind CSS'], 'gallery' => [], 'is_published' => true];
+        return ['title' => $title, 'slug' => Str::slug($title).'-'.Str::lower(Str::random(4)), 'category' => 'web', 'description' => fake()->paragraph(), 'problem' => fake()->paragraph(), 'solution' => fake()->paragraph(), 'result' => fake()->paragraph(), 'technologies' => ['Laravel', 'Tailwind CSS'], 'gallery' => [], 'repository_url' => null, 'is_published' => true];
     }
 }

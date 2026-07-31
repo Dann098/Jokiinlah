@@ -13,6 +13,17 @@ class SatisfactionSurveyPortfolioTest extends TestCase
 
     public function test_satisfaction_survey_portfolio_is_published_with_real_project_content(): void
     {
+        $customPortfolio = Portfolio::factory()->create([
+            'title' => 'Dashboard Penjualan Kustom',
+            'slug' => 'dashboard-monitoring-penjualan',
+            'description' => 'Konten yang sudah dikurasi.',
+            'technologies' => ['Python'],
+            'thumbnail' => 'images/portfolios/custom-thumbnail.png',
+            'gallery' => ['images/portfolios/custom-gallery.png'],
+            'repository_url' => 'https://github.com/Dann098/custom-dashboard',
+            'is_demo' => true,
+        ]);
+
         $this->seed(PortfolioSeeder::class);
 
         $portfolio = Portfolio::query()
@@ -40,13 +51,17 @@ class SatisfactionSurveyPortfolioTest extends TestCase
         $this->assertStringContainsString('Net Promoter Score', $portfolio->solution);
         $this->assertStringNotContainsString('%', $portfolio->result);
 
-        $otherPortfolio = Portfolio::query()
-            ->where('slug', 'dashboard-monitoring-penjualan')
-            ->sole();
-
-        $this->assertTrue($otherPortfolio->is_demo);
-        $this->assertSame(['Laravel', 'MySQL', 'Tailwind CSS'], $otherPortfolio->technologies);
-        $this->assertNull($otherPortfolio->repository_url);
+        $customPortfolio->refresh();
+        $this->assertSame('Dashboard Penjualan Kustom', $customPortfolio->title);
+        $this->assertSame('Konten yang sudah dikurasi.', $customPortfolio->description);
+        $this->assertSame(['Python'], $customPortfolio->technologies);
+        $this->assertSame('images/portfolios/custom-thumbnail.png', $customPortfolio->thumbnail);
+        $this->assertSame(['images/portfolios/custom-gallery.png'], $customPortfolio->gallery);
+        $this->assertSame(
+            'https://github.com/Dann098/custom-dashboard',
+            $customPortfolio->repository_url,
+        );
+        $this->assertTrue($customPortfolio->is_demo);
     }
 
     public function test_satisfaction_survey_assets_and_repository_link_are_publicly_available(): void
@@ -78,6 +93,18 @@ class SatisfactionSurveyPortfolioTest extends TestCase
         $this->get(route('portfolios.show', $portfolio))
             ->assertOk()
             ->assertDontSee('javascript:', false)
+            ->assertDontSee('Lihat Repository GitHub');
+    }
+
+    public function test_non_repository_github_url_is_never_rendered(): void
+    {
+        $portfolio = Portfolio::factory()->create([
+            'repository_url' => 'https://github.com/orgs/acme',
+        ]);
+
+        $this->get(route('portfolios.show', $portfolio))
+            ->assertOk()
+            ->assertDontSee('https://github.com/orgs/acme', false)
             ->assertDontSee('Lihat Repository GitHub');
     }
 }

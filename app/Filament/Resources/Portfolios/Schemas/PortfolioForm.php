@@ -13,6 +13,51 @@ class PortfolioForm
 {
     public static function configure(Schema $schema): Schema
     {
+        $reservedGithubRoutes = implode('|', [
+            'about',
+            'account',
+            'apps',
+            'business',
+            'codespaces',
+            'collections',
+            'contact',
+            'customer-stories',
+            'dashboard',
+            'edu',
+            'enterprise',
+            'events',
+            'explore',
+            'features',
+            'gist',
+            'git',
+            'github',
+            'home',
+            'issues',
+            'join',
+            'login',
+            'logout',
+            'marketplace',
+            'new',
+            'notifications',
+            'organizations',
+            'orgs',
+            'pricing',
+            'pulls',
+            'readme',
+            'repositories',
+            'search',
+            'security',
+            'settings',
+            'site',
+            'sponsors',
+            'stars',
+            'team',
+            'topics',
+            'trending',
+            'users',
+            'watching',
+        ]);
+
         return $schema
             ->components([
                 TextInput::make('title')
@@ -35,6 +80,13 @@ class PortfolioForm
                     ->columnSpanFull(),
                 TagsInput::make('technologies')
                     ->label('Teknologi')
+                    ->columnSpanFull(),
+                TextInput::make('repository_url')
+                    ->label('URL Repository GitHub')
+                    ->url()
+                    ->maxLength(2048)
+                    ->rule("regex:/\Ahttps:\/\/github\.com\/(?!(?:{$reservedGithubRoutes})(?:\/|$))[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+(?:\.git)?\/?\z/i")
+                    ->helperText('Gunakan URL HTTPS repository GitHub, misalnya https://github.com/akun/repository.')
                     ->columnSpanFull(),
                 PublicImageUpload::make('thumbnail', 'Thumbnail portofolio', 'portfolios/thumbnails')
                     ->imagePreviewHeight('180')

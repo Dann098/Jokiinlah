@@ -4,6 +4,7 @@
 @section('content')
 @php($portfolioImage = $portfolio->thumbnailUrl())
 @php($galleryUrls = $portfolio->galleryUrls())
+@php($repositoryUrl = $portfolio->repositoryUrl())
 <section class='bg-navy py-16 text-white'>
     <div class='container-public'>
         <x-breadcrumb :items="['Portofolio' => route('portfolios.index'), $portfolio->title => null]" />
@@ -39,6 +40,9 @@
             </div>
         @endif
         <div class='mt-10 flex flex-col gap-3 sm:flex-row'>
+            @if($repositoryUrl)
+                <x-secondary-button :href='$repositoryUrl' target='_blank' rel='noopener noreferrer'>Lihat Repository GitHub</x-secondary-button>
+            @endif
             <x-primary-button :href="route('contact.index')">Diskusikan Proyek Serupa</x-primary-button>
             <x-whatsapp-button :url='$whatsAppUrl' />
         </div>
