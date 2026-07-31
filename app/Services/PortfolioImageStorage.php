@@ -136,7 +136,11 @@ class PortfolioImageStorage
                 return null;
             }
 
-            return '/storage/'.$path;
+            $urlPath = parse_url($disk->url($path), PHP_URL_PATH);
+
+            return is_string($urlPath) && $urlPath !== ''
+                ? '/'.ltrim($urlPath, '/')
+                : null;
         } catch (Throwable) {
             return null;
         }
