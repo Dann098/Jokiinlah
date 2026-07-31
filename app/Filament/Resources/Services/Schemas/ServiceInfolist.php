@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Services\Schemas;
 
+use App\Models\Service;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
@@ -30,7 +31,10 @@ class ServiceInfolist
                 TextEntry::make('icon')
                     ->placeholder('-'),
                 ImageEntry::make('image')
-                    ->placeholder('-'),
+                    ->label('Gambar')
+                    ->state(fn (Service $record): ?string => $record->imageUrl())
+                    ->height(180)
+                    ->extraImgAttributes(['class' => 'rounded-xl object-cover']),
                 IconEntry::make('is_active')
                     ->boolean(),
                 TextEntry::make('sort_order')

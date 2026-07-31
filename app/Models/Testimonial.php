@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\PublicImageStorage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,5 +30,10 @@ class Testimonial extends Model
             throw new InvalidArgumentException('Rating harus bernilai 1 sampai 5.');
         }
         $this->attributes['rating'] = $value;
+    }
+
+    public function photoUrl(): ?string
+    {
+        return app(PublicImageStorage::class)->url($this->photo);
     }
 }

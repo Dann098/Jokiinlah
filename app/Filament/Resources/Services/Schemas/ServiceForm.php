@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Services\Schemas;
 
 use App\Enums\ServiceCategory;
+use App\Filament\Forms\PublicImageUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -37,12 +38,10 @@ class ServiceForm
                     ->columnSpanFull(),
                 TextInput::make('icon')
                     ->label('Nama ikon')->maxLength(100),
-                TextInput::make('image')
-                    ->label('Path gambar publik')
-                    ->helperText('Contoh: images/layanan.webp. Unggah aset melalui proses deployment, bukan panel.')
-                    ->maxLength(255)
-                    ->notRegex('/\.\./')
-                    ->regex('/^(images|storage)\/[A-Za-z0-9_\/.\-]+$/'),
+                PublicImageUpload::make('image', 'Gambar layanan', 'services/images')
+                    ->imagePreviewHeight('180')
+                    ->itemPanelAspectRatio('16:9')
+                    ->helperText('Gunakan gambar landscape. Format JPG, PNG, atau WebP, maksimal 4 MB.'),
                 Toggle::make('is_active')
                     ->label('Aktif')->default(true),
                 TextInput::make('sort_order')

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Testimonials\Schemas;
 
+use App\Models\Testimonial;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -19,8 +21,11 @@ class TestimonialInfolist
                     ->columnSpanFull(),
                 TextEntry::make('rating')
                     ->numeric(),
-                TextEntry::make('photo')
-                    ->placeholder('-'),
+                ImageEntry::make('photo')
+                    ->label('Foto')
+                    ->state(fn (Testimonial $record): ?string => $record->photoUrl())
+                    ->circular()
+                    ->height(160),
                 IconEntry::make('is_published')
                     ->boolean(),
                 IconEntry::make('is_demo')

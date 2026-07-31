@@ -411,7 +411,8 @@ Resolver terpusat mempertahankan kompatibilitas untuk path public lama
 URL eksternal, MIME/ekstensi berbahaya, serta memberikan fallback aman untuk file
 yang hilang. Observer cleanup berjalan setelah commit, mempertahankan file yang
 masih direferensikan record atau field lain, dan tidak menghapus legacy asset.
-Tidak ada migration baru dan alur Article/private project storage tidak diubah.
+Tidak ada migration baru dan private project storage tidak diubah. Pengelolaan
+gambar Article kemudian disatukan pada addendum berikutnya.
 
 Verifikasi addendum:
 
@@ -430,8 +431,8 @@ Verifikasi addendum:
 
 File utama addendum:
 
-- `app/Services/PortfolioImageStorage.php`
-- `app/Observers/PortfolioImageObserver.php`
+- `app/Services/PublicImageStorage.php`
+- `app/Observers/PublicImageObserver.php`
 - `app/Models/Portfolio.php`
 - `app/Filament/Resources/Portfolios/Schemas/PortfolioForm.php`
 - `app/Filament/Resources/Portfolios/Schemas/PortfolioInfolist.php`
@@ -440,3 +441,34 @@ File utama addendum:
 - `resources/views/public/portfolios/show.blade.php`
 - `tests/Feature/PortfolioImageManagementTest.php`
 - `tests/Feature/PortfolioImageCleanupTest.php`
+
+## 41. Addendum upload seluruh gambar konten publik
+
+Audit lanjutan menemukan tiga field path manual lain pada panel: thumbnail Artikel,
+gambar Layanan, dan foto Testimoni. Seluruhnya telah diganti dengan `FileUpload`
+yang memakai komponen bersama `PublicImageUpload`. Field `icon` pada Layanan tetap
+berupa teks karena nilainya adalah nama ikon UI, bukan path berkas. Upload dokumen
+proyek dan lampiran tetap memakai storage private yang sudah tersedia.
+
+Direktori managed:
+
+- Artikel: `public:articles/thumbnails`
+- Portfolio: `public:portfolios/thumbnails` dan `public:portfolios/gallery`
+- Layanan: `public:services/images`
+- Testimoni: `public:testimonials/photos`
+
+Semua resource memakai whitelist JPG/PNG/WebP, maksimum 4 MB, nama UUID, URL
+same-origin, preview admin, resolver legacy `images/...`, serta cleanup observer
+setelah commit. File tidak dihapus jika masih direferensikan field atau resource
+lain. Gambar yang tidak ada, berbahaya, atau berada di luar direktori managed tidak
+dirender ke halaman publik.
+
+Verifikasi addendum seluruh konten:
+
+- Full suite: **160 test, 983 assertion, seluruhnya PASS**.
+- Targeted image suite: **27 test, 184 assertion, seluruhnya PASS**.
+- Browser QA Artikel/Layanan/Testimoni: tiga upload mencapai status
+  `processing-complete`; tidak ada lagi label atau input path manual.
+- Viewport admin 360, 390, 768, 1366, dan 1440 px: tidak ada horizontal overflow.
+- Browser console dan network error: nihil.
+- Tidak ada migration baru.

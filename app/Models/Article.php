@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\ArticleCategory;
+use App\Services\PublicImageStorage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,5 +28,10 @@ class Article extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true)->whereNotNull('published_at')->where('published_at', '<=', now());
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        return app(PublicImageStorage::class)->url($this->thumbnail);
     }
 }

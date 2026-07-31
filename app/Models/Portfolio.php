@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Services\PortfolioImageStorage;
+use App\Services\PublicImageStorage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +30,7 @@ class Portfolio extends Model
 
     public function resolvedThumbnailUrl(): ?string
     {
-        return app(PortfolioImageStorage::class)->url($this->thumbnail);
+        return app(PublicImageStorage::class)->url($this->thumbnail);
     }
 
     /**
@@ -39,7 +39,7 @@ class Portfolio extends Model
     public function galleryUrls(): array
     {
         return array_values(array_filter(array_map(
-            fn (?string $path): ?string => app(PortfolioImageStorage::class)->url($path),
+            fn (?string $path): ?string => app(PublicImageStorage::class)->url($path),
             $this->gallery ?? [],
         )));
     }

@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\Articles\Schemas;
 
+use App\Models\Article;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Schema;
 
@@ -23,8 +25,11 @@ class ArticleInfolist
                     ->columnSpanFull(),
                 TextEntry::make('category')
                     ->badge(),
-                TextEntry::make('thumbnail')
-                    ->placeholder('-'),
+                ImageEntry::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->state(fn (Article $record): ?string => $record->thumbnailUrl())
+                    ->height(180)
+                    ->extraImgAttributes(['class' => 'rounded-xl object-cover']),
                 IconEntry::make('is_published')
                     ->boolean(),
                 TextEntry::make('published_at')

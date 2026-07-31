@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Articles\Tables;
 
+use App\Models\Article;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -24,8 +26,12 @@ class ArticlesTable
                 TextColumn::make('category')
                     ->badge()
                     ->searchable(),
-                TextColumn::make('thumbnail')
-                    ->searchable(),
+                ImageColumn::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->state(fn (Article $record): ?string => $record->thumbnailUrl())
+                    ->square()
+                    ->height(48)
+                    ->alt(fn (Article $record): string => "Thumbnail {$record->title}"),
                 IconColumn::make('is_published')
                     ->boolean(),
                 TextColumn::make('published_at')

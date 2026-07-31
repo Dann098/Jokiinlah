@@ -1,7 +1,10 @@
 @props(['article'])
+@php
+    $thumbnailUrl = $article->thumbnailUrl();
+@endphp
 <article class='surface-card hover-lift flex h-full flex-col overflow-hidden' data-reveal>
-    @if($article->thumbnail && file_exists(public_path($article->thumbnail)))
-        <div class='relative aspect-[16/9]'><img src='{{ asset($article->thumbnail) }}' alt='Ilustrasi {{ $article->title }}' width='720' height='405' loading='lazy' class='h-full w-full object-cover'><x-badge class='absolute bottom-5 left-5'>{{ $article->category->label() }}</x-badge></div>
+    @if($thumbnailUrl)
+        <div class='relative aspect-[16/9]'><img src='{{ $thumbnailUrl }}' alt='Ilustrasi {{ $article->title }}' width='720' height='405' loading='lazy' class='h-full w-full object-cover'><x-badge class='absolute bottom-5 left-5'>{{ $article->category->label() }}</x-badge></div>
     @else
         <div class='hero-grid flex aspect-[16/9] items-end bg-navy-light p-5'><x-badge>{{ $article->category->label() }}</x-badge></div>
     @endif

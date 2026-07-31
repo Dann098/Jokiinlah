@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Articles\Schemas;
 
 use App\Enums\ArticleCategory;
+use App\Filament\Forms\PublicImageUpload;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -29,8 +30,10 @@ class ArticleForm
                 Select::make('category')
                     ->options(ArticleCategory::class)
                     ->required(),
-                TextInput::make('thumbnail')
-                    ->label('Path thumbnail publik')->maxLength(255)->notRegex('/\.\./')->regex('/^(images|storage)\/[A-Za-z0-9_\/.\-]+$/'),
+                PublicImageUpload::make('thumbnail', 'Thumbnail artikel', 'articles/thumbnails')
+                    ->imagePreviewHeight('180')
+                    ->itemPanelAspectRatio('16:9')
+                    ->helperText('Gunakan gambar landscape. Format JPG, PNG, atau WebP, maksimal 4 MB.'),
                 Toggle::make('is_published')
                     ->label('Terbit')->default(false),
                 DateTimePicker::make('published_at')->label('Waktu terbit')->timezone(config('jokiinlah.display_timezone')),

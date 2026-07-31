@@ -2,18 +2,32 @@
 
 namespace App\Services;
 
+use App\Models\Article;
 use App\Models\Portfolio;
+use App\Models\Service;
+use App\Models\Testimonial;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Throwable;
 
-class PortfolioImageStorage
+class PublicImageStorage
 {
     private const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-    private const MANAGED_PATH_PATTERN = '#\Aportfolios/(?:thumbnails|gallery)/[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpe?g|png|webp)\z#Di';
+    private const MANAGED_PATH_PATTERN = '#\A(?:articles/thumbnails|portfolios/(?:thumbnails|gallery)|services/images|testimonials/photos)/[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpe?g|png|webp)\z#Di';
 
-    private const LEGACY_PATH_PATTERN = '#\Aimages/portfolios(?:/[A-Za-z0-9][A-Za-z0-9._-]*)*\.(?:jpe?g|png|webp)\z#Di';
+    private const LEGACY_PATH_PATTERN = '#\Aimages/(?:[A-Za-z0-9][A-Za-z0-9._-]*/)*[A-Za-z0-9][A-Za-z0-9._-]*\.(?:jpe?g|png|webp)\z#Di';
+
+    /**
+     * @var array<class-string<Model>, array<int, string>>
+     */
+    private const MODEL_IMAGE_ATTRIBUTES = [
+        Article::class => ['thumbnail'],
+        Portfolio::class => ['thumbnail', 'gallery'],
+        Service::class => ['image'],
+        Testimonial::class => ['photo'],
+    ];
 
     public function url(?string $path): ?string
     {
@@ -27,7 +41,7 @@ class PortfolioImageStorage
             return null;
         }
 
-        $basePath = realpath(public_path('images/portfolios'));
+        $basePath = realpath(public_path('images'));
         $filePath = realpath(public_path($legacyPath));
 
         if ($basePath === false
@@ -96,9 +110,37 @@ class PortfolioImageStorage
     }
 
     /**
+     * @return array<int, string>
+     */
+    public function imageAttributes(Model $model): array
+    {
+        return self::MODEL_IMAGE_ATTRIBUTES[$model::class] ?? [];
+    }
+
+    /**
+     * @return array<int, string|null>
+     */
+    public function pathsFor(Model $model): array
+    {
+        $paths = [];
+
+        foreach ($this->imageAttributes($model) as $attribute) {
+            $value = $model->getAttribute($attribute);
+
+            if (is_array($value)) {
+                $paths = [...$paths, ...array_values(array_filter($value, 'is_string'))];
+            } elseif (is_string($value)) {
+                $paths[] = $value;
+            }
+        }
+
+        return $paths;
+    }
+
+    /**
      * @param  array<int, string|null>  $paths
      */
-    public function deleteUnreferenced(array $paths, int $portfolioId): void
+    public function deleteUnreferenced(array $paths, Model $owner): void
     {
         $managedPaths = array_values(array_unique(array_filter(array_map(
             fn (?string $path): ?string => $this->managedPath($path),
@@ -106,7 +148,7 @@ class PortfolioImageStorage
         ))));
 
         foreach ($managedPaths as $managedPath) {
-            if ($this->isReferencedByAnotherPortfolio($managedPath, $portfolioId)) {
+            if ($this->isReferencedByAnotherRecord($managedPath, $owner)) {
                 continue;
             }
 
@@ -118,10 +160,10 @@ class PortfolioImageStorage
                 }
 
                 if (! $disk->delete($managedPath)) {
-                    $this->logCleanupWarning($portfolioId, $managedPath, 'delete_returned_false');
+                    $this->logCleanupWarning($owner, $managedPath, 'delete_returned_false');
                 }
             } catch (Throwable $exception) {
-                $this->logCleanupWarning($portfolioId, $managedPath, class_basename($exception));
+                $this->logCleanupWarning($owner, $managedPath, class_basename($exception));
             }
         }
     }
@@ -136,7 +178,8 @@ class PortfolioImageStorage
                 return null;
             }
 
-            $urlPath = parse_url($disk->url($path), PHP_URL_PATH);
+            $url = $disk->url($path);
+            $urlPath = parse_url($url, PHP_URL_PATH);
 
             return is_string($urlPath) && $urlPath !== ''
                 ? '/'.ltrim($urlPath, '/')
@@ -176,27 +219,32 @@ class PortfolioImageStorage
         return $path;
     }
 
-    private function isReferencedByAnotherPortfolio(string $managedPath, int $portfolioId): bool
+    private function isReferencedByAnotherRecord(string $managedPath, Model $owner): bool
     {
-        return Portfolio::query()
-            ->whereKeyNot($portfolioId)
-            ->get(['id', 'thumbnail', 'gallery'])
-            ->contains(function (Portfolio $portfolio) use ($managedPath): bool {
-                $paths = [
-                    $portfolio->thumbnail,
-                    ...($portfolio->gallery ?? []),
-                ];
+        foreach (self::MODEL_IMAGE_ATTRIBUTES as $modelClass => $attributes) {
+            $query = $modelClass::query();
 
-                return collect($paths)->contains(
+            if ($owner instanceof $modelClass) {
+                $query->whereKeyNot($owner->getKey());
+            }
+
+            if ($query->get(['id', ...$attributes])->contains(
+                fn (Model $record): bool => collect($this->pathsFor($record))->contains(
                     fn (?string $path): bool => $this->managedPath($path) === $managedPath,
-                );
-            });
+                ),
+            )) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    private function logCleanupWarning(int $portfolioId, string $managedPath, string $reason): void
+    private function logCleanupWarning(Model $owner, string $managedPath, string $reason): void
     {
-        Log::warning('Portfolio image cleanup failed.', [
-            'portfolio_id' => $portfolioId,
+        Log::warning('Public image cleanup failed.', [
+            'owner_type' => class_basename($owner),
+            'owner_id' => $owner->getKey(),
             'path_fingerprint' => hash('sha256', $managedPath),
             'reason' => $reason,
         ]);

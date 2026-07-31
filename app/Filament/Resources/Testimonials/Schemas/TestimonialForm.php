@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Testimonials\Schemas;
 
+use App\Filament\Forms\PublicImageUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -22,8 +23,10 @@ class TestimonialForm
                     ->columnSpanFull(),
                 TextInput::make('rating')
                     ->label('Rating')->required()->numeric()->integer()->minValue(1)->maxValue(5),
-                TextInput::make('photo')
-                    ->label('Path foto publik')->maxLength(255)->notRegex('/\.\./')->regex('/^(images|storage)\/[A-Za-z0-9_\/.\-]+$/'),
+                PublicImageUpload::make('photo', 'Foto pelanggan', 'testimonials/photos')
+                    ->imagePreviewHeight('160')
+                    ->itemPanelAspectRatio('1:1')
+                    ->helperText('Gunakan foto persegi. Format JPG, PNG, atau WebP, maksimal 4 MB.'),
                 Toggle::make('is_published')
                     ->label('Terbit')->default(false),
                 Toggle::make('is_demo')
