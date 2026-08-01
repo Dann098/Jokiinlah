@@ -7,14 +7,43 @@ use Illuminate\Database\Seeder;
 
 class PortfolioSeeder extends Seeder
 {
-    private const PUBLISHED_PORTFOLIO_SLUG = 'analisis-survei-kepuasan';
+    private const CURATED_PORTFOLIO_SLUGS = [
+        'analisis-survei-kepuasan',
+        'aplikasi-inventaris-mobile',
+    ];
 
     public function run(): void
     {
         $items = [
             ['title' => 'Dashboard Monitoring Penjualan', 'slug' => 'dashboard-monitoring-penjualan', 'category' => 'Sistem Informasi'],
             ['title' => 'Portal Akademik Terintegrasi', 'slug' => 'portal-akademik-terintegrasi', 'category' => 'Website'],
-            ['title' => 'Aplikasi Inventaris Mobile', 'slug' => 'aplikasi-inventaris-mobile', 'category' => 'Mobile'],
+            [
+                'title' => 'Aplikasi Inventaris Mobile',
+                'slug' => 'aplikasi-inventaris-mobile',
+                'category' => 'Mobile',
+                'data' => [
+                    'description' => 'Aplikasi inventaris berbasis Flutter untuk mencatat barang, memantau ketersediaan stok, mengelola transaksi barang masuk dan keluar, serta mendeteksi persediaan yang mulai menipis.',
+                    'problem' => 'Pencatatan inventaris secara manual membuat jumlah stok sulit dipantau dan meningkatkan risiko keterlambatan dalam mengetahui barang yang hampir habis.',
+                    'solution' => 'Membangun aplikasi inventaris mobile yang menyediakan pengelolaan barang, kategori, transaksi stok, riwayat aktivitas, dan peringatan stok menipis dalam satu aplikasi offline.',
+                    'result' => 'Data inventaris dapat dicatat dan dipantau melalui perangkat Android sehingga informasi stok lebih terstruktur dan mudah diperiksa.',
+                    'technologies' => ['Flutter', 'Dart', 'SQLite', 'Provider', 'Material 3'],
+                    'thumbnail' => 'images/portfolios/aplikasi-inventaris-mobile/01-dashboard-inventaris.png',
+                    'gallery' => [
+                        'images/portfolios/aplikasi-inventaris-mobile/01-dashboard-inventaris.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/02-daftar-barang.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/03-detail-barang.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/04-tambah-barang.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/05-barang-masuk.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/06-barang-keluar.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/07-riwayat-transaksi.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/08-stok-menipis.png',
+                        'images/portfolios/aplikasi-inventaris-mobile/09-kategori.png',
+                    ],
+                    'repository_url' => null,
+                    'is_published' => true,
+                    'is_demo' => false,
+                ],
+            ],
             [
                 'title' => 'Analisis Survei Kepuasan',
                 'slug' => 'analisis-survei-kepuasan',
@@ -63,7 +92,7 @@ class PortfolioSeeder extends Seeder
                 'category' => $item['category'],
             ], $item['data'] ?? []);
 
-            if ($item['slug'] === self::PUBLISHED_PORTFOLIO_SLUG) {
+            if (in_array($item['slug'], self::CURATED_PORTFOLIO_SLUGS, true)) {
                 Portfolio::query()->updateOrCreate(['slug' => $item['slug']], $data);
 
                 continue;

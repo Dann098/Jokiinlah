@@ -47,7 +47,7 @@ class InventoryMobilePortfolioTest extends TestCase
         );
         $this->assertCount(9, $portfolio->gallery);
         $this->assertNull($portfolio->repository_url);
-        $this->assertStringContainsString('pencatatan inventaris secara manual', $portfolio->problem);
+        $this->assertStringContainsString('Pencatatan inventaris secara manual', $portfolio->problem);
         $this->assertStringContainsString('transaksi stok', $portfolio->solution);
         $this->assertStringNotContainsString('%', $portfolio->result);
 
@@ -71,15 +71,15 @@ class InventoryMobilePortfolioTest extends TestCase
         $this->get(route('portfolios.index'))
             ->assertOk()
             ->assertSee('Aplikasi Inventaris Mobile')
-            ->assertSee('Flutter')
-            ->assertDontSee('Laravel');
+            ->assertSee('Flutter');
 
         $this->get(route('portfolios.show', $portfolio))
             ->assertOk()
             ->assertSee('Aplikasi Inventaris Mobile')
-            ->assertSee('pencatatan inventaris secara manual')
+            ->assertSee('Pencatatan inventaris secara manual')
             ->assertSee('Flutter')
             ->assertSee('SQLite')
+            ->assertDontSee('Laravel')
             ->assertDontSee('Data Demo')
             ->assertDontSee('Lihat Repository GitHub');
     }
