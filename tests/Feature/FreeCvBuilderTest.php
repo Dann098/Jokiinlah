@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Routing\Route as LaravelRoute;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Routing\Route as LaravelRoute;
 use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
@@ -79,5 +79,51 @@ class FreeCvBuilderTest extends TestCase
         foreach ($routes as $route) {
             $this->assertSame(['GET', 'HEAD'], $route->methods());
         }
+    }
+
+    public function test_cv_builder_exposes_accessible_fields_repeaters_and_local_photo_rules(): void
+    {
+        $content = $this->get(route('free-tools.cv-builder'))
+            ->assertOk()
+            ->assertSee('Informasi Pribadi')
+            ->assertSee('Ringkasan Profesional')
+            ->assertSee('Tambah Pengalaman')
+            ->assertSee('Tambah Pendidikan')
+            ->assertSee('Tambah Proyek')
+            ->assertSee('Tambah Sertifikasi')
+            ->assertSee('Tambah Kategori')
+            ->assertSee('Gunakan Foto')
+            ->assertSee("accept='.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp'", false)
+            ->assertSee("maxlength='900'", false)
+            ->assertSee("maxlength='250'", false)
+            ->assertSee("role='tablist'", false)
+            ->assertSee('x-bind:aria-selected', false)
+            ->assertSee("aria-live='polite'", false)
+            ->assertSee('otomatis kedaluwarsa setelah 30 hari')
+            ->assertSee('Reset')
+            ->getContent();
+
+        $this->assertStringNotContainsString('.svg', strtolower($content));
+        $this->assertStringNotContainsString('type=\'submit\'', strtolower($content));
+    }
+
+    public function test_cv_builder_assets_are_print_ready_and_make_no_cv_network_request(): void
+    {
+        $css = file_get_contents(resource_path('css/app.css'));
+        $javascript = file_get_contents(resource_path('js/cv-builder.js'));
+
+        $this->assertIsString($css);
+        $this->assertStringContainsString('@page', $css);
+        $this->assertStringContainsString('size: A4', $css);
+        $this->assertStringContainsString('@media print', $css);
+        $this->assertStringContainsString('break-inside: avoid', $css);
+        $this->assertStringContainsString("font-family: Arial, Helvetica, 'Liberation Sans'", $css);
+
+        $this->assertIsString($javascript);
+        $this->assertStringContainsString('window.localStorage', $javascript);
+        $this->assertStringContainsString("new Set(['image/jpeg', 'image/png', 'image/webp'])", $javascript);
+        $this->assertStringNotContainsString('fetch(', $javascript);
+        $this->assertStringNotContainsString('axios', strtolower($javascript));
+        $this->assertStringNotContainsString('photoPreview:', substr($javascript, strpos($javascript, 'persistedData()'), 700));
     }
 }

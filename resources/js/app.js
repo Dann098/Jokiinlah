@@ -1,7 +1,10 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
+import { cvBuilder } from './cv-builder';
 
 window.Alpine = Alpine;
+
+Alpine.data('cvBuilder', cvBuilder);
 
 Alpine.data('navigation', () => ({
     open: false,

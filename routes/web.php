@@ -17,6 +17,7 @@ use App\Http\Controllers\Public\ArticleController;
 use App\Http\Controllers\Public\ConsultationController;
 use App\Http\Controllers\Public\ContactController;
 use App\Http\Controllers\Public\FaqController;
+use App\Http\Controllers\Public\FreeToolController;
 use App\Http\Controllers\Public\HomeController;
 use App\Http\Controllers\Public\LegalPageController;
 use App\Http\Controllers\Public\PortfolioController;
@@ -35,6 +36,8 @@ Route::get('/artikel', [ArticleController::class, 'index'])->name('articles.inde
 Route::get('/artikel/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 Route::get('/faq', FaqController::class)->name('faq.index');
 Route::get('/kontak', ContactController::class)->name('contact.index');
+Route::get('/fitur-gratis', [FreeToolController::class, 'index'])->name('free-tools.index');
+Route::get('/fitur-gratis/pembuat-cv', [FreeToolController::class, 'cvBuilder'])->name('free-tools.cv-builder');
 Route::post('/konsultasi', [ConsultationController::class, 'store'])->middleware('throttle:consultations')->name('consultations.store');
 Route::get('/kebijakan-privasi', [LegalPageController::class, 'privacy'])->name('privacy');
 Route::get('/syarat-dan-ketentuan', [LegalPageController::class, 'terms'])->name('terms');

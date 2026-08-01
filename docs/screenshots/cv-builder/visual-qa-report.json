@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-08-01T23:06:48.149Z",
+  "base_url": "http://127.0.0.1:8012",
+  "viewports": [
+    {
+      "viewport": "360x800",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-360x800.png"
+    },
+    {
+      "viewport": "390x844",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-390x844.png"
+    },
+    {
+      "viewport": "768x1024",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-768x1024.png"
+    },
+    {
+      "viewport": "1024x768",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-1024x768.png"
+    },
+    {
+      "viewport": "1366x768",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-1366x768.png"
+    },
+    {
+      "viewport": "1440x900",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-1440x900.png"
+    },
+    {
+      "viewport": "1920x1080",
+      "horizontal_overflow": false,
+      "preview_visible": true,
+      "screenshot": "docs/screenshots/cv-builder/cv-builder-1920x1080.png"
+    }
+  ],
+  "interactions": {
+    "sample": true,
+    "repeater": true,
+    "section_toggle": true,
+    "local_storage_restore": true,
+    "reset": true,
+    "invalid_svg": true,
+    "valid_local_photo": true,
+    "xss_as_text": true,
+    "dangerous_url_rejected": true
+  },
+  "print": {
+    "one_page_pdf_pages": 1,
+    "multiple_page_pdf_pages": 4,
+    "navbar_hidden": true,
+    "footer_hidden": true,
+    "form_hidden": true,
+    "local_font": "Arial, Helvetica, \"Liberation Sans\", sans-serif"
+  },
+  "console_errors": [],
+  "network_errors": [],
+  "status": "passed"
+}
