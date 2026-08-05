@@ -75,7 +75,7 @@ class FreeCvBuilderTest extends TestCase
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn (LaravelRoute $route): bool => str_starts_with($route->uri(), 'fitur-gratis'));
 
-        $this->assertCount(2, $routes);
+        $this->assertCount(3, $routes);
         foreach ($routes as $route) {
             $this->assertSame(['GET', 'HEAD'], $route->methods());
         }
