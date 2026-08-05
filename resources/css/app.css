@@ -112,26 +112,33 @@ header[data-scrolled='true'] { box-shadow: 0 12px 35px rgb(0 0 0 / 0.18); backgr
 .cv-zoom-button.is-active { background: #0b1933; color: #fff; }
 .cv-paper-scroller { max-width: 100%; overflow-x: auto; border: 1px solid rgb(11 25 51 / 0.1); border-top: 0; border-radius: 0 0 1rem 1rem; background: #dfe3e8; padding: 1rem; overscroll-behavior-inline: contain; }
 .cv-paper-scale { width: 210mm; margin-inline: auto; zoom: var(--cv-zoom, 0.9); }
-.cv-paper { box-sizing: border-box; width: 210mm; min-height: 297mm; background: #fff; padding: 14mm; color: #111; box-shadow: 0 16px 50px rgb(0 0 0 / 0.16); font-family: Arial, Helvetica, 'Liberation Sans', sans-serif; font-size: 10pt; line-height: 1.42; overflow-wrap: anywhere; }
-.cv-document-header { position: relative; display: grid; min-height: 30mm; grid-template-columns: minmax(0, 1fr); align-items: end; border-bottom: 1.2px solid #2f2f2f; padding-bottom: 4mm; }
-.cv-document-header.has-photo { grid-template-columns: minmax(0, 1fr) 26mm; gap: 7mm; }
-.cv-document-name { color: #111; font: 800 25pt/1.05 Arial, Helvetica, 'Liberation Sans', sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
-.cv-document-title { margin-top: 1.5mm; color: #333; font-size: 10pt; font-weight: 700; }
-.cv-document-contacts { display: flex; flex-wrap: wrap; align-items: center; gap: 1mm 3mm; margin-top: 3mm; color: #333; font-size: 9.2pt; }
-.cv-document-contact { display: inline-flex; align-items: center; gap: 2mm; }
-.cv-document-dot { font-size: 8pt; }
-.cv-document-photo { width: 26mm; height: 34.7mm; align-self: end; object-fit: cover; border: 0.4mm solid #333; }
-.cv-document-section { break-inside: auto; margin-top: 4mm; }
-.cv-document-section > h3 { break-after: avoid; border-bottom: 0.75px solid #2f2f2f; padding-bottom: 1.7mm; color: #111; font: 800 10.5pt/1.2 Arial, Helvetica, 'Liberation Sans', sans-serif; letter-spacing: 0.01em; }
-.cv-document-summary { margin-top: 2.2mm; color: #222; text-align: justify; white-space: pre-line; }
-.cv-document-list { display: grid; gap: 3mm; margin-top: 2.5mm; }
-.cv-document-item { break-inside: avoid; color: #222; }
-.cv-document-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5mm; align-items: baseline; }
-.cv-document-date { max-width: 48mm; text-align: right; white-space: nowrap; }
-.cv-document-item > p, .cv-document-certification > p { margin-top: 0.7mm; }
-.cv-document-item ul, .cv-document-skills { margin: 1.2mm 0 0 5mm; list-style: disc; }
-.cv-document-item li, .cv-document-skills li { margin-top: 0.8mm; padding-left: 1mm; }
-.cv-document-link { display: block; margin-top: 0.8mm; color: #222; text-decoration: underline; }
+.cv-paper { box-sizing: border-box; width: 210mm; min-height: 297mm; background: #fff; padding: 12mm; color: #111; box-shadow: 0 16px 50px rgb(0 0 0 / 0.16); font-family: Arial, Helvetica, 'Liberation Sans', sans-serif; font-size: 10pt; line-height: 1.34; overflow-wrap: anywhere; orphans: 2; widows: 2; }
+.cv-document-header { position: relative; display: grid; min-height: 29mm; grid-template-columns: minmax(0, 1fr); align-items: end; border-bottom: 1.2px solid #2f2f2f; padding-bottom: 3mm; }
+.cv-document-header.has-photo { grid-template-columns: minmax(0, 1fr) 24mm; gap: 6mm; }
+.cv-document-identity { min-width: 0; }
+.cv-document-name { color: #111; font: 800 24pt/1.03 Arial, Helvetica, 'Liberation Sans', sans-serif; letter-spacing: -0.02em; text-transform: uppercase; }
+.cv-document-title { margin-top: 1mm; color: #333; font-size: 10pt; font-weight: 700; }
+.cv-document-contacts { display: grid; gap: 0.7mm; margin-top: 2.1mm; color: #333; font-size: 9.2pt; line-height: 1.22; }
+.cv-document-contacts-row { display: flex; min-width: 0; align-items: baseline; gap: 2.5mm; }
+.cv-document-contacts-row--urls { font-size: 9pt; }
+.cv-document-contact { display: inline-flex; min-width: 0; max-width: 100%; align-items: baseline; gap: 2mm; overflow-wrap: anywhere; }
+.cv-document-contact > span:last-child { min-width: 0; }
+.cv-document-dot { flex: none; font-size: 8pt; }
+.cv-document-photo { width: 24mm; aspect-ratio: 3 / 4; align-self: start; object-fit: cover; border: 0.4mm solid #333; }
+.cv-document-section { break-inside: auto; margin-top: 3mm; orphans: 2; widows: 2; }
+.cv-document-section--skills { break-inside: avoid; page-break-inside: avoid; }
+.cv-document-section > h3 { break-after: avoid; page-break-after: avoid; border-bottom: 0.75px solid #2f2f2f; padding-bottom: 1.1mm; color: #111; font: 800 10.5pt/1.15 Arial, Helvetica, 'Liberation Sans', sans-serif; letter-spacing: 0.01em; }
+.cv-document-summary { margin-top: 1.6mm; color: #222; text-align: justify; white-space: pre-line; }
+.cv-document-list { display: grid; gap: 2mm; margin-top: 1.8mm; }
+.cv-document-item { break-inside: avoid; page-break-inside: avoid; color: #222; orphans: 2; widows: 2; }
+.cv-document-row { display: grid; grid-template-columns: minmax(0, 1fr) max-content; gap: 4mm; align-items: baseline; }
+.cv-document-row > :first-child { min-width: 0; }
+.cv-document-date { width: max-content; min-width: max-content; max-width: none; overflow: visible; overflow-wrap: normal; text-align: right; white-space: nowrap; word-break: normal; }
+.cv-document-date--freeform { width: auto; min-width: 5ch; max-width: 50%; overflow-wrap: anywhere; white-space: normal; }
+.cv-document-item > p, .cv-document-certification > p { margin-top: 0.4mm; }
+.cv-document-item ul, .cv-document-skills { margin: 0.8mm 0 0 5mm; list-style: disc; orphans: 2; widows: 2; }
+.cv-document-item li, .cv-document-skills li { break-inside: avoid; page-break-inside: avoid; margin-top: 0.4mm; padding-left: 1mm; orphans: 2; widows: 2; }
+.cv-document-link { display: block; max-width: 100%; margin-top: 0.5mm; color: #222; font-size: 9.5pt; line-height: 1.2; overflow-wrap: anywhere; text-decoration: underline; word-break: normal; }
 .cv-mobile-tab { min-height: 2.75rem; border-radius: 0.65rem; color: #687386; font-size: 0.8rem; font-weight: 750; }
 .cv-mobile-tab.is-active { background: #fff; color: #0b1933; box-shadow: 0 3px 12px rgb(11 25 51 / 0.1); }
 .cv-toast { position: fixed; right: 1rem; bottom: 1rem; z-index: 80; display: flex; max-width: min(28rem, calc(100vw - 2rem)); align-items: center; gap: 1rem; border-radius: 0.9rem; background: #0b1933; padding: 0.9rem 1rem; color: #fff; box-shadow: 0 15px 40px rgb(0 0 0 / 0.25); font-size: 0.8rem; font-weight: 650; }
@@ -157,15 +164,15 @@ header[data-scrolled='true'] { box-shadow: 0 12px 35px rgb(0 0 0 / 0.18); backgr
     .cv-preview-toolbar { align-items: flex-start; flex-direction: column; }
 }
 
-@page { size: A4; margin: 14mm; }
+@page { size: 210mm 297mm; margin: 12mm; }
 
 @media print {
     html, body { width: auto !important; min-width: 0 !important; height: auto !important; overflow: visible !important; background: #fff !important; }
     body { color: #111; }
-    body > a, body > header, body > footer, .no-print { display: none !important; }
+    body > a, body > header, body > footer, form, button, .no-print, .cv-action-bar, .cv-builder-hero, .cv-editor, .cv-preview-toolbar, .cv-toast { display: none !important; }
     main, .cv-builder-shell, .cv-workspace, .cv-preview-column, .cv-paper-scroller, .cv-paper-scale { display: block !important; width: auto !important; max-width: none !important; height: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; border: 0 !important; background: #fff !important; box-shadow: none !important; position: static !important; zoom: 1 !important; }
     .cv-paper { display: block !important; width: auto !important; min-height: 0 !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; box-shadow: none !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    .cv-document-item, .cv-document-header, .cv-document-certification { break-inside: avoid; page-break-inside: avoid; }
+    .cv-document-item, .cv-document-header, .cv-document-certification, .cv-document-section--skills { break-inside: avoid; page-break-inside: avoid; }
     .cv-document-section > h3 { break-after: avoid; page-break-after: avoid; }
     a[href]::after { content: none !important; }
 }

@@ -69,10 +69,13 @@ Preview menggunakan ukuran A4 `210mm × 297mm`, font lokal Arial/Helvetica/Liber
 Sans, teks hitam, garis tipis, satu kolom, dan foto rasio 3:4. Zoom 75/90/100 hanya
 berlaku di layar.
 
-CSS print memakai `@page { size: A4; margin: 14mm; }`. Navbar, footer, editor, toolbar,
-dan kontrol disembunyikan; item pengalaman/pendidikan/proyek memakai
-`break-inside: avoid`. Tombol cetak menjalankan `window.print()`, sehingga pengguna
-dapat memilih Save as PDF/Simpan sebagai PDF tanpa library PDF tambahan.
+CSS print memakai `@page { size: 210mm 297mm; margin: 12mm; }`. Navbar, footer,
+editor, toolbar, kontrol, dan pesan privasi disembunyikan. Item pengalaman,
+pendidikan, proyek, sertifikasi, serta seluruh bagian Keahlian memakai
+`break-inside: avoid` dan `page-break-inside: avoid`; konten panjang tetap dapat
+berlanjut ke halaman kedua secara alami. Tombol cetak menjalankan `window.print()`,
+sehingga pengguna dapat memilih Save as PDF/Simpan sebagai PDF tanpa library PDF
+tambahan.
 
 ## Accessibility dan responsive
 
@@ -106,16 +109,16 @@ ATS otomatis, DOCX, pembayaran, watermark, cloud storage, atau banyak template.
 
 | Gate | Hasil |
 |---|---|
-| Feature test CV | 6 passed, 67 assertions |
+| Feature test CV | 6 passed, 75 assertions |
 | Frontend `node:test` | 10 passed |
-| Full Laravel suite | 232 passed; 1251 assertions |
+| Full Laravel suite | 232 passed; 1259 assertions |
 | Pint | passed |
 | Vite build | passed; 60 modules transformed |
 | Composer validate | valid |
 | Composer audit | no security advisories |
 | npm audit | 0 vulnerabilities |
 | Browser QA | passed; 7 viewports, 0 console/network errors |
-| Print QA | PDF pendek 1 halaman; PDF panjang 4 halaman |
+| Print QA | data contoh 1 halaman; data contoh + foto 1 halaman; konten panjang 2 halaman |
 
 Reproduksi browser/print QA:
 

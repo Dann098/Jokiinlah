@@ -1,6 +1,7 @@
 {
-  "generated_at": "2026-08-01T23:06:48.149Z",
-  "base_url": "http://127.0.0.1:8012",
+  "generated_at": "2026-08-05T23:40:23.551Z",
+  "base_url": "http://127.0.0.1:52144",
+  "browser": "Microsoft Edge Chromium",
   "viewports": [
     {
       "viewport": "360x800",
@@ -57,8 +58,21 @@
     "dangerous_url_rejected": true
   },
   "print": {
-    "one_page_pdf_pages": 1,
-    "multiple_page_pdf_pages": 4,
+    "sample_pdf_pages": 1,
+    "sample_with_photo_pdf_pages": 1,
+    "sample_with_photo_images": 1,
+    "multiple_page_pdf_pages": 2,
+    "multiple_page_non_empty_lines": [
+      49,
+      24
+    ],
+    "skills_page": 2,
+    "skills_kept_together": true,
+    "long_date_visible": true,
+    "portfolio_url_wrapped_safely": true,
+    "photo_printed": true,
+    "no_photo_full_width": true,
+    "a4_media_box": true,
     "navbar_hidden": true,
     "footer_hidden": true,
     "form_hidden": true,

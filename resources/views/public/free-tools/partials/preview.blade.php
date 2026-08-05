@@ -4,8 +4,12 @@
             <h2 class='cv-document-name' x-text="personal.fullName || 'NAMA LENGKAP'"></h2>
             <p class='cv-document-title' x-show='personal.title' x-text='personal.title'></p>
             <div class='cv-document-contacts' aria-label='Informasi kontak'>
-                <template x-for="(contact, index) in [personal.city, personal.phone, personal.email, displayUrl(personal.linkedin), displayUrl(personal.website)].filter(Boolean)" x-bind:key='`${contact}-${index}`'>
-                    <span class='cv-document-contact'><span class='cv-document-dot' x-show='index > 0' aria-hidden='true'>•</span><span x-text='contact'></span></span>
+                <template x-for="row in [{ type: 'primary', contacts: [personal.city, personal.phone, personal.email].filter(Boolean) }, { type: 'urls', contacts: [displayUrl(personal.linkedin), displayUrl(personal.website)].filter(Boolean) }].filter((item) => item.contacts.length)" x-bind:key='`contact-row-${row.type}`'>
+                    <div class='cv-document-contacts-row' x-bind:class="row.type === 'urls' ? 'cv-document-contacts-row--urls' : ''">
+                        <template x-for='(contact, index) in row.contacts' x-bind:key='`${row.type}-${contact}-${index}`'>
+                            <span class='cv-document-contact'><span class='cv-document-dot' x-show='index > 0' aria-hidden='true'>•</span><span x-text='contact'></span></span>
+                        </template>
+                    </div>
                 </template>
             </div>
         </div>
@@ -67,7 +71,7 @@
                 <article class='cv-document-item' x-show="project.name || project.role || project.bullets.some((bullet) => bullet.trim())">
                     <div class='cv-document-row'>
                         <strong x-text='project.name'></strong>
-                        <strong class='cv-document-date' x-text='project.period'></strong>
+                        <strong class='cv-document-date cv-document-date--freeform' x-text='project.period'></strong>
                     </div>
                     <p x-show='project.role || project.technologies'><span x-text='project.role'></span><span x-show='project.role && project.technologies'> | </span><span x-text='project.technologies'></span></p>
                     <a class='cv-document-link' x-show='safeUrl(project.url)' x-bind:href='safeUrl(project.url)' target='_blank' rel='noopener noreferrer' x-text='displayUrl(project.url)'></a>
@@ -95,7 +99,7 @@
         </div>
     </section>
 
-    <section class='cv-document-section' x-show="sections.skills && skillCategories.some((category) => category.name && category.items.length)">
+    <section class='cv-document-section cv-document-section--skills' x-show="sections.skills && skillCategories.some((category) => category.name && category.items.length)">
         <h3>KEAHLIAN</h3>
         <ul class='cv-document-skills'>
             <template x-for='category in skillCategories' x-bind:key='category.id'>

@@ -113,10 +113,18 @@ class FreeCvBuilderTest extends TestCase
         $javascript = file_get_contents(resource_path('js/cv-builder.js'));
 
         $this->assertIsString($css);
-        $this->assertStringContainsString('@page', $css);
-        $this->assertStringContainsString('size: A4', $css);
+        $this->assertStringContainsString('@page { size: 210mm 297mm; margin: 12mm; }', $css);
         $this->assertStringContainsString('@media print', $css);
         $this->assertStringContainsString('break-inside: avoid', $css);
+        $this->assertStringContainsString('page-break-inside: avoid', $css);
+        $this->assertStringContainsString('orphans: 2', $css);
+        $this->assertStringContainsString('widows: 2', $css);
+        $this->assertStringContainsString('.cv-document-section--skills', $css);
+        $this->assertStringContainsString('min-width: max-content', $css);
+        $this->assertStringContainsString('overflow-wrap: normal', $css);
+        $this->assertMatchesRegularExpression('/\.cv-document-date--freeform\s*\{[^}]*min-width:\s*5ch/s', $css);
+        $this->assertStringContainsString('aspect-ratio: 3 / 4', $css);
+        $this->assertStringContainsString('align-self: start', $css);
         $this->assertStringContainsString("font-family: Arial, Helvetica, 'Liberation Sans'", $css);
 
         $this->assertIsString($javascript);
