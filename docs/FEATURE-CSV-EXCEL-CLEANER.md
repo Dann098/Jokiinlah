@@ -14,6 +14,15 @@ Tidak ada endpoint POST, upload server, database, session, API eksternal, analyt
 payload, atau browser storage untuk data pengguna. Papa Parse dan SheetJS dibundel
 oleh Vite dan hanya dimuat secara dinamis saat halaman cleaner dibuka.
 
+Tujuan fitur dibatasi pada pembacaan, perbandingan, pembersihan, dan ekspor satu file
+CSV atau satu sheet XLSX. Fitur ini tidak menyediakan AI cleaning, akun khusus,
+riwayat, cloud storage, penggabungan file, konversi tanggal, atau analisis data lanjut.
+
+Dependency frontend yang ditambahkan:
+
+- `papaparse` 5.5.4 dari npm;
+- `xlsx` 0.20.3 dari paket distribusi resmi SheetJS yang dikunci di `package-lock.json`.
+
 ## Alur dan aturan pembersihan
 
 Urutan operasi bersifat deterministik:
@@ -67,6 +76,20 @@ Browser QA memproses data sampai state hasil pada 360x800, 390x844, 768x1024,
 1024x768, 1366x768, dan 1440x900. Report serta screenshot berada di
 `docs/screenshots/data-cleaner/`.
 
+## File yang dibuat atau diubah
+
+Implementasi utama:
+
+- route/controller: `routes/web.php` dan `FreeToolController.php`;
+- halaman/kartu/sitemap: Blade cleaner, index Fitur Gratis, dan sitemap publik;
+- frontend: `resources/js/data-cleaner.js`, lazy registration di `app.js`, serta style
+  responsive di `resources/css/app.css`;
+- dependency: `package.json` dan `package-lock.json`;
+- test: `FreeDataCleanerTest.php`, regresi route pada `FreeCvBuilderTest.php`, dan
+  `tests/Frontend/data-cleaner.test.mjs`;
+- QA: `scripts/data-cleaner-qa.mjs`, runner PowerShell, report JSON, dan enam screenshot;
+- dokumentasi: file ini, `docs/testing/data-cleaner.tdd.md`, dan ringkasan README.
+
 ## Verifikasi aktual
 
 | Gate | Hasil |
@@ -87,4 +110,9 @@ Reproduksi browser QA:
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run-data-cleaner-qa.ps1
 ```
 
-Status commit dan push dicatat pada laporan penyelesaian setelah release commit dibuat.
+## Release Git
+
+- RED checkpoint: `57b0488` (`test: define free CSV and Excel cleaner behavior`).
+- Feature commit: `1dafc1b` (`feat: add free CSV and Excel cleaner`).
+- Push status: berhasil dikirim ke `origin/main` pada 6 Agustus 2026; remote bergerak
+  dari `c461d3f` ke `1dafc1b` tanpa force push.
