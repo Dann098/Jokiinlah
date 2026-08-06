@@ -38,6 +38,7 @@ Route::get('/faq', FaqController::class)->name('faq.index');
 Route::get('/kontak', ContactController::class)->name('contact.index');
 Route::get('/fitur-gratis', [FreeToolController::class, 'index'])->name('free-tools.index');
 Route::get('/fitur-gratis/pembuat-cv', [FreeToolController::class, 'cvBuilder'])->name('free-tools.cv-builder');
+Route::get('/fitur-gratis/pembersih-data', [FreeToolController::class, 'dataCleaner'])->name('free-tools.data-cleaner');
 Route::post('/konsultasi', [ConsultationController::class, 'store'])->middleware('throttle:consultations')->name('consultations.store');
 Route::get('/kebijakan-privasi', [LegalPageController::class, 'privacy'])->name('privacy');
 Route::get('/syarat-dan-ketentuan', [LegalPageController::class, 'terms'])->name('terms');

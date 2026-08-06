@@ -1,0 +1,119 @@
+{
+  "generated_at": "2026-08-06T00:44:15.356Z",
+  "base_url": "http://127.0.0.1:54861",
+  "browser": "Microsoft Edge Chromium",
+  "viewports": [
+    {
+      "viewport": "360x800",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-360x800.png"
+    },
+    {
+      "viewport": "390x844",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-390x844.png"
+    },
+    {
+      "viewport": "768x1024",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-768x1024.png"
+    },
+    {
+      "viewport": "1024x768",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-1024x768.png"
+    },
+    {
+      "viewport": "1366x768",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-1366x768.png"
+    },
+    {
+      "viewport": "1440x900",
+      "stateful_result": true,
+      "result_visible_in_screenshot": true,
+      "horizontal_overflow": false,
+      "controls_min_44px": true,
+      "table_overflow_managed": true,
+      "screenshot": "docs/screenshots/data-cleaner/data-cleaner-1440x900.png"
+    }
+  ],
+  "csv": {
+    "comma_delimiter": true,
+    "semicolon_delimiter": true,
+    "indonesian_characters": true,
+    "empty_rows_removed": 1,
+    "duplicates_removed": 1,
+    "empty_columns_removed": 1,
+    "spaces_trimmed": 7,
+    "headers_normalized": 5,
+    "negative_number_preserved": true
+  },
+  "xlsx": {
+    "one_sheet_auto_selected": true,
+    "empty_first_sheet_skipped": true,
+    "multiple_sheets_listed": true,
+    "sheet_switch": true,
+    "cached_formula_value": true,
+    "negative_number": true,
+    "empty_sheet_rejected": true
+  },
+  "validation": {
+    "empty_csv": true,
+    "oversize_csv": true,
+    "oversize_xlsx": true,
+    "corrupt_xlsx": true,
+    "xls_rejected": true,
+    "xlsm_rejected": true
+  },
+  "downloads": {
+    "csv": {
+      "filename": "data-pelanggan-bersih.csv",
+      "all_rows": true,
+      "utf8_bom": true,
+      "formula_safe": true,
+      "negative_number_safe": true
+    },
+    "xlsx_from_csv": {
+      "filename": "data-pelanggan-bersih.xlsx",
+      "one_sheet": true,
+      "formula_safe": true
+    },
+    "xlsx": {
+      "filename": "data-multi-sheet-bersih.xlsx",
+      "one_sheet": true,
+      "all_rows": true
+    }
+  },
+  "privacy": {
+    "no_upload_request": true,
+    "no_local_storage": true,
+    "no_session_storage": true,
+    "no_indexed_db": true,
+    "reset_clears_memory": true,
+    "reload_restores_nothing": true
+  },
+  "console_errors": [],
+  "network_errors": [],
+  "status": "passed"
+}

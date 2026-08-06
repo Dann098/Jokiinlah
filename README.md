@@ -37,7 +37,9 @@ sesuai policy.
 ## Fitur utama
 
 Website publik menyediakan landing page responsif, layanan, portofolio, artikel, FAQ,
-form konsultasi guest, halaman legal, SEO metadata, sitemap, robots, dan WhatsApp CTA.
+form konsultasi guest, halaman legal, SEO metadata, sitemap, robots, WhatsApp CTA,
+pembuat CV ATS, serta pembersih CSV/XLSX yang seluruh pemrosesannya berlangsung di
+browser tanpa upload server.
 Scope active/published mencegah konten nonaktif, draft, atau future tampil ke publik.
 
 Customer Portal berada di `/dashboard` dan menyediakan:
@@ -139,9 +141,9 @@ composer validate --strict
 composer audit
 ```
 
-Verifikasi regresi terbaru: **219 test lulus dengan 1.103 assertion** pada SQLite.
+Verifikasi regresi terbaru: **237 test lulus dengan 1.315 assertion** pada SQLite.
 Sebanyak 59 test fitur permintaan proyek dan chat (120 assertion) juga lulus pada
-MariaDB 10.4.32. Build Vite memproses 58 modul; Composer audit dan npm audit bersih.
+MariaDB 10.4.32. Build Vite memproses 67 modul; Composer audit dan npm audit bersih.
 Config, route, dan view cache berhasil dibuat lalu dibersihkan kembali untuk
 development.
 

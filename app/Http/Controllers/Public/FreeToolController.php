@@ -16,4 +16,9 @@ class FreeToolController extends Controller
     {
         return view('public.free-tools.cv-builder');
     }
+
+    public function dataCleaner(): View
+    {
+        return view('public.free-tools.data-cleaner');
+    }
 }

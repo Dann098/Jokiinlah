@@ -61,23 +61,36 @@ Alpine.data('portalNavigation', () => ({
         if (returnFocus) this.$nextTick(() => this.$refs.toggleButton?.focus());
     },
 }));
-Alpine.start();
 
-const errorSummary = document.querySelector('[data-error-summary]');
-if (errorSummary) requestAnimationFrame(() => errorSummary.focus());
+function initializePublicPage() {
+    const errorSummary = document.querySelector('[data-error-summary]');
+    if (errorSummary) requestAnimationFrame(() => errorSummary.focus());
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!reducedMotion && 'IntersectionObserver' in window) {
-    document.documentElement.classList.add('reveal-ready');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('[data-reveal]').forEach((element) => observer.observe(element));
-} else {
-    document.querySelectorAll('[data-reveal]').forEach((element) => element.classList.add('is-visible'));
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reducedMotion && 'IntersectionObserver' in window) {
+        document.documentElement.classList.add('reveal-ready');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        document.querySelectorAll('[data-reveal]').forEach((element) => observer.observe(element));
+    } else {
+        document.querySelectorAll('[data-reveal]').forEach((element) => element.classList.add('is-visible'));
+    }
 }
+
+async function bootAlpine() {
+    if (document.querySelector('[x-data="dataCleaner"]')) {
+        const { dataCleaner } = await import('./data-cleaner');
+        Alpine.data('dataCleaner', dataCleaner);
+    }
+
+    Alpine.start();
+    initializePublicPage();
+}
+
+void bootAlpine();
