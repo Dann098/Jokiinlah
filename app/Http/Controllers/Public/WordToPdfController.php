@@ -12,6 +12,8 @@ use App\Services\FilenameSanitizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Throwable;
@@ -35,6 +37,17 @@ final class WordToPdfController extends Controller
         $document = $request->file('document');
         $downloadName = $this->downloadName($document, $filenameSanitizer);
 
+        $lock = Cache::lock(
+            'word-to-pdf:conversion',
+            max(10, (int) config('converter.word_to_pdf_timeout') + 10),
+        );
+
+        if (! $lock->get()) {
+            return back()->withErrors([
+                'document' => 'Server sedang memproses dokumen lain. Silakan coba kembali beberapa saat lagi.',
+            ]);
+        }
+
         try {
             $result = $converter->convert($document);
         } catch (WordToPdfConverterUnavailable) {
@@ -45,17 +58,27 @@ final class WordToPdfController extends Controller
             return back()->withErrors([
                 'document' => 'Dokumen belum berhasil dikonversi. Pastikan file Word tidak rusak lalu coba kembali.',
             ]);
+        } finally {
+            $lock->release();
         }
 
-        return response()->streamDownload(function () use ($converter, $result): void {
-            $handle = null;
-
+        $handle = is_file($result->pdfPath) ? fopen($result->pdfPath, 'rb') : false;
+        if ($handle === false) {
             try {
-                $handle = fopen($result->pdfPath, 'rb');
-                if ($handle === false) {
-                    return;
-                }
+                $converter->cleanup($result);
+            } catch (Throwable) {
+                Log::warning('Word to PDF workspace cleanup deferred.', [
+                    'reason_code' => 'missing_output_cleanup_failed',
+                ]);
+            }
 
+            return back()->withErrors([
+                'document' => 'Dokumen belum berhasil dikonversi. Pastikan file Word tidak rusak lalu coba kembali.',
+            ]);
+        }
+
+        return response()->streamDownload(function () use ($converter, $handle, $result): void {
+            try {
                 while (! feof($handle)) {
                     echo fread($handle, 1024 * 64);
                     flush();
@@ -68,7 +91,9 @@ final class WordToPdfController extends Controller
                 try {
                     $converter->cleanup($result);
                 } catch (Throwable) {
-                    // Scheduled cleanup is the final safety net.
+                    Log::warning('Word to PDF workspace cleanup deferred.', [
+                        'reason_code' => 'stream_cleanup_failed',
+                    ]);
                 }
             }
         }, $downloadName, [

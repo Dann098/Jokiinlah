@@ -25,6 +25,8 @@ class ProductionReadinessCommand extends Command
             ['Private disk bukan public', config('jokiinlah.private_disk') !== 'public'],
             ['Mail bukan log/array', ! in_array(config('mail.default'), ['log', 'array'], true)],
             ['LibreOffice binary tersedia', $this->libreOfficeAvailable()],
+            ['Isolasi LibreOffice diverifikasi', config('converter.sandbox_verified') === true],
+            ['Ekstensi ZIP aktif', extension_loaded('zip')],
             ['Workspace konversi privat', $this->conversionWorkspaceIsPrivate()],
             ['Workspace konversi writable', $this->conversionWorkspaceIsWritable()],
             ['Process execution PHP aktif', $this->processExecutionAvailable()],

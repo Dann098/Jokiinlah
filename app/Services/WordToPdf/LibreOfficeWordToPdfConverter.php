@@ -10,6 +10,7 @@ use App\Exceptions\WordToPdfConverterUnavailable;
 use App\ValueObjects\WordToPdfConversionResult;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -54,10 +55,15 @@ final class LibreOfficeWordToPdfConverter implements WordToPdfConverterInterface
             return new WordToPdfConversionResult($pdfPath, $workspace);
         } catch (WordToPdfConversionTimedOut $exception) {
             $this->cleaner->delete($workspace);
+            Log::warning('Word to PDF conversion stopped.', ['reason_code' => 'timeout']);
 
             throw $exception;
-        } catch (Throwable) {
+        } catch (Throwable $exception) {
             $this->cleaner->delete($workspace);
+            Log::warning('Word to PDF conversion stopped.', [
+                'reason_code' => 'conversion_failed',
+                'failure_type' => $exception::class,
+            ]);
 
             throw new WordToPdfConversionFailed;
         }
@@ -72,6 +78,10 @@ final class LibreOfficeWordToPdfConverter implements WordToPdfConverterInterface
     {
         $binary = trim((string) config('converter.libreoffice_binary'));
         $available = $binary !== '' && is_file($binary);
+
+        if (app()->environment('production') && config('converter.sandbox_verified') !== true) {
+            $available = false;
+        }
 
         if (PHP_OS_FAMILY !== 'Windows') {
             $available = $available && is_executable($binary);
@@ -135,7 +145,10 @@ final class LibreOfficeWordToPdfConverter implements WordToPdfConverterInterface
 
     private function isValidPdf(string $path): bool
     {
-        if (! is_file($path) || filesize($path) < 6) {
+        $maximumBytes = (int) config('converter.word_to_pdf_output_max_mb') * 1024 * 1024;
+        $size = is_file($path) ? filesize($path) : false;
+
+        if ($size === false || $size < 6 || $size > $maximumBytes) {
             return false;
         }
 

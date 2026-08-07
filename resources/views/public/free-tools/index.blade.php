@@ -1,6 +1,6 @@
 @extends('layouts.public')
 @section('title', 'Fitur Gratis | Jokiinlah')
-@section('description', 'Gunakan fitur gratis Jokiinlah tanpa login. Buat CV profesional dengan data yang tetap diproses di perangkat Anda.')
+@section('description', 'Gunakan fitur gratis Jokiinlah tanpa login untuk membuat CV, membersihkan data, dan mengonversi dokumen Word ke PDF.')
 @section('content')
 <section class='bg-navy py-16 text-white'>
     <div class='container-public'>
@@ -15,8 +15,8 @@
     <div class='container-public'>
         <div class='max-w-3xl' data-reveal>
             <p class='text-xs font-bold uppercase tracking-[0.2em] text-[#80520d]'>Tersedia Sekarang</p>
-            <h2 class='mt-3 text-balance text-3xl font-bold text-navy sm:text-4xl'>Mulai dari Pembuat CV ATS Gratis</h2>
-            <p class='mt-5 leading-8 text-muted'>Isi data, lihat preview secara langsung, lalu cetak atau simpan sebagai PDF dari browser Anda.</p>
+            <h2 class='mt-3 text-balance text-3xl font-bold text-navy sm:text-4xl'>Alat praktis untuk dokumen dan data</h2>
+            <p class='mt-5 leading-8 text-muted'>Pilih alat yang Anda butuhkan untuk membuat CV, membersihkan data, atau mengonversi dokumen tanpa membuat akun.</p>
         </div>
 
         <article class='surface-card mt-10 max-w-3xl overflow-hidden' data-reveal>

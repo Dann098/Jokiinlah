@@ -118,13 +118,22 @@ class AppServiceProvider extends ServiceProvider
             ->by('customer-mutation:'.hash('sha256', (string) $request->user()?->email).'|'.$request->ip())
             ->response(fn () => response('Terlalu banyak permintaan. Silakan tunggu dan coba kembali.', 429)));
 
-        RateLimiter::for('word-to-pdf', fn (Request $request): Limit => Limit::perMinutes(10, 5)
-            ->by('word-to-pdf:'.hash('sha256', (string) $request->ip()))
-            ->response(fn () => response(
-                'Terlalu banyak proses konversi. Silakan coba kembali beberapa saat lagi.',
-                429,
-                ['Content-Type' => 'text/plain; charset=UTF-8'],
-            )));
+        RateLimiter::for('word-to-pdf', fn (Request $request): array => [
+            Limit::perMinutes(10, 5)
+                ->by('word-to-pdf:'.hash('sha256', (string) $request->ip()))
+                ->response(fn () => response(
+                    'Terlalu banyak proses konversi. Silakan coba kembali beberapa saat lagi.',
+                    429,
+                    ['Content-Type' => 'text/plain; charset=UTF-8'],
+                )),
+            Limit::perMinutes(10, 30)
+                ->by('word-to-pdf:global')
+                ->response(fn () => response(
+                    'Terlalu banyak proses konversi. Silakan coba kembali beberapa saat lagi.',
+                    429,
+                    ['Content-Type' => 'text/plain; charset=UTF-8'],
+                )),
+        ]);
 
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
