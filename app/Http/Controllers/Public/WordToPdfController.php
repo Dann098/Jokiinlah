@@ -39,7 +39,12 @@ final class WordToPdfController extends Controller
 
         $lock = Cache::lock(
             'word-to-pdf:conversion',
-            max(10, (int) config('converter.word_to_pdf_timeout') + 10),
+            max(
+                30,
+                (int) config('converter.word_to_pdf_timeout')
+                    + (int) config('security.malware.timeout', 10)
+                    + 30,
+            ),
         );
 
         if (! $lock->get()) {
