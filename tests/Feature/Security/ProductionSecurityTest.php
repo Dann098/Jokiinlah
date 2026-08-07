@@ -42,6 +42,8 @@ class ProductionSecurityTest extends TestCase
     {
         $this->artisan('jokiinlah:readiness')
             ->expectsOutputToContain('LibreOffice binary tersedia')
+            ->expectsOutputToContain('Isolasi LibreOffice diverifikasi')
+            ->expectsOutputToContain('Ekstensi ZIP aktif')
             ->expectsOutputToContain('Workspace konversi privat')
             ->expectsOutputToContain('Process execution PHP aktif')
             ->expectsOutputToContain('Deployment production harus ditunda.')
