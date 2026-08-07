@@ -209,4 +209,4 @@ dokumentasi ini. Tidak ada database atau migration baru.
 - Trust-boundary RED: `871fbad` dan `fe13b11`.
 - Trust-boundary GREEN: `75b5d8a`.
 - Lock TTL fix after final review: `ce52f4b`.
-- Push status: pending final verification.
+- Push status: verified and pushed to `origin/main` (release evidence commit `5ddac2d`).
