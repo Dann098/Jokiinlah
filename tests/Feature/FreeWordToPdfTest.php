@@ -6,6 +6,7 @@ use App\Contracts\WordToPdfConverterInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route as LaravelRoute;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
@@ -128,11 +129,32 @@ class FreeWordToPdfTest extends TestCase
             'document' => $this->makeDocxUpload(),
         ]);
 
+        $workspaces = File::directories($root);
+        $this->assertCount(1, $workspaces);
+        $this->assertStringStartsWith($root.DIRECTORY_SEPARATOR, $workspaces[0]);
+
         ob_start();
         $response->baseResponse->sendContent();
         ob_end_clean();
 
         $this->assertSame([], File::directories($root));
+    }
+
+    public function test_only_one_conversion_can_run_at_a_time(): void
+    {
+        $lock = Cache::lock('word-to-pdf:conversion', 70);
+        $this->assertTrue($lock->get());
+
+        try {
+            $this->from(route('free-tools.word-to-pdf'))
+                ->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload()])
+                ->assertRedirect(route('free-tools.word-to-pdf'))
+                ->assertSessionHasErrors([
+                    'document' => 'Server sedang memproses dokumen lain. Silakan coba kembali beberapa saat lagi.',
+                ]);
+        } finally {
+            $lock->release();
+        }
     }
 
     public function test_converter_failures_and_timeouts_show_only_safe_messages(): void
