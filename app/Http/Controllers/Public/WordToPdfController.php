@@ -80,7 +80,14 @@ final class WordToPdfController extends Controller
         return response()->streamDownload(function () use ($converter, $handle, $result): void {
             try {
                 while (! feof($handle)) {
-                    echo fread($handle, 1024 * 64);
+                    $chunk = fread($handle, 1024 * 64);
+                    if ($chunk === false) {
+                        Log::warning('Word to PDF download stopped.', ['reason_code' => 'stream_read_failed']);
+
+                        break;
+                    }
+
+                    echo $chunk;
                     flush();
                 }
             } finally {

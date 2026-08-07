@@ -27,6 +27,8 @@ class ProductionReadinessCommand extends Command
             ['LibreOffice binary tersedia', $this->libreOfficeAvailable()],
             ['Isolasi LibreOffice diverifikasi', config('converter.sandbox_verified') === true],
             ['Ekstensi ZIP aktif', extension_loaded('zip')],
+            ['Ekstensi DOM XML aktif', extension_loaded('dom')],
+            ['Cache lock production shared', $this->cacheSupportsSharedLocks()],
             ['Workspace konversi privat', $this->conversionWorkspaceIsPrivate()],
             ['Workspace konversi writable', $this->conversionWorkspaceIsWritable()],
             ['Process execution PHP aktif', $this->processExecutionAvailable()],
@@ -63,8 +65,32 @@ class ProductionReadinessCommand extends Command
 
     private function conversionWorkspaceIsPrivate(): bool
     {
-        $privateRoot = rtrim(str_replace('\\', '/', storage_path('app/private')), '/');
-        $conversionRoot = rtrim(str_replace('\\', '/', (string) config('converter.temporary_directory')), '/');
+        $privateRoot = realpath(storage_path('app/private'));
+        $conversionRoot = realpath((string) config('converter.temporary_directory'));
+
+        if ($privateRoot === false || $conversionRoot === false) {
+            return false;
+        }
+
+        $privateRoot = rtrim(str_replace('\\', '/', $privateRoot), '/');
+        $conversionRoot = rtrim(str_replace('\\', '/', $conversionRoot), '/');
+
+        $probe = $conversionRoot;
+        while (strlen($probe) >= strlen($privateRoot)) {
+            if (is_link($probe)) {
+                return false;
+            }
+
+            if (strcasecmp($probe, $privateRoot) === 0) {
+                break;
+            }
+
+            $parent = dirname($probe);
+            if ($parent === $probe) {
+                return false;
+            }
+            $probe = $parent;
+        }
 
         return strcasecmp($conversionRoot, $privateRoot) === 0
             || str_starts_with(strtolower($conversionRoot), strtolower($privateRoot).'/');
@@ -83,5 +109,10 @@ class ProductionReadinessCommand extends Command
         $disabled = array_map('trim', explode(',', (string) ini_get('disable_functions')));
 
         return function_exists('proc_open') && ! in_array('proc_open', $disabled, true);
+    }
+
+    private function cacheSupportsSharedLocks(): bool
+    {
+        return in_array(config('cache.default'), ['database', 'redis', 'memcached', 'dynamodb'], true);
     }
 }

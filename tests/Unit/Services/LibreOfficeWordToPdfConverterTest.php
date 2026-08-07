@@ -2,16 +2,16 @@
 
 namespace Tests\Unit\Services;
 
+use App\Enums\MalwareScanStatus;
 use App\Exceptions\WordToPdfConversionFailed;
 use App\Exceptions\WordToPdfConversionTimedOut;
 use App\Exceptions\WordToPdfConverterUnavailable;
+use App\Services\Malware\FakeMalwareScanner;
 use App\Services\WordToPdf\LibreOfficeWordToPdfConverter;
 use App\Services\WordToPdf\SymfonyLibreOfficeProcessRunner;
 use App\ValueObjects\LibreOfficeProcessResult;
-use App\Enums\MalwareScanStatus;
 use Illuminate\Support\Facades\File;
 use Tests\Fakes\FakeLibreOfficeProcessRunner;
-use App\Services\Malware\FakeMalwareScanner;
 use Tests\Support\CreatesWordDocuments;
 use Tests\TestCase;
 

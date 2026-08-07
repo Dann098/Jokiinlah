@@ -3,6 +3,8 @@
 namespace App\Rules;
 
 use Closure;
+use DOMDocument;
+use DOMXPath;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\UploadedFile;
 use ZipArchive;
@@ -93,7 +95,8 @@ final class ValidWordDocument implements ValidationRule
         $directorySector = $this->littleEndianUnsigned(substr($header, 48, 4));
         $difatSectorCount = $this->littleEndianUnsigned(substr($header, 72, 4));
 
-        if ($path === false || $fileSize < ($sectorSize * 2) || $fatSectorCount < 1 || $fatSectorCount > 109 || $difatSectorCount !== 0) {
+        $maximumSectors = intdiv(max(0, $fileSize - $sectorSize), $sectorSize);
+        if ($path === false || $fileSize < ($sectorSize * 2) || $fatSectorCount < 1 || $fatSectorCount > $maximumSectors || $difatSectorCount > 32) {
             return null;
         }
 
@@ -103,9 +106,43 @@ final class ValidWordDocument implements ValidationRule
         }
 
         try {
+            $fatSectors = [];
+            for ($index = 0; $index < 109 && count($fatSectors) < $fatSectorCount; $index++) {
+                $sector = $this->littleEndianUnsigned(substr($header, 76 + ($index * 4), 4));
+                if ($sector < 0xFFFFFFF0) {
+                    $fatSectors[] = $sector;
+                }
+            }
+
+            $difatSector = $this->littleEndianUnsigned(substr($header, 68, 4));
+            $seenDifat = [];
+            for ($chain = 0; count($fatSectors) < $fatSectorCount && $chain < $difatSectorCount; $chain++) {
+                if ($difatSector >= 0xFFFFFFF0 || isset($seenDifat[$difatSector])) {
+                    return null;
+                }
+
+                $seenDifat[$difatSector] = true;
+                $contents = $this->compoundSector($handle, $difatSector, $sectorSize, $fileSize);
+                if ($contents === null) {
+                    return null;
+                }
+
+                $entriesPerSector = intdiv($sectorSize, 4) - 1;
+                for ($index = 0; $index < $entriesPerSector && count($fatSectors) < $fatSectorCount; $index++) {
+                    $sector = $this->littleEndianUnsigned(substr($contents, $index * 4, 4));
+                    if ($sector < 0xFFFFFFF0) {
+                        $fatSectors[] = $sector;
+                    }
+                }
+                $difatSector = $this->littleEndianUnsigned(substr($contents, -4));
+            }
+
+            if (count($fatSectors) !== $fatSectorCount) {
+                return null;
+            }
+
             $fat = [];
-            for ($index = 0; $index < $fatSectorCount; $index++) {
-                $fatSector = $this->littleEndianUnsigned(substr($header, 76 + ($index * 4), 4));
+            foreach ($fatSectors as $fatSector) {
                 $contents = $this->compoundSector($handle, $fatSector, $sectorSize, $fileSize);
                 if ($contents === null) {
                     return null;
@@ -133,7 +170,18 @@ final class ValidWordDocument implements ValidationRule
                 $directorySector = $fat[$directorySector];
             }
 
-            return $this->compoundEntryNames($directory);
+            $entries = $this->compoundEntries($directory);
+            $wordDocument = collect($entries)->firstWhere('name', 'worddocument');
+            if (! is_array($wordDocument)) {
+                return null;
+            }
+
+            $fib = $this->compoundStreamPrefix($handle, $wordDocument, $fat, $sectorSize, $fileSize, 32);
+            if ($fib === null || ! $this->isValidWordFib($fib)) {
+                return null;
+            }
+
+            return array_values(array_unique(array_column($entries, 'name')));
         } finally {
             fclose($handle);
         }
@@ -156,10 +204,10 @@ final class ValidWordDocument implements ValidationRule
         return is_string($contents) && strlen($contents) === $sectorSize ? $contents : null;
     }
 
-    /** @return list<string> */
-    private function compoundEntryNames(string $directory): array
+    /** @return list<array{name: string, start: int, size: int}> */
+    private function compoundEntries(string $directory): array
     {
-        $names = [];
+        $entries = [];
 
         foreach (str_split($directory, 128) as $entry) {
             if (strlen($entry) !== 128 || ! in_array(ord($entry[66]), [1, 2, 5], true)) {
@@ -172,10 +220,63 @@ final class ValidWordDocument implements ValidationRule
             }
 
             $name = mb_convert_encoding(substr($entry, 0, $nameLength - 2), 'UTF-8', 'UTF-16LE');
-            $names[] = mb_strtolower($name);
+            $sizeHigh = $this->littleEndianUnsigned(substr($entry, 124, 4));
+            if ($sizeHigh !== 0) {
+                continue;
+            }
+
+            $entries[] = [
+                'name' => mb_strtolower($name),
+                'start' => $this->littleEndianUnsigned(substr($entry, 116, 4)),
+                'size' => $this->littleEndianUnsigned(substr($entry, 120, 4)),
+            ];
         }
 
-        return array_values(array_unique($names));
+        return $entries;
+    }
+
+    /**
+     * @param  resource  $handle
+     * @param  array{name: string, start: int, size: int}  $entry
+     * @param  list<int>  $fat
+     */
+    private function compoundStreamPrefix($handle, array $entry, array $fat, int $sectorSize, int $fileSize, int $length): ?string
+    {
+        if ($entry['size'] < $length || $entry['start'] >= 0xFFFFFFF0) {
+            return null;
+        }
+
+        $contents = '';
+        $sector = $entry['start'];
+        $seen = [];
+        while (strlen($contents) < $length) {
+            if (isset($seen[$sector]) || ! isset($fat[$sector])) {
+                return null;
+            }
+
+            $seen[$sector] = true;
+            $chunk = $this->compoundSector($handle, $sector, $sectorSize, $fileSize);
+            if ($chunk === null) {
+                return null;
+            }
+
+            $contents .= $chunk;
+            $sector = $fat[$sector];
+        }
+
+        return substr($contents, 0, $length);
+    }
+
+    private function isValidWordFib(string $fib): bool
+    {
+        $identifier = unpack('vvalue', substr($fib, 0, 2))['value'] ?? 0;
+        $version = unpack('vvalue', substr($fib, 2, 2))['value'] ?? 0;
+        $flags = unpack('vvalue', substr($fib, 10, 2))['value'] ?? 0;
+
+        return $identifier === 0xA5EC
+            && $version >= 0x0065
+            && $version <= 0x0112
+            && ($flags & 0x8100) === 0;
     }
 
     private function littleEndianUnsigned(string $bytes): int
@@ -229,16 +330,73 @@ final class ValidWordDocument implements ValidationRule
                 }
             }
 
-            $contentTypes = $zip->getFromName('[Content_Types].xml', 65_536);
-
-            return is_string($contentTypes)
-                && ! str_contains(strtolower($contentTypes), 'macroenabled')
-                && str_contains(
-                    $contentTypes,
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml',
-                );
+            return $this->hasValidContentTypes($zip)
+                && $this->hasValidOfficeDocumentRelationship($zip)
+                && $this->hasValidWordDocumentRoot($zip);
         } finally {
             $zip->close();
+        }
+    }
+
+    private function hasValidContentTypes(ZipArchive $zip): bool
+    {
+        $document = $this->archiveXml($zip, '[Content_Types].xml', 65_536);
+        if ($document === null) {
+            return false;
+        }
+
+        $xpath = new DOMXPath($document);
+        $xpath->registerNamespace('ct', 'http://schemas.openxmlformats.org/package/2006/content-types');
+        $nodes = $xpath->query(
+            '/ct:Types/ct:Override[@PartName="/word/document.xml" and @ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"]',
+        );
+
+        return $nodes !== false && $nodes->length === 1;
+    }
+
+    private function hasValidOfficeDocumentRelationship(ZipArchive $zip): bool
+    {
+        $document = $this->archiveXml($zip, '_rels/.rels', 65_536);
+        if ($document === null) {
+            return false;
+        }
+
+        $xpath = new DOMXPath($document);
+        $xpath->registerNamespace('r', 'http://schemas.openxmlformats.org/package/2006/relationships');
+        $nodes = $xpath->query(
+            '/r:Relationships/r:Relationship[@Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" and @Target="word/document.xml" and not(@TargetMode)]',
+        );
+
+        return $nodes !== false && $nodes->length === 1;
+    }
+
+    private function hasValidWordDocumentRoot(ZipArchive $zip): bool
+    {
+        $document = $this->archiveXml($zip, 'word/document.xml', 4 * 1024 * 1024);
+        $root = $document?->documentElement;
+
+        return $root !== null
+            && $root->localName === 'document'
+            && $root->namespaceURI === 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    }
+
+    private function archiveXml(ZipArchive $zip, string $name, int $maximumBytes): ?DOMDocument
+    {
+        $contents = $zip->getFromName($name, $maximumBytes);
+        if (! is_string($contents) || $contents === '' || strlen($contents) >= $maximumBytes) {
+            return null;
+        }
+
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $document = new DOMDocument;
+            $loaded = $document->loadXML($contents, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING | LIBXML_COMPACT);
+
+            return $loaded && $document->doctype === null ? $document : null;
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
         }
     }
 

@@ -3,7 +3,9 @@
 namespace App\Services\WordToPdf;
 
 use App\Contracts\LibreOfficeProcessRunnerInterface;
+use App\Contracts\MalwareScannerInterface;
 use App\Contracts\WordToPdfConverterInterface;
+use App\Enums\MalwareScanStatus;
 use App\Exceptions\WordToPdfConversionFailed;
 use App\Exceptions\WordToPdfConversionTimedOut;
 use App\Exceptions\WordToPdfConverterUnavailable;
@@ -19,6 +21,7 @@ final class LibreOfficeWordToPdfConverter implements WordToPdfConverterInterface
     public function __construct(
         private readonly LibreOfficeProcessRunnerInterface $runner,
         private readonly ConversionWorkspaceCleaner $cleaner = new ConversionWorkspaceCleaner,
+        private readonly ?MalwareScannerInterface $scanner = null,
     ) {}
 
     public function convert(UploadedFile $document): WordToPdfConversionResult
@@ -37,6 +40,14 @@ final class LibreOfficeWordToPdfConverter implements WordToPdfConverterInterface
             $profilePath = $workspace.DIRECTORY_SEPARATOR.'profile';
             File::ensureDirectoryExists($profilePath, 0750, true);
             $document->move($workspace, basename($sourcePath));
+
+            $scan = ($this->scanner ?? app(MalwareScannerInterface::class))->scan(
+                'conversions',
+                basename($workspace).'/'.basename($sourcePath),
+            );
+            if ($scan->status !== MalwareScanStatus::Clean) {
+                throw new WordToPdfConversionFailed;
+            }
 
             $result = $this->runner->run(
                 $this->command($binary, $profilePath, $workspace, $sourcePath),

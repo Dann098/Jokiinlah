@@ -42,7 +42,12 @@ final class SymfonyLibreOfficeProcessRunner implements LibreOfficeProcessRunnerI
     private function isolatedEnvironment(array $environment): array
     {
         $parent = getenv();
-        $isolated = is_array($parent) ? array_fill_keys(array_keys($parent), false) : [];
+        $parentKeys = is_array($parent) ? array_keys($parent) : [];
+        $serverKeys = array_keys(array_filter(
+            $_SERVER,
+            fn (mixed $value): bool => is_scalar($value) || $value === null,
+        ));
+        $isolated = array_fill_keys(array_unique([...$parentKeys, ...array_keys($_ENV), ...$serverKeys]), false);
 
         foreach (['PATH', 'SystemRoot', 'WINDIR', 'COMSPEC', 'PATHEXT', 'LANG', 'LC_ALL'] as $key) {
             $value = getenv($key);
