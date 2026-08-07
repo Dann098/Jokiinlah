@@ -22,3 +22,8 @@ Schedule::command('jokiinlah:files-reconcile --limit=1000')
     ->weeklyOn(1, '03:10')
     ->withoutOverlapping(120)
     ->onOneServer();
+
+Schedule::command('jokiinlah:conversion-cleanup')
+    ->hourly()
+    ->withoutOverlapping(10)
+    ->onOneServer();

@@ -167,6 +167,10 @@ header[data-scrolled='true'] { box-shadow: 0 12px 35px rgb(0 0 0 / 0.18); backgr
 .data-cleaner-table tbody th { position: sticky; z-index: 1; left: 0; background: #f4f6f9; color: #687386; font-weight: 700; }
 .data-cleaner-table tbody tr:nth-child(even) td { background: #fafbfc; }
 .data-cleaner-cell { display: block; max-width: 16rem; overflow: hidden; text-overflow: ellipsis; }
+.word-converter-shell { min-width: 0; overflow-x: clip; }
+.word-converter-dropzone { display: flex; min-height: 14rem; flex-direction: column; align-items: center; justify-content: center; border: 2px dashed rgb(11 25 51 / 0.28); border-radius: 1rem; background: #f8fafc; padding: 1.5rem; text-align: center; transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease; }
+.word-converter-dropzone.is-dragging { border-color: #d6a83d; background: #fffaf0; box-shadow: 0 0 0 4px rgb(214 168 61 / 0.14); }
+.word-converter-dropzone:focus-within { outline: 2px solid #0b1933; outline-offset: 3px; }
 
 @media (max-width: 1023px) {
     .cv-mobile-hidden { display: none; }

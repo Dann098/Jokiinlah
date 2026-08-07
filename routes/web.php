@@ -23,6 +23,7 @@ use App\Http\Controllers\Public\LegalPageController;
 use App\Http\Controllers\Public\PortfolioController;
 use App\Http\Controllers\Public\ServiceController;
 use App\Http\Controllers\Public\SitemapController;
+use App\Http\Controllers\Public\WordToPdfController;
 use App\Http\Controllers\RevisionAttachmentDownloadController;
 use App\Http\Controllers\TwoFactorSecurityController;
 use Illuminate\Support\Facades\Route;
@@ -39,6 +40,10 @@ Route::get('/kontak', ContactController::class)->name('contact.index');
 Route::get('/fitur-gratis', [FreeToolController::class, 'index'])->name('free-tools.index');
 Route::get('/fitur-gratis/pembuat-cv', [FreeToolController::class, 'cvBuilder'])->name('free-tools.cv-builder');
 Route::get('/fitur-gratis/pembersih-data', [FreeToolController::class, 'dataCleaner'])->name('free-tools.data-cleaner');
+Route::get('/fitur-gratis/word-ke-pdf', [WordToPdfController::class, 'show'])->name('free-tools.word-to-pdf');
+Route::post('/fitur-gratis/word-ke-pdf', [WordToPdfController::class, 'convert'])
+    ->middleware('throttle:word-to-pdf')
+    ->name('free-tools.word-to-pdf.convert');
 Route::post('/konsultasi', [ConsultationController::class, 'store'])->middleware('throttle:consultations')->name('consultations.store');
 Route::get('/kebijakan-privasi', [LegalPageController::class, 'privacy'])->name('privacy');
 Route::get('/syarat-dan-ketentuan', [LegalPageController::class, 'terms'])->name('terms');

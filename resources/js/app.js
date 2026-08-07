@@ -1,10 +1,12 @@
 import './bootstrap';
 import Alpine from 'alpinejs';
 import { cvBuilder } from './cv-builder';
+import { wordToPdfUpload } from './word-to-pdf';
 
 window.Alpine = Alpine;
 
 Alpine.data('cvBuilder', cvBuilder);
+Alpine.data('wordToPdfUpload', wordToPdfUpload);
 
 Alpine.data('navigation', () => ({
     open: false,

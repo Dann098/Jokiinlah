@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Contracts\LibreOfficeProcessRunnerInterface;
 use App\Contracts\MalwareScannerInterface;
+use App\Contracts\WordToPdfConverterInterface;
 use App\Enums\MalwareScanStatus;
 use App\Listeners\AuditTwoFactorSecurityEvent;
 use App\Models\Appointment;
@@ -18,6 +20,8 @@ use App\Observers\PublicImageObserver;
 use App\Services\Malware\ClamAvMalwareScanner;
 use App\Services\Malware\FakeMalwareScanner;
 use App\Services\Malware\UnavailableMalwareScanner;
+use App\Services\WordToPdf\LibreOfficeWordToPdfConverter;
+use App\Services\WordToPdf\SymfonyLibreOfficeProcessRunner;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -40,6 +44,9 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->bind(LibreOfficeProcessRunnerInterface::class, SymfonyLibreOfficeProcessRunner::class);
+        $this->app->bind(WordToPdfConverterInterface::class, LibreOfficeWordToPdfConverter::class);
+
         $this->app->singleton(MalwareScannerInterface::class, function (): MalwareScannerInterface {
             if (! config('security.malware.enabled')) {
                 return new UnavailableMalwareScanner;
@@ -110,6 +117,14 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('customer-mutations', fn (Request $request): Limit => Limit::perMinute(12)
             ->by('customer-mutation:'.hash('sha256', (string) $request->user()?->email).'|'.$request->ip())
             ->response(fn () => response('Terlalu banyak permintaan. Silakan tunggu dan coba kembali.', 429)));
+
+        RateLimiter::for('word-to-pdf', fn (Request $request): Limit => Limit::perMinutes(10, 5)
+            ->by('word-to-pdf:'.hash('sha256', (string) $request->ip()))
+            ->response(fn () => response(
+                'Terlalu banyak proses konversi. Silakan coba kembali beberapa saat lagi.',
+                429,
+                ['Content-Type' => 'text/plain; charset=UTF-8'],
+            )));
 
         if ($this->app->environment('production')) {
             URL::forceScheme('https');

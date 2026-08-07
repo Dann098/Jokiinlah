@@ -3,23 +3,24 @@
 namespace Tests\Feature;
 
 use App\Contracts\WordToPdfConverterInterface;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route as LaravelRoute;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\File;
 use Tests\Fakes\FakeWordToPdfConverter;
 use Tests\Support\CreatesWordDocuments;
 use Tests\TestCase;
 
 class FreeWordToPdfTest extends TestCase
 {
-    use CreatesWordDocuments;
+    use CreatesWordDocuments, RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
-        RateLimiter::clear('word-to-pdf:127.0.0.1');
+        $this->clearWordToPdfRateLimit();
         $this->app->instance(WordToPdfConverterInterface::class, new FakeWordToPdfConverter);
     }
 
@@ -81,17 +82,18 @@ class FreeWordToPdfTest extends TestCase
         config(['converter.word_to_pdf_max_mb' => 1]);
 
         $invalidFiles = [
-            UploadedFile::fake()->createWithContent('dokumen.pdf', '%PDF-1.4'),
-            UploadedFile::fake()->createWithContent('macro.docm', 'not allowed'),
-            UploadedFile::fake()->createWithContent('program.exe', 'MZ'),
-            UploadedFile::fake()->createWithContent('arsip.zip', "PK\x03\x04"),
-            UploadedFile::fake()->createWithContent('kosong.docx', ''),
-            UploadedFile::fake()->create('besar.docx', 1025, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
+            'PDF' => UploadedFile::fake()->createWithContent('dokumen.pdf', '%PDF-1.4'),
+            'DOCM' => UploadedFile::fake()->createWithContent('macro.docm', 'not allowed'),
+            'EXE' => UploadedFile::fake()->createWithContent('program.exe', 'MZ'),
+            'ZIP' => UploadedFile::fake()->createWithContent('arsip.zip', "PK\x03\x04"),
+            'empty DOCX' => UploadedFile::fake()->createWithContent('kosong.docx', ''),
+            'oversized DOCX' => UploadedFile::fake()->create('besar.docx', 1025, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
         ];
 
-        foreach ($invalidFiles as $file) {
-            $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $file])
-                ->assertSessionHasErrors('document');
+        foreach ($invalidFiles as $label => $file) {
+            $this->clearWordToPdfRateLimit();
+            $response = $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $file]);
+            $this->assertTrue(session('errors')?->has('document') ?? false, $label);
         }
     }
 
@@ -159,5 +161,11 @@ class FreeWordToPdfTest extends TestCase
         $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload('laporan-6.docx')])
             ->assertStatus(429)
             ->assertSee('Terlalu banyak proses konversi. Silakan coba kembali beberapa saat lagi.');
+    }
+
+    private function clearWordToPdfRateLimit(): void
+    {
+        $key = 'word-to-pdf:'.hash('sha256', '127.0.0.1');
+        RateLimiter::clear(md5('word-to-pdf'.$key));
     }
 }

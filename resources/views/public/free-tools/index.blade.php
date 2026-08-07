@@ -56,6 +56,23 @@
             </div>
         </article>
 
+        <article class='surface-card mt-8 max-w-3xl overflow-hidden' data-reveal>
+            <div class='border-b border-navy/10 bg-cream px-6 py-5 sm:px-8'>
+                <div class='flex flex-wrap items-center gap-2'>
+                    <x-badge>Gratis</x-badge>
+                    <x-badge>DOC &amp; DOCX</x-badge>
+                    <x-badge>Tanpa Login</x-badge>
+                </div>
+            </div>
+            <div class='p-6 sm:p-8'>
+                <h2 class='text-2xl font-bold text-navy sm:text-3xl'>Word ke PDF Gratis</h2>
+                <p class='mt-4 leading-8 text-muted'>Konversikan file Microsoft Word menjadi PDF secara cepat tanpa perlu membuat akun.</p>
+                <div class='mt-8'>
+                    <x-primary-button :href="route('free-tools.word-to-pdf')">Convert ke PDF</x-primary-button>
+                </div>
+            </div>
+        </article>
+
         <p class='mt-8 max-w-3xl text-sm leading-7 text-muted'>Butuh bantuan profesional untuk menyunting dokumen? <a class='font-bold text-navy underline decoration-gold decoration-2 underline-offset-4' href='{{ route('services.index') }}'>Lihat layanan Jokiinlah</a>.</p>
     </div>
 </section>
