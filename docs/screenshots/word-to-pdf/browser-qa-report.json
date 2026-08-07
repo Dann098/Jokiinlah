@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-08-07T13:09:13.652Z",
+  "browser": "Microsoft Edge Chromium",
+  "status": "partial",
+  "responsive_status": "passed",
+  "viewports": [
+    {
+      "viewport": "360x800",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-360x800.png"
+    },
+    {
+      "viewport": "390x844",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-390x844.png"
+    },
+    {
+      "viewport": "768x1024",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-768x1024.png"
+    },
+    {
+      "viewport": "1024x768",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-1024x768.png"
+    },
+    {
+      "viewport": "1366x768",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-1366x768.png"
+    },
+    {
+      "viewport": "1440x900",
+      "h1Count": 1,
+      "overflow": false,
+      "dropzoneClipped": false,
+      "submitHeight": 48,
+      "filenameOverflow": false,
+      "filenameVisible": true,
+      "filenameExact": true,
+      "clientErrorEmpty": true,
+      "privacyPresent": true,
+      "loadingLiveRegion": true,
+      "errorAlert": true,
+      "screenshot": "docs/screenshots/word-to-pdf/word-to-pdf-1440x900.png"
+    }
+  ],
+  "validation": {
+    "pdf_rejected": true,
+    "long_filename_safe": true
+  },
+  "limitations": {
+    "libreoffice_available": false,
+    "real_doc_docx_conversion": "not run",
+    "pdf_layout_content_checks": "not run",
+    "server_error_states": "covered by PHPUnit, not browser automation"
+  },
+  "console_errors": [],
+  "network_errors": []
+}

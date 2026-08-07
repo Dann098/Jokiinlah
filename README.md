@@ -38,8 +38,9 @@ sesuai policy.
 
 Website publik menyediakan landing page responsif, layanan, portofolio, artikel, FAQ,
 form konsultasi guest, halaman legal, SEO metadata, sitemap, robots, WhatsApp CTA,
-pembuat CV ATS, serta pembersih CSV/XLSX yang seluruh pemrosesannya berlangsung di
-browser tanpa upload server.
+pembuat CV ATS, pembersih CSV/XLSX yang seluruh pemrosesannya berlangsung di browser,
+serta converter Word DOC/DOCX ke PDF berbasis LibreOffice dengan temporary storage
+privat dan tanpa akun.
 Scope active/published mencegah konten nonaktif, draft, atau future tampil ke publik.
 
 Customer Portal berada di `/dashboard` dan menyediakan:
@@ -75,6 +76,7 @@ project, payment, user/content management, site setting, atau global activity lo
 - Node.js dan npm
 - MariaDB 10.4+ atau MySQL kompatibel
 - ClamAV daemon yang dapat dijangkau aplikasi (wajib untuk production)
+- LibreOffice headless dan font server yang sesuai (wajib untuk Word ke PDF production)
 
 ## Instalasi development
 
@@ -107,7 +109,16 @@ DB_CONNECTION=mysql
 FILESYSTEM_DISK=local
 PRIVATE_FILESYSTEM_DISK=local
 MALWARE_SCANNER_ENABLED=false
+LIBREOFFICE_BINARY=
+WORD_TO_PDF_MAX_MB=10
+WORD_TO_PDF_TIMEOUT=60
+WORD_TO_PDF_EXPANDED_MAX_MB=100
+WORD_TO_PDF_OUTPUT_MAX_MB=50
+WORD_TO_PDF_SANDBOX_VERIFIED=false
 ```
+
+Nilai sandbox hanya boleh diubah menjadi `true` setelah proses LibreOffice benar-benar
+diisolasi sebagai user non-root, tanpa network egress, dan diberi quota resource.
 
 Jangan commit `.env` atau credential production. Jangan memakai `migrate:fresh` pada
 database yang berisi data; instalasi normal tidak memerlukannya. Scanner yang nonaktif
@@ -141,9 +152,10 @@ composer validate --strict
 composer audit
 ```
 
-Verifikasi regresi terbaru: **237 test lulus dengan 1.315 assertion** pada SQLite.
+Verifikasi regresi terbaru: **253 test lulus dengan 1.442 assertion** pada SQLite;
+1 integration test LibreOffice di-skip eksplisit karena binary tidak tersedia.
 Sebanyak 59 test fitur permintaan proyek dan chat (120 assertion) juga lulus pada
-MariaDB 10.4.32. Build Vite memproses 67 modul; Composer audit dan npm audit bersih.
+MariaDB 10.4.32. Build Vite memproses 68 modul; Composer audit dan npm audit bersih.
 Config, route, dan view cache berhasil dibuat lalu dibersihkan kembali untuk
 development.
 
@@ -153,6 +165,7 @@ Perintah hardening dan pemeriksaan production:
 php artisan jokiinlah:retention-evaluate --dry-run
 php artisan jokiinlah:purge --dry-run
 php artisan jokiinlah:files-reconcile --checksum
+php artisan jokiinlah:conversion-cleanup --dry-run
 php artisan schedule:list
 php artisan jokiinlah:readiness
 ```
@@ -174,10 +187,20 @@ php artisan schedule:work
 ```
 
 Production wajib memakai process manager untuk worker dan cron `schedule:run` setiap
-menit. Tiga task maintenance terdaftar: retention harian, purge harian, dan file
-reconciliation mingguan.
+menit. Empat task maintenance terdaftar: retention harian, purge harian, file
+reconciliation mingguan, dan cleanup workspace conversion setiap jam.
 
 ## Visual QA
+
+Word ke PDF:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/run-word-to-pdf-qa.ps1
+```
+
+QA responsive UI converter lulus pada enam viewport dari 360x800 sampai 1440x900.
+Status browser QA keseluruhan masih partial; konversi dan layout PDF nyata tetap
+wajib diuji pada server terisolasi yang memiliki LibreOffice.
 
 Website publik:
 
