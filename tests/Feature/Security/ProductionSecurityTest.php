@@ -44,6 +44,7 @@ class ProductionSecurityTest extends TestCase
             ->expectsOutputToContain('LibreOffice binary tersedia')
             ->expectsOutputToContain('Isolasi LibreOffice diverifikasi')
             ->expectsOutputToContain('Ekstensi ZIP aktif')
+            ->expectsOutputToContain('Cache lock production shared')
             ->expectsOutputToContain('Workspace konversi privat')
             ->expectsOutputToContain('Process execution PHP aktif')
             ->expectsOutputToContain('Deployment production harus ditunda.')

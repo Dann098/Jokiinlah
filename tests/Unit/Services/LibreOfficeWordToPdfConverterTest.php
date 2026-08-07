@@ -8,8 +8,10 @@ use App\Exceptions\WordToPdfConverterUnavailable;
 use App\Services\WordToPdf\LibreOfficeWordToPdfConverter;
 use App\Services\WordToPdf\SymfonyLibreOfficeProcessRunner;
 use App\ValueObjects\LibreOfficeProcessResult;
+use App\Enums\MalwareScanStatus;
 use Illuminate\Support\Facades\File;
 use Tests\Fakes\FakeLibreOfficeProcessRunner;
+use App\Services\Malware\FakeMalwareScanner;
 use Tests\Support\CreatesWordDocuments;
 use Tests\TestCase;
 
@@ -142,12 +144,14 @@ class LibreOfficeWordToPdfConverterTest extends TestCase
     {
         File::ensureDirectoryExists($this->root);
         putenv('WORD_TO_PDF_TEST_SECRET=must-not-leak');
+        $_ENV['WORD_TO_PDF_ENV_ONLY_SECRET'] = 'must-not-leak';
 
         try {
             $script = <<<'PHP'
 file_put_contents(getenv('HOME').DIRECTORY_SEPARATOR.'process-probe.json', json_encode([
     'cwd' => getcwd(),
     'secret' => getenv('WORD_TO_PDF_TEST_SECRET'),
+    'env_secret' => getenv('WORD_TO_PDF_ENV_ONLY_SECRET'),
 ]));
 PHP;
             $runner = new SymfonyLibreOfficeProcessRunner;
@@ -162,8 +166,29 @@ PHP;
             $this->assertTrue($result->successful());
             $this->assertSame(realpath($this->root), realpath($probe['cwd']));
             $this->assertFalse($probe['secret']);
+            $this->assertFalse($probe['env_secret']);
         } finally {
             putenv('WORD_TO_PDF_TEST_SECRET');
+            unset($_ENV['WORD_TO_PDF_ENV_ONLY_SECRET']);
+        }
+    }
+
+    public function test_malware_scan_fails_closed_before_libreoffice_runs(): void
+    {
+        $runner = new FakeLibreOfficeProcessRunner(function (): never {
+            $this->fail('LibreOffice tidak boleh berjalan untuk dokumen terinfeksi.');
+        });
+        $converter = new LibreOfficeWordToPdfConverter(
+            $runner,
+            scanner: new FakeMalwareScanner(MalwareScanStatus::Infected, 'fixture_infected'),
+        );
+
+        $this->expectException(WordToPdfConversionFailed::class);
+
+        try {
+            $converter->convert($this->makeDocxUpload());
+        } finally {
+            $this->assertSame([], File::directories($this->root));
         }
     }
 }

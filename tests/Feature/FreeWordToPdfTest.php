@@ -91,8 +91,10 @@ class FreeWordToPdfTest extends TestCase
             'ZIP' => UploadedFile::fake()->createWithContent('arsip.zip', "PK\x03\x04"),
             'renamed ZIP' => $this->makeDisguisedArchiveUpload(),
             'renamed DOCM' => $this->makeDisguisedDocmUpload(),
+            'external OOXML relationship' => $this->makeExternalRelationshipDocxUpload(),
             'renamed OLE workbook' => $this->makeDisguisedOleUpload(),
             'macro DOC' => $this->makeMacroDocUpload(),
+            'forged WordDocument stream' => $this->makeForgedWordCompoundUpload(),
             'empty DOCX' => UploadedFile::fake()->createWithContent('kosong.docx', ''),
             'oversized DOCX' => UploadedFile::fake()->create('besar.docx', 1025, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
         ];

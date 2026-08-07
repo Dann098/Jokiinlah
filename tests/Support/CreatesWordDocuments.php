@@ -72,8 +72,13 @@ XML);
         return $this->makeCompoundUpload($name, ['WordDocument', 'VBA']);
     }
 
+    protected function makeForgedWordCompoundUpload(string $name = 'word-palsu.doc'): UploadedFile
+    {
+        return $this->makeCompoundUpload($name, ['WordDocument'], false);
+    }
+
     /** @param list<string> $streamNames */
-    private function makeCompoundUpload(string $name, array $streamNames): UploadedFile
+    private function makeCompoundUpload(string $name, array $streamNames, bool $validWordFib = true): UploadedFile
     {
         $path = tempnam(storage_path('framework/testing'), 'doc-');
 
@@ -94,18 +99,27 @@ XML);
 
         $directory = $this->compoundDirectoryEntry('Root Entry', 5);
         foreach ($streamNames as $streamName) {
-            $directory .= $this->compoundDirectoryEntry($streamName, 2);
+            $isWordDocument = $streamName === 'WordDocument';
+            $directory .= $this->compoundDirectoryEntry($streamName, 2, $isWordDocument ? 2 : 0xFFFFFFFE, $isWordDocument ? 4096 : 0);
         }
         $directory = str_pad(substr($directory, 0, 512), 512, "\0");
 
         $fat = pack('V', 0xFFFFFFFE).pack('V', 0xFFFFFFFD);
+        for ($sector = 2; $sector <= 9; $sector++) {
+            $fat .= pack('V', $sector === 9 ? 0xFFFFFFFE : $sector + 1);
+        }
         $fat = str_pad($fat, 512, "\xFF");
-        file_put_contents($path, $header.$directory.$fat);
+        $wordStream = str_repeat("\0", 4096);
+        if ($validWordFib) {
+            $wordStream = substr_replace($wordStream, pack('v', 0xA5EC), 0, 2);
+            $wordStream = substr_replace($wordStream, pack('v', 0x00D9), 2, 2);
+        }
+        file_put_contents($path, $header.$directory.$fat.$wordStream);
 
         return new UploadedFile($path, $name, 'application/msword', null, true);
     }
 
-    private function compoundDirectoryEntry(string $name, int $type): string
+    private function compoundDirectoryEntry(string $name, int $type, int $startSector = 0xFFFFFFFE, int $size = 0): string
     {
         $encodedName = mb_convert_encoding($name."\0", 'UTF-16LE', 'UTF-8');
         $entry = str_pad(substr($encodedName, 0, 64), 128, "\0");
@@ -114,7 +128,8 @@ XML);
         $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 68, 4);
         $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 72, 4);
         $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 76, 4);
-        $entry = substr_replace($entry, pack('V', 0xFFFFFFFE), 116, 4);
+        $entry = substr_replace($entry, pack('V', $startSector), 116, 4);
+        $entry = substr_replace($entry, pack('V2', $size, 0), 120, 8);
 
         return $entry;
     }
@@ -133,6 +148,15 @@ XML);
             '[Content_Types].xml' => '<Types><Override PartName="/word/document.xml" ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"/></Types>',
             'word/document.xml' => '<w:document/>',
             'word/vbaProject.bin' => 'macro',
+        ]);
+    }
+
+    protected function makeExternalRelationshipDocxUpload(string $name = 'relasi-eksternal.docx'): UploadedFile
+    {
+        return $this->makeZipUpload($name, [
+            '[Content_Types].xml' => '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>',
+            '_rels/.rels' => '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="https://attacker.invalid/document.xml" TargetMode="External"/></Relationships>',
+            'word/document.xml' => '<not-word/>',
         ]);
     }
 
