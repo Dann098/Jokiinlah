@@ -87,15 +87,12 @@ class FreeDataCleanerTest extends TestCase
             ->assertSee(url('/fitur-gratis/pembersih-data'), false);
     }
 
-    public function test_free_tools_have_get_routes_only_and_no_cleaner_submission_endpoint(): void
+    public function test_data_cleaner_route_remains_read_only_when_server_converter_is_added(): void
     {
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn (LaravelRoute $route): bool => str_starts_with($route->uri(), 'fitur-gratis'));
 
-        $this->assertCount(3, $routes);
-        foreach ($routes as $route) {
-            $this->assertSame(['GET', 'HEAD'], $route->methods());
-        }
+        $this->assertSame(['GET', 'HEAD'], $routes->firstWhere('uri', 'fitur-gratis/pembersih-data')->methods());
     }
 
     public function test_data_cleaner_source_never_persists_or_transmits_file_data(): void

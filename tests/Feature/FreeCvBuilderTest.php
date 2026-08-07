@@ -70,15 +70,14 @@ class FreeCvBuilderTest extends TestCase
             ->assertSee(route('free-tools.cv-builder'), false);
     }
 
-    public function test_cv_builder_has_get_routes_only_and_no_server_submission_endpoint(): void
+    public function test_cv_builder_routes_remain_read_only_when_server_converter_is_added(): void
     {
         $routes = collect(Route::getRoutes()->getRoutes())
             ->filter(fn (LaravelRoute $route): bool => str_starts_with($route->uri(), 'fitur-gratis'));
 
-        $this->assertCount(3, $routes);
-        foreach ($routes as $route) {
-            $this->assertSame(['GET', 'HEAD'], $route->methods());
-        }
+        $this->assertSame(['GET', 'HEAD'], $routes->firstWhere('uri', 'fitur-gratis')->methods());
+        $this->assertSame(['GET', 'HEAD'], $routes->firstWhere('uri', 'fitur-gratis/pembuat-cv')->methods());
+        $this->assertSame(['GET', 'HEAD'], $routes->firstWhere('uri', 'fitur-gratis/pembersih-data')->methods());
     }
 
     public function test_cv_builder_exposes_accessible_fields_repeaters_and_local_photo_rules(): void
