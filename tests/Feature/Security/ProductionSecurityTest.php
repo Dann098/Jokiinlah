@@ -41,6 +41,9 @@ class ProductionSecurityTest extends TestCase
     public function test_readiness_guard_fails_for_local_configuration(): void
     {
         $this->artisan('jokiinlah:readiness')
+            ->expectsOutputToContain('LibreOffice binary tersedia')
+            ->expectsOutputToContain('Workspace konversi privat')
+            ->expectsOutputToContain('Process execution PHP aktif')
             ->expectsOutputToContain('Deployment production harus ditunda.')
             ->assertFailed();
     }
