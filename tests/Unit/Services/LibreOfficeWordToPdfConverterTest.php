@@ -6,6 +6,7 @@ use App\Exceptions\WordToPdfConversionFailed;
 use App\Exceptions\WordToPdfConversionTimedOut;
 use App\Exceptions\WordToPdfConverterUnavailable;
 use App\Services\WordToPdf\LibreOfficeWordToPdfConverter;
+use App\Services\WordToPdf\SymfonyLibreOfficeProcessRunner;
 use App\ValueObjects\LibreOfficeProcessResult;
 use Illuminate\Support\Facades\File;
 use Tests\Fakes\FakeLibreOfficeProcessRunner;
@@ -26,6 +27,7 @@ class LibreOfficeWordToPdfConverterTest extends TestCase
             'converter.libreoffice_binary' => PHP_BINARY,
             'converter.word_to_pdf_timeout' => 17,
             'converter.temporary_directory' => $this->root,
+            'converter.word_to_pdf_output_max_mb' => 1,
         ]);
     }
 
@@ -88,6 +90,16 @@ class LibreOfficeWordToPdfConverterTest extends TestCase
             function (array $command): LibreOfficeProcessResult {
                 $input = $command[array_key_last($command)];
                 $out = $command[array_search('--outdir', $command, true) + 1];
+                file_put_contents(
+                    $out.DIRECTORY_SEPARATOR.pathinfo($input, PATHINFO_FILENAME).'.pdf',
+                    '%PDF-'.str_repeat('x', (1024 * 1024) + 1),
+                );
+
+                return new LibreOfficeProcessResult(0);
+            },
+            function (array $command): LibreOfficeProcessResult {
+                $input = $command[array_key_last($command)];
+                $out = $command[array_search('--outdir', $command, true) + 1];
                 file_put_contents($out.DIRECTORY_SEPARATOR.pathinfo($input, PATHINFO_FILENAME).'.pdf', 'not a pdf');
 
                 return new LibreOfficeProcessResult(0);
@@ -124,5 +136,34 @@ class LibreOfficeWordToPdfConverterTest extends TestCase
         config(['converter.libreoffice_binary' => '']);
         $this->expectException(WordToPdfConverterUnavailable::class);
         $converter->convert($this->makeDocxUpload());
+    }
+
+    public function test_process_runner_uses_workspace_cwd_and_does_not_inherit_application_secrets(): void
+    {
+        File::ensureDirectoryExists($this->root);
+        putenv('WORD_TO_PDF_TEST_SECRET=must-not-leak');
+
+        try {
+            $script = <<<'PHP'
+file_put_contents(getenv('HOME').DIRECTORY_SEPARATOR.'process-probe.json', json_encode([
+    'cwd' => getcwd(),
+    'secret' => getenv('WORD_TO_PDF_TEST_SECRET'),
+]));
+PHP;
+            $runner = new SymfonyLibreOfficeProcessRunner;
+            $result = $runner->run([PHP_BINARY, '-r', $script], [
+                'HOME' => $this->root,
+                'TMP' => $this->root,
+                'TEMP' => $this->root,
+                'USERPROFILE' => $this->root,
+            ], 5);
+
+            $probe = json_decode(file_get_contents($this->root.DIRECTORY_SEPARATOR.'process-probe.json'), true, flags: JSON_THROW_ON_ERROR);
+            $this->assertTrue($result->successful());
+            $this->assertSame(realpath($this->root), realpath($probe['cwd']));
+            $this->assertFalse($probe['secret']);
+        } finally {
+            putenv('WORD_TO_PDF_TEST_SECRET');
+        }
     }
 }

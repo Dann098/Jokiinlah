@@ -9,6 +9,7 @@ use Illuminate\Routing\Route as LaravelRoute;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Testing\TestResponse;
 use Tests\Fakes\FakeWordToPdfConverter;
 use Tests\Support\CreatesWordDocuments;
 use Tests\TestCase;
@@ -74,6 +75,7 @@ class FreeWordToPdfTest extends TestCase
             $response->assertOk()->assertHeader('content-type', 'application/pdf');
             $this->assertStringContainsString('attachment;', (string) $response->headers->get('content-disposition'));
             $this->assertStringContainsString('laporan.pdf', (string) $response->headers->get('content-disposition'));
+            $this->consumeDownload($response);
         }
     }
 
@@ -86,6 +88,8 @@ class FreeWordToPdfTest extends TestCase
             'DOCM' => UploadedFile::fake()->createWithContent('macro.docm', 'not allowed'),
             'EXE' => UploadedFile::fake()->createWithContent('program.exe', 'MZ'),
             'ZIP' => UploadedFile::fake()->createWithContent('arsip.zip', "PK\x03\x04"),
+            'renamed ZIP' => $this->makeDisguisedArchiveUpload(),
+            'renamed DOCM' => $this->makeDisguisedDocmUpload(),
             'empty DOCX' => UploadedFile::fake()->createWithContent('kosong.docx', ''),
             'oversized DOCX' => UploadedFile::fake()->create('besar.docx', 1025, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
         ];
@@ -112,6 +116,7 @@ class FreeWordToPdfTest extends TestCase
         $this->assertStringNotContainsString("\n", $disposition);
         $this->assertStringNotContainsString('X-Evil:', $disposition);
         $this->assertStringEndsWith('.pdf"', $disposition);
+        $this->consumeDownload($response);
     }
 
     public function test_streamed_download_removes_the_temporary_workspace(): void
@@ -149,13 +154,20 @@ class FreeWordToPdfTest extends TestCase
             ->assertSessionHasErrors([
                 'document' => 'Layanan konversi sedang tidak tersedia. Silakan coba kembali nanti.',
             ]);
+
+        $this->app->instance(WordToPdfConverterInterface::class, new FakeWordToPdfConverter('missing'));
+        $this->from(route('free-tools.word-to-pdf'))
+            ->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload()])
+            ->assertRedirect(route('free-tools.word-to-pdf'))
+            ->assertSessionHasErrors('document');
     }
 
     public function test_rate_limiter_blocks_the_sixth_conversion_for_an_ip(): void
     {
         for ($attempt = 1; $attempt <= 5; $attempt++) {
-            $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload("laporan-{$attempt}.docx")])
+            $response = $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload("laporan-{$attempt}.docx")])
                 ->assertOk();
+            $this->consumeDownload($response);
         }
 
         $this->post(route('free-tools.word-to-pdf.convert'), ['document' => $this->makeDocxUpload('laporan-6.docx')])
@@ -167,5 +179,12 @@ class FreeWordToPdfTest extends TestCase
     {
         $key = 'word-to-pdf:'.hash('sha256', '127.0.0.1');
         RateLimiter::clear(md5('word-to-pdf'.$key));
+    }
+
+    private function consumeDownload(TestResponse $response): void
+    {
+        ob_start();
+        $response->baseResponse->sendContent();
+        ob_end_clean();
     }
 }

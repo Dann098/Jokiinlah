@@ -28,6 +28,9 @@ final class FakeWordToPdfConverter implements WordToPdfConverterInterface
         File::ensureDirectoryExists($workspace);
         $pdfPath = $workspace.DIRECTORY_SEPARATOR.Str::uuid().'.pdf';
         file_put_contents($pdfPath, "%PDF-1.4\n% fake conversion\n%%EOF");
+        if ($this->outcome === 'missing') {
+            File::delete($pdfPath);
+        }
 
         return new WordToPdfConversionResult($pdfPath, $workspace);
     }

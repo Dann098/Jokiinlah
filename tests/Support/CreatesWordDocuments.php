@@ -65,8 +65,49 @@ XML);
             throw new RuntimeException('Tidak dapat membuat fixture DOC.');
         }
 
-        file_put_contents($path, hex2bin('D0CF11E0A1B11AE1').str_repeat("\0", 2048));
+        $header = str_repeat("\0", 512);
+        $header = substr_replace($header, hex2bin('D0CF11E0A1B11AE1'), 0, 8);
+        $header = substr_replace($header, hex2bin('3E000300FEFF09000600'), 24, 10);
+        file_put_contents($path, $header.str_repeat("\0", 1536));
 
         return new UploadedFile($path, $name, 'application/msword', null, true);
+    }
+
+    protected function makeDisguisedArchiveUpload(string $name = 'arsip-palsu.docx'): UploadedFile
+    {
+        return $this->makeZipUpload($name, [
+            '[Content_Types].xml' => '<Types><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/></Types>',
+            'xl/workbook.xml' => '<workbook/>',
+        ]);
+    }
+
+    protected function makeDisguisedDocmUpload(string $name = 'macro-disamarkan.docx'): UploadedFile
+    {
+        return $this->makeZipUpload($name, [
+            '[Content_Types].xml' => '<Types><Override PartName="/word/document.xml" ContentType="application/vnd.ms-word.document.macroEnabled.main+xml"/></Types>',
+            'word/document.xml' => '<w:document/>',
+            'word/vbaProject.bin' => 'macro',
+        ]);
+    }
+
+    /** @param array<string, string> $entries */
+    private function makeZipUpload(string $name, array $entries): UploadedFile
+    {
+        $path = tempnam(storage_path('framework/testing'), 'zip-');
+        if ($path === false) {
+            throw new RuntimeException('Tidak dapat membuat fixture ZIP.');
+        }
+
+        $zip = new ZipArchive;
+        if ($zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            throw new RuntimeException('Tidak dapat membuka fixture ZIP.');
+        }
+
+        foreach ($entries as $entry => $contents) {
+            $zip->addFromString($entry, $contents);
+        }
+        $zip->close();
+
+        return new UploadedFile($path, $name, 'application/zip', null, true);
     }
 }
