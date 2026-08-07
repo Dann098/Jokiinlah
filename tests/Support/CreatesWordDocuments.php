@@ -59,6 +59,22 @@ XML);
 
     protected function makeDocUpload(string $name = 'laporan.doc'): UploadedFile
     {
+        return $this->makeCompoundUpload($name, ['WordDocument']);
+    }
+
+    protected function makeDisguisedOleUpload(string $name = 'workbook-palsu.doc'): UploadedFile
+    {
+        return $this->makeCompoundUpload($name, ['Workbook']);
+    }
+
+    protected function makeMacroDocUpload(string $name = 'macro-palsu.doc'): UploadedFile
+    {
+        return $this->makeCompoundUpload($name, ['WordDocument', 'VBA']);
+    }
+
+    /** @param list<string> $streamNames */
+    private function makeCompoundUpload(string $name, array $streamNames): UploadedFile
+    {
         $path = tempnam(storage_path('framework/testing'), 'doc-');
 
         if ($path === false) {
@@ -68,9 +84,39 @@ XML);
         $header = str_repeat("\0", 512);
         $header = substr_replace($header, hex2bin('D0CF11E0A1B11AE1'), 0, 8);
         $header = substr_replace($header, hex2bin('3E000300FEFF09000600'), 24, 10);
-        file_put_contents($path, $header.str_repeat("\0", 1536));
+        $header = substr_replace($header, pack('V', 1), 44, 4);
+        $header = substr_replace($header, pack('V', 0), 48, 4);
+        $header = substr_replace($header, pack('V', 4096), 56, 4);
+        $header = substr_replace($header, pack('V', 0xFFFFFFFE), 60, 4);
+        $header = substr_replace($header, pack('V', 0xFFFFFFFE), 68, 4);
+        $header = substr_replace($header, str_repeat(pack('V', 0xFFFFFFFF), 109), 76, 436);
+        $header = substr_replace($header, pack('V', 1), 76, 4);
+
+        $directory = $this->compoundDirectoryEntry('Root Entry', 5);
+        foreach ($streamNames as $streamName) {
+            $directory .= $this->compoundDirectoryEntry($streamName, 2);
+        }
+        $directory = str_pad(substr($directory, 0, 512), 512, "\0");
+
+        $fat = pack('V', 0xFFFFFFFE).pack('V', 0xFFFFFFFD);
+        $fat = str_pad($fat, 512, "\xFF");
+        file_put_contents($path, $header.$directory.$fat);
 
         return new UploadedFile($path, $name, 'application/msword', null, true);
+    }
+
+    private function compoundDirectoryEntry(string $name, int $type): string
+    {
+        $encodedName = mb_convert_encoding($name."\0", 'UTF-16LE', 'UTF-8');
+        $entry = str_pad(substr($encodedName, 0, 64), 128, "\0");
+        $entry = substr_replace($entry, pack('v', min(strlen($encodedName), 64)), 64, 2);
+        $entry = substr_replace($entry, chr($type), 66, 1);
+        $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 68, 4);
+        $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 72, 4);
+        $entry = substr_replace($entry, pack('V', 0xFFFFFFFF), 76, 4);
+        $entry = substr_replace($entry, pack('V', 0xFFFFFFFE), 116, 4);
+
+        return $entry;
     }
 
     protected function makeDisguisedArchiveUpload(string $name = 'arsip-palsu.docx'): UploadedFile

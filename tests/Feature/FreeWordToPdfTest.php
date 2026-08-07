@@ -91,6 +91,8 @@ class FreeWordToPdfTest extends TestCase
             'ZIP' => UploadedFile::fake()->createWithContent('arsip.zip', "PK\x03\x04"),
             'renamed ZIP' => $this->makeDisguisedArchiveUpload(),
             'renamed DOCM' => $this->makeDisguisedDocmUpload(),
+            'renamed OLE workbook' => $this->makeDisguisedOleUpload(),
+            'macro DOC' => $this->makeMacroDocUpload(),
             'empty DOCX' => UploadedFile::fake()->createWithContent('kosong.docx', ''),
             'oversized DOCX' => UploadedFile::fake()->create('besar.docx', 1025, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'),
         ];
@@ -201,6 +203,7 @@ class FreeWordToPdfTest extends TestCase
     {
         $key = 'word-to-pdf:'.hash('sha256', '127.0.0.1');
         RateLimiter::clear(md5('word-to-pdf'.$key));
+        RateLimiter::clear(md5('word-to-pdfword-to-pdf:global'));
     }
 
     private function consumeDownload(TestResponse $response): void
