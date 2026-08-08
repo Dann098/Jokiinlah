@@ -42,8 +42,8 @@ Konverter CSV ke Excel & Excel ke CSV Gratis | Jokiinlah
             @endforeach
         </ol>
 
-        <div class='mt-6' role='alert' aria-live='assertive' hidden>
-            <div class='rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-900'></div>
+        <div class='mt-6' role='alert' aria-live='assertive' x-cloak x-show='errorMessage'>
+            <div class='rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm font-semibold text-red-900' x-text='errorMessage'></div>
         </div>
 
         <div class='mt-6 grid gap-6 xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]'>
@@ -57,13 +57,23 @@ Konverter CSV ke Excel & Excel ke CSV Gratis | Jokiinlah
                         <span class='rounded-full bg-navy/5 px-3 py-1 text-xs font-bold text-navy'>CSV ≤ 10 MB · XLSX ≤ 5 MB</span>
                     </div>
 
-                    <label for='csv-excel-converter-file' class='csv-converter-dropzone mt-5'>
-                        <input id='csv-excel-converter-file' class='sr-only' type='file' accept='.csv,.xlsx'>
+                    <label for='csv-excel-converter-file' class='csv-converter-dropzone mt-5' x-bind:class="dragActive ? 'is-dragging' : ''" x-on:dragenter.prevent='dragActive = true' x-on:dragover.prevent='dragActive = true' x-on:dragleave.prevent='dragActive = false' x-on:drop.prevent='handleDrop($event)'>
+                        <input id='csv-excel-converter-file' x-ref='fileInput' class='sr-only' type='file' accept='.csv,.xlsx' x-on:change='handleFileInput($event)'>
                         <span class='flex h-12 w-12 items-center justify-center rounded-full bg-navy text-xl text-gold' aria-hidden='true'>↑</span>
                         <span class='mt-3 block text-base font-bold text-navy'>Klik untuk memilih atau tarik file ke area ini</span>
                         <span class='mt-1 block text-sm leading-6 text-muted'>Satu file .csv atau .xlsx untuk setiap proses.</span>
                     </label>
-                    <div class='mt-4 min-h-6 text-sm font-semibold text-navy' aria-live='polite'></div>
+                    <div class='mt-4 min-h-6 text-sm font-semibold text-navy' aria-live='polite'>
+                        <span x-show='isProcessing'>Membaca dan memvalidasi file…</span>
+                        <span class='break-all' x-show='!isProcessing && selectedFile' x-text='selectedFile?.name'></span>
+                    </div>
+
+                    <dl class='mt-5 grid gap-3 text-sm sm:grid-cols-2' x-cloak x-show='fileInfo'>
+                        <div class='data-cleaner-info'><dt>Nama file</dt><dd x-text='fileInfo?.name'></dd></div>
+                        <div class='data-cleaner-info'><dt>Ukuran</dt><dd x-text='fileInfo?.size'></dd></div>
+                        <div class='data-cleaner-info'><dt>Jenis</dt><dd x-text='fileInfo?.type'></dd></div>
+                        <div class='data-cleaner-info'><dt>Arah konversi</dt><dd x-text='conversionDirection'></dd></div>
+                    </dl>
 
                     <div class='mt-5'>
                         <label class='text-sm font-bold text-navy' for='csv-excel-converter-sheet'>Pilih Sheet yang akan dikonversi</label>
