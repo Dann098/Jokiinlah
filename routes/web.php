@@ -40,6 +40,7 @@ Route::get('/kontak', ContactController::class)->name('contact.index');
 Route::get('/fitur-gratis', [FreeToolController::class, 'index'])->name('free-tools.index');
 Route::get('/fitur-gratis/pembuat-cv', [FreeToolController::class, 'cvBuilder'])->name('free-tools.cv-builder');
 Route::get('/fitur-gratis/pembersih-data', [FreeToolController::class, 'dataCleaner'])->name('free-tools.data-cleaner');
+Route::get('/fitur-gratis/konverter-csv-excel', [FreeToolController::class, 'csvExcelConverter'])->name('free-tools.csv-excel-converter');
 Route::get('/fitur-gratis/word-ke-pdf', [WordToPdfController::class, 'show'])->name('free-tools.word-to-pdf');
 Route::post('/fitur-gratis/word-ke-pdf', [WordToPdfController::class, 'convert'])
     ->middleware('throttle:word-to-pdf')

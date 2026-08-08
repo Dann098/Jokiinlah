@@ -21,4 +21,9 @@ class FreeToolController extends Controller
     {
         return view('public.free-tools.data-cleaner');
     }
+
+    public function csvExcelConverter(): View
+    {
+        return view('public.free-tools.csv-excel-converter');
+    }
 }
