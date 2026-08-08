@@ -91,6 +91,11 @@ async function bootAlpine() {
         Alpine.data('dataCleaner', dataCleaner);
     }
 
+    if (document.querySelector('[x-data="csvExcelConverter"]')) {
+        const { csvExcelConverter } = await import('./csv-excel-converter');
+        Alpine.data('csvExcelConverter', csvExcelConverter);
+    }
+
     Alpine.start();
     initializePublicPage();
 }

@@ -6,7 +6,7 @@ Konverter CSV ke Excel & Excel ke CSV Gratis | Jokiinlah
 @section('description', 'Konversi CSV ke Excel XLSX atau Excel ke CSV secara gratis langsung di browser tanpa upload file ke server.')
 
 @section('content')
-<div class='csv-converter-shell bg-[#f4f6f9]' data-csv-excel-converter>
+<div class='csv-converter-shell bg-[#f4f6f9]' x-data='csvExcelConverter'>
     <section class='bg-navy text-white'>
         <div class='container-public py-10 sm:py-14'>
             <x-breadcrumb :items="['Fitur Gratis' => route('free-tools.index'), 'Konverter CSV & Excel' => null]" />
